@@ -1,0 +1,16 @@
+../app/Screen.c:39:6:Screen_begin	1
+../app/Screen.c:81:6:Screen_RX_data	1
+../app/Screen.c:85:6:Screen_RX_Callback	1
+../app/Screen.c:99:6:Navigation_setting_page	1
+../app/Screen.c:103:6:Navigation_home_page	1
+../app/Screen.c:108:6:Navigation_Next_MainPage	2
+../app/Screen.c:131:6:Navigation_Next_PrevPage	1
+../app/Screen.c:135:6:ON_OFF_Button	1
+../app/Screen.c:145:6:Navigation_keyboard	1
+../app/Screen.c:158:6:Keyboard	9
+../app/Screen.c:196:9:Index_VP	5
+../app/Screen.c:213:6:Screen_init_handler_table	1
+../app/Screen.c:240:6:Screen_excute_RX_function	3
+../app/Screen.c:259:15:Screen_CheckInput_Keyboard	3
+../app/Screen.c:289:6:Screen_Icon_Pin	3
+../app/Screen.c:305:6:Screen_Icon_Result	5

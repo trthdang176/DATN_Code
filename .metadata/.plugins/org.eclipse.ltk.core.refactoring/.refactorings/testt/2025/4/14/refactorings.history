@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;testt/app/Screen.cpp&apos; to &apos;Screen.c&apos;" description="Rename resource &apos;Screen.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="app/Screen.cpp" name="Screen.c" stamp="1743497497976" updateReferences="false"/>&#x0A;<refactoring comment="Rename resource &apos;testt/lib/DWIN_HMI.cpp&apos; to &apos;DWIN_HMI.c&apos;" description="Rename resource &apos;DWIN_HMI.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="lib/DWIN_HMI.cpp" name="DWIN_HMI.c" stamp="1743497506432" updateReferences="false"/>
+</session>

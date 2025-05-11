@@ -1,0 +1,95 @@
+/*
+ * Control_IC.h
+ *
+ *  Created on: Mar 27, 2025
+ *      Author: dangtt
+ */
+
+#ifndef INC_CONTROL_IC_H_
+#define INC_CONTROL_IC_H_
+
+#include "main.h"
+
+#define DSA1  GPIO_PIN_15
+#define DSB1  GPIO_PIN_14
+#define CP1   GPIO_PIN_13
+#define MR1   GPIO_PIN_12
+
+#define DSA2  GPIO_PIN_11
+#define DSB2  GPIO_PIN_10
+#define CP2   GPIO_PIN_9
+#define MR2   GPIO_PIN_8
+
+#define DSA3  GPIO_PIN_13
+#define DSB3  GPIO_PIN_12
+#define CP3   GPIO_PIN_11
+#define MR3   GPIO_PIN_10
+
+// postion bit LE in shift ic -> the bit is reverse 
+#define LE1_Bit 3     
+#define LE2_Bit 7
+#define LE3_Bit 5 
+#define LE4_Bit 1
+#define LE5_Bit 5
+#define LE6_Bit 7
+#define LE7_Bit 3
+
+#define ENABLE_OE_1 0x00 // 0b 0000 0000 OE = 0 : enable IC, LE = 0 : lock ic 
+#define ENABLE_OE_2 0x00
+
+#define PIN_IC_TEST_1                 1 
+#define PIN_IC_TEST_2                 2 
+#define PIN_IC_TEST_3                 3 
+#define PIN_IC_TEST_4                 4 
+#define PIN_IC_TEST_5                 5 
+#define PIN_IC_TEST_6                 6 
+#define PIN_IC_TEST_7                 7 
+#define PIN_IC_TEST_8                 8 
+#define PIN_IC_TEST_9                 9 
+#define PIN_IC_TEST_10                10 
+#define PIN_IC_TEST_11                11 
+#define PIN_IC_TEST_12                12 
+#define PIN_IC_TEST_13                13 
+#define PIN_IC_TEST_14                14 
+#define PIN_IC_TEST_15                15 
+#define PIN_IC_TEST_16                16
+
+enum {
+    Shift_IC1 = 0,
+    Shift_IC2    ,
+    Shift_IC3    ,
+    Shift_IC_MAX
+};
+
+enum {
+    Latch_IC1  = 0,
+    Latch_IC2     ,
+    Latch_IC3     ,
+    Latch_IC4     ,
+    Latch_IC5     ,
+    Latch_IC6     ,
+    Latch_IC7     ,  
+    Latch_IC_MAX
+};
+
+
+typedef struct {
+    GPIO_TypeDef *Port_x;
+    uint16_t PIN_x;
+} Pin_IC_Test_Mapping;
+
+void Control_IC_begin(void);
+void Control_Vcc_pin(uint8_t data);
+void Latch_IC_begin(void);
+
+void shift_out(uint8_t num, uint8_t data);
+void Control_D_In(uint8_t num, uint8_t data);
+
+void Control_Input_IC_Test(uint8_t num, uint16_t data);
+void Control_Output_IC_Test(uint8_t num, uint8_t *array_data);
+
+void Control_Program_IC_Test(char *data, uint8_t numPin);
+
+
+
+#endif /* INC_CONTROL_IC_H_ */

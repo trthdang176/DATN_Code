@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;testt/Core/Src/Control_IC&apos; to &apos;Control_IC.c&apos;" description="Rename resource &apos;Control_IC&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Src/Control_IC" name="Control_IC.c" stamp="1743044817169" updateReferences="false"/>
+</session>
