@@ -1,4 +1,5 @@
 ../lib/AT24Cxx.c:9:16:AT24Cxx_Init	24	static
 ../lib/AT24Cxx.c:28:16:AT24Cxx_write_page	32	static
 ../lib/AT24Cxx.c:38:16:AT24Cxx_write_buffer	32	static
-../lib/AT24Cxx.c:48:16:AT24Cxx_read_buffer	40	static
+../lib/AT24Cxx.c:48:16:AT24Cxx_write_buffer_bloking	56	static
+../lib/AT24Cxx.c:82:16:AT24Cxx_read_buffer	40	static

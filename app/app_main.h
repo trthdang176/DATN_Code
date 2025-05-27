@@ -13,6 +13,10 @@
 #define __APP_MAIN_H__
 
 #include "test_os.h"
+#include "app_eeprom.h"
+#include "app_uart_esp32.h"
+#include "app_can_bus.h"
+
 #include "../os/os.h"
 #include "../os/os_event.h"
 
@@ -26,9 +30,42 @@ enum TestOS_sig {
     TIMEOUT2_SIG,
     POST_DATA_TIMEOUT,
     PRINT_POST_DATA,
+    READ_ALL_PROGRAM_TEST,
+    READ_ONE_PROGRAM_TEST,
+    WRITE_PROGRAM_TEST,
+    TEST_SEND_DATA_ESP32,
 
     MAX_SIG
 };
+
+/* eeprom signal */
+enum {
+    WAIT_WRITE_TIMEOUT = 0,
+    CHECK_WRITE_BUF       ,
+    WRITE_EEPROM_IN_BUF   ,
+    FINISH_WRITE          ,
+    READ_EEPROM           ,
+    WRITE_EEPROM          ,
+
+    MAX_SIG_EEPROM
+};
+
+/* Uart esp32 signal */ 
+enum {
+    SEND_DATA_ESP32   = 0,
+    RECEIVE_DATA_ESP32   ,
+
+    MAX_SIG_UART_ESP32
+};
+
+/* Can bus signal */
+enum {
+    SEND_DATA_CAN_BUS  = 0,
+    RECEIVE_DATA_CAN_BUS  ,
+
+    MAX_SIG_CAN_BUS
+};
+
 
 void BSP_init(void);
 

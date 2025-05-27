@@ -14,11 +14,14 @@
 #include "../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h" /* CMSIS STM32F1xx Device Peripheral Access Layer Header File */
 
 void I2C1_ER_IRQHandler(void);
+void RTC_IRQHandler(void);
 
 void I2C1_ER_IRQHandler(void) { 
-    OS_task_activate(1);  
+    // OS_task_activate(1);  
     // HAL_NVIC_ClearPendingIRQ(I2C1_ER_IRQn); // clear NVIC pending bit
-    
+}
+void RTC_IRQHandler(void) {
+    OS_task_activate(1);  
 }
 
 /* hardware-specific support code run on a specific hardware platform */
@@ -27,11 +30,13 @@ void BSP_init(void) {
     dynamic_event_pool_init();
     
     /* Set IRQ number for priority used in OS */
-    OS_prio_setIRQ(1,I2C1_ER_IRQn);
+    OS_prio_setIRQ(1,RTC_IRQn);
 
-    OS_priority_IRQ(I2C1_ER_IRQn,1);
-    OS_Test_setIRQ(AO_BlinkyTest,I2C1_ER_IRQn);    
-    OS_Test_setIRQ(AO_taskPost,I2C1_ER_IRQn);
+    OS_priority_IRQ(RTC_IRQn,1);
+    OS_Test_setIRQ(AO_BlinkyTest,RTC_IRQn);    
+    OS_Test_setIRQ(AO_taskPost,RTC_IRQn);
+    OS_Test_setIRQ(AO_task_eeprom,RTC_IRQn);
+    OS_Test_setIRQ(AO_task_uart_esp32,RTC_IRQn);
 }
 
 /* ============================= function using for initialization task ============================= */ 

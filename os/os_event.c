@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 #define OS_EVT_NULL         ((OS_event_t*)0)
 #define OS_EVT_POOL_SIZE    (OS_TASK_PER_PRI)
@@ -33,7 +34,7 @@ void free_dynamic_event(OS_event_t *e) {
     OS_PORT_CRIT_ENTRY();
 
     uint8_t idx = e - dynamic_event_pool; /* Get index of event */
-    free(e->data); /* free allocated memory */
+//    free(e->data); /* free allocated memory */
     if (idx > 0 && idx < OS_EVT_POOL_SIZE) {
         dynamic_event_pool_free[dynamic_event_free_stack++] = idx; 
     }
@@ -54,12 +55,10 @@ OS_event_t *get_dynamic_event(void) {
 void set_data_dynamic_event(OS_event_t *e, uint8_t *data, uint32_t len) {
     if (len != 0) {
         e->len = len;
-        e->data = malloc(len);
-        if (e->data == NULL) return;
         memcpy(e->data,data,len);
     } else {
         e->len = len;
-        e->data = (uint8_t *)0;
+        memset(e->data, 0, sizeof(e->data));
     }
 }
 
@@ -67,7 +66,7 @@ void set_sig_dynamic_event(OS_event_t *e, uint8_t sig) {
     e->sig = sig;
 }
 
-uint8_t *get_data_dynamic_event(OS_event_t *e) {
+uint8_t *get_data_dynamic_event(OS_event_t * const e) {
     return (e->data);
 }
 

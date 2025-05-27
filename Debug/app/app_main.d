@@ -19,12 +19,18 @@ app/app_main.o: ../app/app_main.c ../app/app_main.h ../app/test_os.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_exti.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma_ex.h \
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_can.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
+ ../app/app_eeprom.h ../app/../lib/AT24Cxx.h \
+ ../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+ ../app/Screen.h ../app/../lib/DWIN_HMI.h \
+ ../app/../lib/../Core/Inc/main.h ../app/../lib/Common.h \
+ ../app/../Core/Inc/main.h ../app/app_uart_esp32.h ../app/app_can_bus.h \
  ../app/../os/os_event.h ../app/../os/os.h \
  ../app/../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h
 ../app/app_main.h:
@@ -50,12 +56,23 @@ app/app_main.o: ../app/app_main.c ../app/app_main.h ../app/test_os.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_exti.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma_ex.h:
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_can.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
+../app/app_eeprom.h:
+../app/../lib/AT24Cxx.h:
+../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
+../app/Screen.h:
+../app/../lib/DWIN_HMI.h:
+../app/../lib/../Core/Inc/main.h:
+../app/../lib/Common.h:
+../app/../Core/Inc/main.h:
+../app/app_uart_esp32.h:
+../app/app_can_bus.h:
 ../app/../os/os_event.h:
 ../app/../os/os.h:
 ../app/../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:

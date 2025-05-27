@@ -1,4 +1,4 @@
-../app/test_os.c:22:6:BlinkyTest_app_init	1
-../app/test_os.c:27:6:BlinkyTest_ctor	1
-../app/test_os.c:37:6:BlinkyTest_init	1
-../app/test_os.c:55:6:BlinkyTest_Dispatch	5
+../app/test_os.c:35:6:BlinkyTest_app_init	2
+../app/test_os.c:50:6:BlinkyTest_ctor	1
+../app/test_os.c:63:6:BlinkyTest_init	1
+../app/test_os.c:91:6:BlinkyTest_Dispatch	12

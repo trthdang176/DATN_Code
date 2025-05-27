@@ -26,7 +26,7 @@ typedef struct {
     uint16_t sig; /* signal of event */
 
     /* Payload */
-    uint8_t *data;
+    uint8_t data[64];
     uint32_t len;
 } OS_event_t;
 

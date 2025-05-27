@@ -7,7 +7,7 @@ void DWIN_SetPage(Dwin_t *pDwin, uint8_t page)
     HAL_UART_Transmit(pDwin->pUart,sendBuffer,sizeof(sendBuffer),1000);
 }
 
-void DWIN_SetText(Dwin_t *pDwin, uint16_t VP_address, uint8_t *textData, uint16_t datalen) {
+void DWIN_SetText(Dwin_t *pDwin, uint16_t VP_address, char *textData, uint16_t datalen) {
     uint8_t ffEnding[2] = { 0xFF, 0xFF };
     uint8_t sendBuffer[8 + datalen];
 
@@ -22,7 +22,7 @@ void DWIN_SetText(Dwin_t *pDwin, uint16_t VP_address, uint8_t *textData, uint16_
 }
 
 void DWIN_ClearText(Dwin_t *pDwin, uint16_t VP_address) {
-    DWIN_SetText(pDwin,VP_address,"",strlen(""));
+    DWIN_SetText(pDwin,VP_address,(uint8_t *)"",strlen(""));
 }
 
 void DWIN_SetColorText(Dwin_t *pDwin, uint16_t SP_address, uint16_t color) {
@@ -135,9 +135,9 @@ void DWIN_SetCallback(Dwin_t *pDwin, pListenDWIN dwin_callback)
 void DWIN_Listen(Dwin_t *pDwin, uint8_t *RX_Buffer)
 {
     uint8_t datalength;
-    uint8_t message_ASCII;
     uint16_t VPaddress;
-    uint16_t lastByte;
+    uint16_t lowByte;
+    uint16_t highByte;
 
 
     if( RX_Buffer[0] == 0x5A && RX_Buffer[1] == 0xA5 ) 
@@ -148,15 +148,14 @@ void DWIN_Listen(Dwin_t *pDwin, uint8_t *RX_Buffer)
             datalength += 2; // Plus with Frame header
             // get vp address
             VPaddress = (uint16_t)(RX_Buffer[4] << 8 | RX_Buffer[5]);
-            // get return key value
-            lastByte = (uint16_t)(RX_Buffer[datalength-1] << 8 | RX_Buffer[datalength]);
-            // Get message ASCII
-            message_ASCII = RX_Buffer[datalength];
+            /* get return key value */
+            lowByte = RX_Buffer[datalength];  
+            highByte = RX_Buffer[datalength-1];
 
             // Call back function
             if( pDwin->p_ListenDWIN_Callback != NULL )
             {
-                pDwin->p_ListenDWIN_Callback(VPaddress,lastByte,message_ASCII);
+                pDwin->p_ListenDWIN_Callback(VPaddress,lowByte,highByte);
             }
         }
     }

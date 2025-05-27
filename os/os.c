@@ -130,7 +130,7 @@ void OS_TimeEvt_init(
     OS_task *task)
 {
     pOS_Evt->Time_event.sig = sig;
-    pOS_Evt->Time_event.data = (uint8_t)0;
+//    pOS_Evt->Time_event.data = 0;
     pOS_Evt->Time_event.len = 0;
     pOS_Evt->task_post = task;
     pOS_Evt->Time_Ctr = 0;

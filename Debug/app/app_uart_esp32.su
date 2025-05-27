@@ -1,0 +1,4 @@
+../app/app_uart_esp32.c:31:6:uart_esp32_task_init	16	static
+../app/app_uart_esp32.c:38:6:uart_esp32_ctor	16	static
+../app/app_uart_esp32.c:42:13:uart_esp32_init	16	static
+../app/app_uart_esp32.c:47:13:uart_esp32_dispatch	24	static

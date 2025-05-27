@@ -45,6 +45,40 @@ AT24Cxx_Status AT24Cxx_write_buffer(AT24Cxx_t *pDev, uint16_t mem_addr, uint8_t*
     }
 }
 
+AT24Cxx_Status AT24Cxx_write_buffer_bloking(AT24Cxx_t *pDev, uint16_t mem_addr, uint8_t* data_buf, uint16_t buf_length) {
+    uint8_t page_remaining = AT24C256_PG_SIZE - mem_addr % AT24C256_PG_SIZE; /* num bytes written in current page from address */
+    uint8_t page_write = (buf_length - page_remaining) / AT24C256_PG_SIZE;   /* num pages can write full */
+    uint8_t byte_remaining = (buf_length - page_remaining) % AT24C256_PG_SIZE; /* num bytes remain after write all full page */
+
+    /* write in current page */
+    if ((mem_addr +page_remaining) > 0x00 && (mem_addr + page_remaining) < AT24C256_MAX_ADDR) {
+        while (HAL_I2C_Mem_Write(pDev->i2c_port,pDev->dev_address,mem_addr,I2C_MEMADD_SIZE_16BIT,data_buf,page_remaining,AT24C256_I2C_TIMOUT) != HAL_OK);
+    }
+
+    /* write full page */
+    for (uint8_t cur_page = 0; cur_page < page_write; cur_page ++) {
+        if ((mem_addr + page_remaining) + (cur_page * AT24C256_PG_SIZE) > 0x00 && (mem_addr + page_remaining) + (cur_page * AT24C256_PG_SIZE) < AT24C256_MAX_ADDR) {
+            while (HAL_I2C_Mem_Write(pDev->i2c_port,pDev->dev_address,(uint16_t)(mem_addr + page_remaining + (cur_page * AT24C256_PG_SIZE)),
+                    I2C_MEMADD_SIZE_16BIT,
+                    data_buf + page_remaining + (cur_page * AT24C256_PG_SIZE),
+                    AT24C256_PG_SIZE,
+                    AT24C256_I2C_TIMOUT) != HAL_OK);
+        }
+    }
+
+    /* write bytes after write full page still remain */
+    if (byte_remaining != 0) {
+        if ((mem_addr + page_remaining) + (page_write * AT24C256_PG_SIZE) > 0x00 && (mem_addr + page_remaining) + (page_write * AT24C256_PG_SIZE) < AT24C256_MAX_ADDR) {
+            while (HAL_I2C_Mem_Write(pDev->i2c_port,pDev->dev_address,
+                    (uint16_t)(mem_addr + page_remaining + (page_write * AT24C256_PG_SIZE)),
+                    I2C_MEMADD_SIZE_16BIT,
+                    data_buf + page_remaining + (page_write * AT24C256_PG_SIZE),
+                    byte_remaining,
+                    AT24C256_I2C_TIMOUT) != HAL_OK);
+        }
+    }
+}
+
 AT24Cxx_Status AT24Cxx_read_buffer(AT24Cxx_t *pDev, uint16_t mem_addr, uint8_t *data_ret, uint16_t buf_length) {
     if (mem_addr < AT24C256_MAX_ADDR) {
         HAL_I2C_Mem_Read(pDev->i2c_port,pDev->dev_address,mem_addr,I2C_MEMADD_SIZE_16BIT,data_ret,buf_length,10);

@@ -70,7 +70,13 @@
     "stdlib.h": "c",
     "stdint.h": "c",
     "os_event.h": "c",
-    "stm32f1xx_hal_def.h": "c"
+    "stm32f1xx_hal_def.h": "c",
+    "at24cxx.h": "c",
+    "app_post_test.h": "c",
+    "app_eeprom.h": "c",
+    "stdio.h": "c",
+    "string.h": "c",
+    "stdbool.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

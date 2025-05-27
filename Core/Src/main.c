@@ -26,8 +26,9 @@
 
 #include "../../lib/AT24Cxx.h"
 #include "../../os/os.h"
+
 #include "../../app/app_main.h"
-#include "../../app/app_post_test.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,8 +47,11 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan;
+
 I2C_HandleTypeDef hi2c1;
 
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -76,6 +80,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_USART1_UART_Init(void);
+static void MX_CAN_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -116,21 +122,53 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
+  MX_CAN_Init();
   /* USER CODE BEGIN 2 */
 
-//  HAL_Delay(3000);
+
+  HAL_Delay(3000);
   HAL_UARTEx_ReceiveToIdle_IT(&huart2, dataRX, sizeof(dataRX)); // Enable interrupt UART
 
   Screen_begin(&huart2);
 
-//  uint8_t test_eeprom_buf[10] = {0};
-//  uint8_t test_write_eeprom_buf[10] = {1,2,3,4,5,6,7,8,9,10};
-//  AT24Cxx_t pEeprom;
-//  AT24Cxx_Init(&pEeprom, 0x50, &hi2c1);
-//  AT24Cxx_read_buffer(&pEeprom,0x10,test_eeprom_buf,10);
-//  AT24Cxx_write_buffer(&pEeprom,0x10,test_write_eeprom_buf,10);
-//  AT24Cxx_read_buffer(&pEeprom,0x10,test_eeprom_buf,10);
+//  HAL_I2C_IsDeviceReady(&hi2c1,0x50 << 1, 1, 100);
 
+//  uint8_t test_eeprom_buf[500] = {0};
+//  uint8_t test_write_eeprom_buf[10] = {1,2,3,4,5,6,7,8,9,10};
+  // AT24Cxx_t pEeprom;
+  // AT24Cxx_Init(&pEeprom, 0x50, &hi2c1);
+//  char text_program_1[] = "0";
+//  char *text_program_2 = "Program test2,74hc560,20";
+//  char *text_program_3 = "Program test3,74hc580,40";
+//  char *text_program_4 = "Program test4,74hc590,50";
+//  AT24Cxx_read_buffer(&pEeprom,0x10,test_eeprom_buf,10);
+//  HAL_I2C_Mem_Write_IT(&hi2c1,(0x50 << 1),0x02,I2C_MEMADD_SIZE_16BIT,text_program_1,strlen(text_program_1));
+//  char clear_buf[TOTAL_ALL_PROGRAM_TEST_LEN] = {0};
+//  memset(clear_buf,0xFF,TOTAL_ALL_PROGRAM_TEST_LEN);
+  // AT24Cxx_write_buffer_bloking(&pEeprom,START_MEM_ADDR_PROGRAM_TEST,(uint8_t *)clear_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+  // AT24Cxx_write_buffer(&pEeprom,START_ADDR_PROGRAM_TEST_X(0),test_write_eeprom_buf,10);
+  //  HAL_Delay(10);
+//  AT24Cxx_read_buffer(&pEeprom,START_ADDR_PROGRAM_TEST_X(0),test_eeprom_buf,TOTAL_ONE_PROGRAM_TEST_LEN);
+  // AT24Cxx_read_buffer(&pEeprom,START_MEM_ADDR_PROGRAM_TEST,test_eeprom_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+  // AT24Cxx_write_buffer_bloking(&pEeprom,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)text_program_1,strlen(text_program_1));
+  // HAL_Delay(10);
+  // AT24Cxx_read_buffer(&pEeprom,START_MEM_ADDR_PROGRAM_TEST,test_eeprom_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+  // AT24Cxx_write_buffer_bloking(&pEeprom,START_ADDR_PROGRAM_TEST_X(1),(uint8_t *)text_program_2,strlen(text_program_2));
+  // HAL_Delay(10);
+  // AT24Cxx_read_buffer(&pEeprom,START_MEM_ADDR_PROGRAM_TEST,test_eeprom_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+  // AT24Cxx_write_buffer_bloking(&pEeprom,START_ADDR_PROGRAM_TEST_X(2),(uint8_t *)text_program_3,strlen(text_program_3));
+  // HAL_Delay(10);
+  // AT24Cxx_read_buffer(&pEeprom,START_MEM_ADDR_PROGRAM_TEST,test_eeprom_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+  // AT24Cxx_write_buffer_bloking(&pEeprom,START_ADDR_PROGRAM_TEST_X(3),(uint8_t *)text_program_4,strlen(text_program_4));
+  // HAL_Delay(10);
+  // AT24Cxx_write_buffer(&pEeprom,0x02,(uint8_t *)text_program_1,strlen(text_program_1));
+
+//  AT24Cxx_read_buffer(&pEeprom,START_MEM_ADDR_PROGRAM_TEST,test_eeprom_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+
+
+// pEeprom.i2c_port = (I2C_HandleTypeDef*)0;
+// pEeprom.dev_address = 0;
 //  for (uint8_t i = 0; i < 5; i++) {
 //    HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
 //    HAL_Delay(200);
@@ -138,8 +176,33 @@ int main(void)
 //    HAL_Delay(200);
 //	printf("SWO Debug!!!\n");
 //  }
-  
-  BSP_init();
+
+ BSP_init();
+
+ Post_task_init();
+ static OS_event_t const *q_app_post[10];
+ OS_task_create(AO_taskPost,
+   1,
+   q_app_post,
+   ARRAY_ELEMENT(q_app_post),
+   (OS_event_t *)0 );
+
+ eeprom_task_init(&hi2c1,EEPROM_ADDRESS);
+ static OS_event_t const *q_eeprom_event[10];
+ OS_task_create( AO_task_eeprom,
+   1,
+   q_eeprom_event,
+   ARRAY_ELEMENT(q_eeprom_event),
+   (OS_event_t *)0 );
+
+  uart_esp32_task_init(&huart1);
+  static OS_event_t const *q_uart_esp32_event[10];
+  OS_task_create(AO_task_uart_esp32,
+  1,
+  q_uart_esp32_event,
+  ARRAY_ELEMENT(q_uart_esp32_event),
+  (OS_event_t *)0);
+
   BlinkyTest_app_init();
   static OS_event_t const *TestOS_blinky[10]; /* Event queue */
   OS_task_create(
@@ -150,13 +213,6 @@ int main(void)
     TestOS_Work()
   );
 
-  Post_task_init();
-  static OS_event_t const *q_app_post[10];
-  OS_task_create(AO_taskPost,
-		  1,
-		  q_app_post,
-		  ARRAY_ELEMENT(q_app_post),
-		  (OS_event_t *)0 );
 
   //    uint8_t sendBuffer_3[] = {
   //   0x5A, 0xA5, 0xFB, 0x82,  
@@ -336,6 +392,43 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief CAN Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN_Init(void)
+{
+
+  /* USER CODE BEGIN CAN_Init 0 */
+
+  /* USER CODE END CAN_Init 0 */
+
+  /* USER CODE BEGIN CAN_Init 1 */
+
+  /* USER CODE END CAN_Init 1 */
+  hcan.Instance = CAN1;
+  hcan.Init.Prescaler = 16;
+  hcan.Init.Mode = CAN_MODE_NORMAL;
+  hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan.Init.TimeTriggeredMode = DISABLE;
+  hcan.Init.AutoBusOff = DISABLE;
+  hcan.Init.AutoWakeUp = DISABLE;
+  hcan.Init.AutoRetransmission = DISABLE;
+  hcan.Init.ReceiveFifoLocked = DISABLE;
+  hcan.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN_Init 2 */
+
+  /* USER CODE END CAN_Init 2 */
+
+}
+
+/**
   * @brief I2C1 Initialization Function
   * @param None
   * @retval None
@@ -366,6 +459,39 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
 
 }
 
@@ -449,6 +575,15 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 		// Enable Interrupt UART again
 		HAL_UARTEx_ReceiveToIdle_IT(&huart2, dataRX, sizeof(dataRX)); // Enable interrupt UART
 	}
+}
+
+void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
+	if (hi2c->Instance == hi2c1.Instance) {
+
+		
+	}
+  /* Transmit complete wait eeprom write */
+  OS_task_post_event(AO_task_eeprom, WAIT_WRITE_TIMEOUT, (uint8_t *)0, 0);
 }
 
 // void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
