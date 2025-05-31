@@ -3,6 +3,12 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="CAN_remote_transmission_request"/>
+		<item value="CAN_identifier_type"/>
+		<item value="TxHeader"/>
+		<item value="TxMailbox"/>
+		<item value="hcan"/>
+		<item value="I2C_HandleTypeDef"/>
 		<item value="Screen_CheckInput_Keyboard"/>
 		<item value="Write_Input_IC_TEST"/>
 		<item value="FIFO1"/>

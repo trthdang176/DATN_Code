@@ -1,0 +1,4 @@
+../os/port/os_port.c:34:6:OS_init	3
+../os/port/os_port.c:62:6:OS_setTask_priority	3
+../os/port/os_port.c:92:6:OS_task_activate	4
+../os/port/os_port.c:120:6:OS_task_setIRQ	1

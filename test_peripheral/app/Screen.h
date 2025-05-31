@@ -8,20 +8,32 @@
 #include "../lib/Common.h"
 #include "../Core/Inc/main.h"
 
+#include "app_main.h"
+
 #define MAX_VALUE_OF_SIG 20             // Check again !!!
-#define MAX_DATA_KEYBOARD_INPUT 50 
+#define MAX_DATA_KEYBOARD_INPUT 50
 
+#define MAX_PROGRAM_NAME_SIZE   20
+#define MAX_IC_NAME_SIZE        20     
+#define MAX_IC_NUM              2   
 
+#define MAX_NAME_WIFI_SIZE      30
+#define MAX_PASSWORD_WIFI_SIZE  30
+
+#define MACHINE_PASSWORD             "1111"    /* Machine Password */
+#define INCORRECT_PASSWORD_TEXT      "Incorrect password"
 
 #define DWINPAGE_MAIN                   101
 #define DWINPAGE_MAIN_FINISH            100
 #define DWINPAGE_MAIN_DETAIL            102
+#define DWINPAGE_MAIN_PULSE             103
 #define DWINPAGE_MAIN_GRAPH             111
 #define DWINPAGE_SETTING                116
-#define DWINPAGE_SETTING_WIFI           105
 #define DWINPAGE_SETTING_PROGRAM        107   
 #define DWINPAGE_MODIFY_PROGRAM         108
 #define DWINPAGE_NUM_KEYBOARD           109
+#define DWINPAGE_PASSWORD               110
+#define DWINPAGE_SETTING_WIFI           117
 #define DWINPAGE_SETTING_TIME           118
 #define DWINPAGE_FULL_KEYBOARD          120
 
@@ -31,6 +43,7 @@
 #define VP_Num_Keyboard                 0x5300
 #define VP_Full_Keyboard                0x5380
 #define VP_Save_button                  0x5400
+#define VP_Enter_button                 0x5500
 #define VP_Keyboard                     0xFF00
     
 #define VP_Hour                         0x9000
@@ -51,13 +64,17 @@
 #define VP_Modify_Program_Name          0x9500
 #define VP_Modify_IC_Name               0x9520
 #define VP_Modify_IC_Num                0x9540
+#define VP_Password                     0x9560
+#define VP_Warning_Password             0x9580 // 20 
+#define VP_Name_Wifi                    0x95A0 // 30
+#define VP_Password_Wifi                0x95D0 // 30
     
 #define VP_ShowString_Keyboard          0xF000
 #define VP_ShowUnit_Keyboard            0xF050
 #define VP_ShowType_Keyboard            0xF080
 #define VP_ShowWarning_Keyboard         0xF100
     
-#define VP_ON_OFF_Icon_1                0x4000
+#define VP_ICON_ON_OFF                  0x4000
 #define VP_ICON_DIRECTION_PIN           0x4050 // -> 0x405F 
 #define VP_ICON_SELECT_PROGRAM          0x4100 
 #define VP_ICON_RESULT                  0x4150
@@ -70,8 +87,11 @@ enum {
     SIG_NUM_KEYBOARD            ,
     SIG_FULL_KEYBOARD           ,
     SIG_SAVE                    ,
+    SIG_ENTER                   ,
     MAX_SIG_VP          // MAX NUMBER OF SIGNALS FROM VP ADDRESS       
 };
+
+/* ================================ ACTION VALUE ================================ */
 
 /* ACTION NAVIGATION */
 enum {
@@ -97,6 +117,7 @@ enum {
     MAX_VALUE_SIG_SELECTION    
 };
 
+/* ACTION KEYBOARD */
 enum {
     VALUE_KEBOARD                  = 0,
     MAX_VALUE_KEYBOARD
@@ -111,6 +132,15 @@ enum {
     VALUE_SAVE_INFORMATION = 0,
     MAX_VALUE_SAVE_INFORMATION
 };
+
+enum {
+    ENTER_PASSWORD     = 0,
+    ENTER_NUM_KEYBOARD    ,
+    ENTER_WIFI            ,
+    ENTER_TIME            ,
+    MAX_VALUE_SIG_ENTER
+};
+
 
 enum {
     CONDITION_HOUR            = 0,
@@ -188,7 +218,7 @@ typedef struct  {
 
 typedef struct Keyboard {
     uint16_t VP_Text; // Vp text show the data input 
-    uint8_t  String[MAX_DATA_KEYBOARD_INPUT]; // the string input 
+    char String[MAX_DATA_KEYBOARD_INPUT]; // the string input 
     uint16_t Index_String;
     bool     Caplock;  // Caplock Status
 } Keyboard_t;
@@ -218,13 +248,18 @@ typedef struct {
     uint8_t curr_case;
     uint8_t curr_PageMain;          // The current main page
     uint8_t selected_Program_Index; // index selected program to show data in main page
-    bool    state;
+    bool    state;                  /* Status of device */
     
     char *NameIC_Tester;
     char *config_pin;                   // Array control icon pin 
     char **data_result;                 // Array control icon result
     uint8_t array[MAX_PROGRAM_TEST];    // Array control icon selected program
 } Device_t;
+
+typedef struct {
+    char Name_Wifi[MAX_NAME_WIFI_SIZE];
+    char Password_Wifi[MAX_PASSWORD_WIFI_SIZE];
+} Wifi_t;
 
 typedef struct  {
     Dwin_t Screen_DWIN;  // inherit from dwin object
@@ -233,11 +268,12 @@ typedef struct  {
     Screen_condition_t *Screen_condition; // The array store condition data input keyboard   
     Device_t IC_Testerx[MAX_DEVICE];
     Program_Test_t Program_Testx[MAX_PROGRAM_TEST];
+    Wifi_t Wifi_setting;
     void *p_handler_table;
     uint8_t pre_page;      // previous page 
     uint8_t curr_device;   // Device is displaying 
     uint8_t modify_program_index; // index of program is modified
-    bool Status_Dev_1,Status_Dev_2,Status_Dev_3;
+    uint8_t page_setting;  // Selected setting page 
 } Screen_t;
 
 typedef struct  {

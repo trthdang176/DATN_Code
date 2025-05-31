@@ -31,8 +31,10 @@ app/Screen.o: ../app/Screen.c ../app/Screen.h ../app/../lib/DWIN_HMI.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../app/../lib/../Core/Inc/Control_IC.h ../app/../lib/../Core/Inc/main.h \
- ../app/../lib/../Core/Inc/Testing_program.h ../app/../lib/Common.h \
+ ../app/../lib/../Core/Inc/Testing_program.h \
+ ../app/../lib/../Core/Inc/main.h ../app/../lib/../Core/Inc/../../os/os.h \
+ ../app/../lib/../Core/Inc/../../os/port/os_port.h \
+ ../app/../lib/../Core/Inc/../../os/port/os_port.h ../app/../lib/Common.h \
  ../app/../Core/Inc/main.h
 ../app/Screen.h:
 ../app/../lib/DWIN_HMI.h:
@@ -68,8 +70,10 @@ app/Screen.o: ../app/Screen.c ../app/Screen.h ../app/../lib/DWIN_HMI.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../app/../lib/../Core/Inc/Control_IC.h:
-../app/../lib/../Core/Inc/main.h:
 ../app/../lib/../Core/Inc/Testing_program.h:
+../app/../lib/../Core/Inc/main.h:
+../app/../lib/../Core/Inc/../../os/os.h:
+../app/../lib/../Core/Inc/../../os/port/os_port.h:
+../app/../lib/../Core/Inc/../../os/port/os_port.h:
 ../app/../lib/Common.h:
 ../app/../Core/Inc/main.h:

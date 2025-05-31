@@ -9,7 +9,10 @@
     "stm32f4xx_hal_conf.h": "c",
     "stdlib.h": "c",
     "cstdlib": "c",
-    "type_traits": "c"
+    "type_traits": "c",
+    "stm32f1xx_hal.h": "c",
+    "stdint.h": "c",
+    "ads1115.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

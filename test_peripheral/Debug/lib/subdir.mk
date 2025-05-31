@@ -5,14 +5,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../lib/AT24Cxx.c \
 ../lib/Common.c \
 ../lib/DWIN_HMI.c 
 
 OBJS += \
+./lib/AT24Cxx.o \
 ./lib/Common.o \
 ./lib/DWIN_HMI.o 
 
 C_DEPS += \
+./lib/AT24Cxx.d \
 ./lib/Common.d \
 ./lib/DWIN_HMI.d 
 
@@ -24,7 +27,7 @@ lib/%.o lib/%.su lib/%.cyclo: ../lib/%.c lib/subdir.mk
 clean: clean-lib
 
 clean-lib:
-	-$(RM) ./lib/Common.cyclo ./lib/Common.d ./lib/Common.o ./lib/Common.su ./lib/DWIN_HMI.cyclo ./lib/DWIN_HMI.d ./lib/DWIN_HMI.o ./lib/DWIN_HMI.su
+	-$(RM) ./lib/AT24Cxx.cyclo ./lib/AT24Cxx.d ./lib/AT24Cxx.o ./lib/AT24Cxx.su ./lib/Common.cyclo ./lib/Common.d ./lib/Common.o ./lib/Common.su ./lib/DWIN_HMI.cyclo ./lib/DWIN_HMI.d ./lib/DWIN_HMI.o ./lib/DWIN_HMI.su
 
 .PHONY: clean-lib
 

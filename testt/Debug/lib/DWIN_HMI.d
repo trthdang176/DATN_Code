@@ -31,8 +31,10 @@ lib/DWIN_HMI.o: ../lib/DWIN_HMI.c ../lib/DWIN_HMI.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../lib/../Core/Inc/Control_IC.h ../lib/../Core/Inc/main.h \
- ../lib/../Core/Inc/Testing_program.h
+ ../lib/../Core/Inc/Testing_program.h ../lib/../Core/Inc/main.h \
+ ../lib/../Core/Inc/../../os/os.h \
+ ../lib/../Core/Inc/../../os/port/os_port.h \
+ ../lib/../Core/Inc/../../os/port/os_port.h
 ../lib/DWIN_HMI.h:
 ../lib/../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -66,6 +68,8 @@ lib/DWIN_HMI.o: ../lib/DWIN_HMI.c ../lib/DWIN_HMI.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../lib/../Core/Inc/Control_IC.h:
-../lib/../Core/Inc/main.h:
 ../lib/../Core/Inc/Testing_program.h:
+../lib/../Core/Inc/main.h:
+../lib/../Core/Inc/../../os/os.h:
+../lib/../Core/Inc/../../os/port/os_port.h:
+../lib/../Core/Inc/../../os/port/os_port.h:

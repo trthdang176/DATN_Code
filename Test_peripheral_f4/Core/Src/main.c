@@ -136,19 +136,19 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  if (RxCAn == 1) {
+	  // if (RxCAn == 1) {
 //		  TxData[0] = RxData[0] + 200;
 //		  TxData[1] = RxData[1] + 5;
-		  for(uint8_t i = 0; i < RxData[1]; i++) {
-			  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_2);
-			  HAL_Delay(RxData[0]);
-		  }
+		  // for(uint8_t i = 0; i < RxData[1]; i++) {
+			//   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_2);
+			//   HAL_Delay(RxData[0]);
+		  // }
 
-		  TxData[0] = RxData[0];
-		  TxData[1] = RxData[1];
-		  HAL_Delay(1000);
-		  HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
-	  }
+		  // TxData[0] = RxData[0];
+		  // TxData[1] = RxData[1];
+		  // HAL_Delay(1000);
+		  // HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+	  // }
 
   }
   /* USER CODE END 3 */
@@ -331,10 +331,18 @@ void shift_out(uint8_t data)
 	  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_2,GPIO_PIN_RESET);   // Clock LOW
     HAL_Delay(1);
 	  // Data
-	      HAL_GPIO_WritePin(GPIOD,GPIO_PIN_0,(data >> i) & 0x01);
+    HAL_GPIO_WritePin(GPIOD,GPIO_PIN_0,(data >> i) & 0x01);
     HAL_GPIO_WritePin(GPIOD,GPIO_PIN_2,GPIO_PIN_SET);   // Clock HIGH
     HAL_Delay(1);
   }
+}
+
+void Write_data(uint8_t data) {
+  // Enable Latch
+  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_1,GPIO_PIN_RESET);
+  HAL_Delay(1);
+  shift_out(data);
+	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_1,GPIO_PIN_SET);
 }
 
 void Write_Input_IC_TEST(uint8_t data1, uint8_t data2, uint8_t data3) {

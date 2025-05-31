@@ -1,101 +1,17 @@
-21:24:33 **** Incremental Build of configuration Debug for project test_peripheral ****
+16:28:23 **** Incremental Build of configuration Debug for project test_peripheral ****
 make -j12 all 
-arm-none-eabi-gcc "../app/Screen.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"app/Screen.d" -MT"app/Screen.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "app/Screen.o"
-../app/Screen.c: In function 'Screen_begin':
-../app/Screen.c:94:24: warning: passing argument 1 of 'DWIN_SetArray_Icon' from incompatible pointer type [-Wincompatible-pointer-types]
-   94 |     DWIN_SetArray_Icon(&_Screen,VP_ICON_DIRECTION_PIN,_Screen.IC_Testerx[PROGRAM_TEST1].config_pin,16);
-      |                        ^~~~~~~~
-      |                        |
-      |                        Screen_t *
-In file included from ../app/Screen.h:7,
-                 from ../app/Screen.c:1:
-../app/../lib/DWIN_HMI.h:31:33: note: expected 'Dwin_t *' but argument is of type 'Screen_t *'
-   31 | void DWIN_SetArray_Icon(Dwin_t *pDwin, uint16_t VP_address_begin, uint8_t *data_array, uint8_t data_length );
-      |                         ~~~~~~~~^~~~~
-../app/Screen.c:94:88: warning: pointer targets in passing argument 3 of 'DWIN_SetArray_Icon' differ in signedness [-Wpointer-sign]
-   94 |     DWIN_SetArray_Icon(&_Screen,VP_ICON_DIRECTION_PIN,_Screen.IC_Testerx[PROGRAM_TEST1].config_pin,16);
-      |                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
-      |                                                                                        |
-      |                                                                                        char *
-../app/../lib/DWIN_HMI.h:31:76: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
-   31 | void DWIN_SetArray_Icon(Dwin_t *pDwin, uint16_t VP_address_begin, uint8_t *data_array, uint8_t data_length );
-      |                                                                   ~~~~~~~~~^~~~~~~~~~
-../app/Screen.c:96:24: warning: passing argument 1 of 'DWIN_SetArray_Icon' from incompatible pointer type [-Wincompatible-pointer-types]
-   96 |     DWIN_SetArray_Icon(&_Screen,VP_ICON_RESULT,_Screen.IC_Testerx[PROGRAM_TEST1].data_result[0],16);
-      |                        ^~~~~~~~
-      |                        |
-      |                        Screen_t *
-../app/../lib/DWIN_HMI.h:31:33: note: expected 'Dwin_t *' but argument is of type 'Screen_t *'
-   31 | void DWIN_SetArray_Icon(Dwin_t *pDwin, uint16_t VP_address_begin, uint8_t *data_array, uint8_t data_length );
-      |                         ~~~~~~~~^~~~~
-../app/Screen.c:96:93: warning: pointer targets in passing argument 3 of 'DWIN_SetArray_Icon' differ in signedness [-Wpointer-sign]
-   96 |     DWIN_SetArray_Icon(&_Screen,VP_ICON_RESULT,_Screen.IC_Testerx[PROGRAM_TEST1].data_result[0],16);
-      |                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-      |                                                                                             |
-      |                                                                                             char *
-../app/../lib/DWIN_HMI.h:31:76: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
-   31 | void DWIN_SetArray_Icon(Dwin_t *pDwin, uint16_t VP_address_begin, uint8_t *data_array, uint8_t data_length );
-      |                                                                   ~~~~~~~~~^~~~~~~~~~
-../app/Screen.c:110:13: warning: unused variable 'data' [-Wunused-variable]
-  110 |     uint8_t data[15] = {1,1,0,0,1,0,0,1,1,0,0,0,1,1,0};
-      |             ^~~~
-../app/Screen.c: In function 'Screen_RX_Callback':
-../app/Screen.c:155:57: warning: suggest parentheses around arithmetic in operand of '|' [-Wparentheses]
-  155 |         screen_event.keyvalue = (uint16_t)((highByte<<8)&0xFF | lowByte&0xFF);
-      |                                            ~~~~~~~~~~~~~^~~~~
-../app/Screen.c: In function 'Navigation_Change_MainPage':
-../app/Screen.c:214:109: warning: pointer targets in passing argument 3 of 'DWIN_SetText' differ in signedness [-Wpointer-sign]
-  214 |             DWIN_SetText((Dwin_t *)screen_obj,VP_Name_Tester,screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester,strlen(screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester));
-      |                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-      |                                                                                                             |
-      |                                                                                                             char *
-../app/../lib/DWIN_HMI.h:28:64: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
-   28 | void DWIN_SetText(Dwin_t *pDwin, uint16_t VP_address, uint8_t *textData, uint16_t datalen);
-      |                                                       ~~~~~~~~~^~~~~~~~
-../app/Screen.c: In function 'Navigation_Change_CaseTest':
-../app/Screen.c:247:59: warning: pointer targets in passing argument 3 of 'DWIN_SetText' differ in signedness [-Wpointer-sign]
-  247 |     DWIN_SetText((Dwin_t *)screen_obj,VP_Show_CurrentCase,ShowCase_String,strlen(ShowCase_String));
-      |                                                           ^~~~~~~~~~~~~~~
-      |                                                           |
-      |                                                           char *
-../app/../lib/DWIN_HMI.h:28:64: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
-   28 | void DWIN_SetText(Dwin_t *pDwin, uint16_t VP_address, uint8_t *textData, uint16_t datalen);
-      |                                                       ~~~~~~~~~^~~~~~~~
-../app/Screen.c:248:107: warning: pointer targets in passing argument 3 of 'DWIN_SetArray_Icon' differ in signedness [-Wpointer-sign]
-  248 |     DWIN_SetArray_Icon((Dwin_t *)screen_obj,VP_ICON_RESULT,_Screen.IC_Testerx[selectedProgram].data_result[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case],num_pin);
-      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                                                                                                           |
-      |                                                                                                           char *
-../app/../lib/DWIN_HMI.h:31:76: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
-   31 | void DWIN_SetArray_Icon(Dwin_t *pDwin, uint16_t VP_address_begin, uint8_t *data_array, uint8_t data_length );
-      |                                                                   ~~~~~~~~~^~~~~~~~~~
-../app/Screen.c: In function 'Navigation_num_keyboard':
-../app/Screen.c:274:10: warning: unused variable 'UnitData_String' [-Wunused-variable]
-  274 |     char UnitData_String[20] = {0};
-      |          ^~~~~~~~~~~~~~~
-../app/Screen.c:273:10: warning: unused variable 'TypeData_String' [-Wunused-variable]
-  273 |     char TypeData_String[20] = {0};
-      |          ^~~~~~~~~~~~~~~
-../app/Screen.c: In function 'Screen_SetInfo_Pin':
-../app/Screen.c:601:103: warning: pointer targets in passing argument 3 of 'DWIN_SetText' differ in signedness [-Wpointer-sign]
-  601 |         DWIN_SetText((Dwin_t *)screen_obj,Address_VP,screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x],strlen(screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x]));
-      |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      |                                                                                                       |
-      |                                                                                                       char *
-../app/../lib/DWIN_HMI.h:28:64: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char *'
-   28 | void DWIN_SetText(Dwin_t *pDwin, uint16_t VP_address, uint8_t *textData, uint16_t datalen);
-      |                                                       ~~~~~~~~~^~~~~~~~
+arm-none-eabi-gcc "../os/os_event.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"os/os_event.d" -MT"os/os_event.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "os/os_event.o"
 arm-none-eabi-gcc -o "test_peripheral.elf" @"objects.list"   -mcpu=cortex-m3 -T"F:\UTE\DATN\Code\test_peripheral\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test_peripheral.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: test_peripheral.elf
  
 arm-none-eabi-size  test_peripheral.elf 
 arm-none-eabi-objdump -h -S test_peripheral.elf  > "test_peripheral.list"
    text	   data	    bss	    dec	    hex	filename
-  37356	    516	   2404	  40276	   9d54	test_peripheral.elf
+  56096	    568	   4920	  61584	   f090	test_peripheral.elf
 Finished building: default.size.stdout
  
 Finished building: test_peripheral.list
  
 
-21:24:34 Build Finished. 0 errors, 12 warnings. (took 1s.99ms)
+16:28:24 Build Finished. 0 errors, 0 warnings. (took 1s.200ms)
 

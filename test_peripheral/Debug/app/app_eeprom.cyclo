@@ -1,0 +1,5 @@
+../app/app_eeprom.c:40:6:eeprom_task_init	2
+../app/app_eeprom.c:68:6:eeprom_ctor	1
+../app/app_eeprom.c:77:13:eeprom_init	1
+../app/app_eeprom.c:99:6:eeprom_dispatch	14
+../app/app_eeprom.c:179:13:write_buffer_with_task	2

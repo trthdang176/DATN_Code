@@ -27,4 +27,6 @@ Core/Startup \
 Drivers/STM32F1xx_HAL_Driver/Src \
 app \
 lib \
+os \
+os/port \
 

@@ -31,7 +31,8 @@ Core/Src/Testing_program.o: ../Core/Src/Testing_program.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/Control_IC.h ../Core/Inc/Testing_program.h
+ ../Core/Inc/Testing_program.h ../Core/Inc/../../os/os.h \
+ ../Core/Inc/../../os/port/os_port.h ../Core/Inc/../../os/port/os_port.h
 ../Core/Inc/Testing_program.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -65,5 +66,7 @@ Core/Src/Testing_program.o: ../Core/Src/Testing_program.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/Control_IC.h:
 ../Core/Inc/Testing_program.h:
+../Core/Inc/../../os/os.h:
+../Core/Inc/../../os/port/os_port.h:
+../Core/Inc/../../os/port/os_port.h:

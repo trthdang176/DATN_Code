@@ -48,6 +48,78 @@ Pin_IC_Test_Mapping PIN_IC_Test_Output[] = {
     {GPIOD,GPIO_PIN_0}
 };
 
+Pin_IC_Test_Mapping PIN_SCKx[] = {
+    {GPIOB,GPIO_PIN_0},
+    {GPIOC,GPIO_PIN_4},
+    {GPIOA,GPIO_PIN_6},
+    {GPIOC,GPIO_PIN_9},
+    {GPIOC,GPIO_PIN_7},
+    {GPIOB,GPIO_PIN_4}, //
+    {GPIOB,GPIO_PIN_4}, //
+    {GPIOD,GPIO_PIN_7},
+    {GPIOD,GPIO_PIN_5},
+    {GPIOD,GPIO_PIN_1},
+    {GPIOC,GPIO_PIN_12},
+    {GPIOC,GPIO_PIN_10}
+
+};  
+
+Pin_IC_Test_Mapping PIN_RCKx[] = {
+    {GPIOC,GPIO_PIN_5}, // 1
+    {GPIOA,GPIO_PIN_7}, //2
+    {GPIOA,GPIO_PIN_5}, //3
+    {GPIOC,GPIO_PIN_8}, //4
+    {GPIOC,GPIO_PIN_6}, //5
+    {GPIOB,GPIO_PIN_3}, // 7
+    {GPIOB,GPIO_PIN_3}, // 7
+    {GPIOD,GPIO_PIN_6}, 
+    {GPIOD,GPIO_PIN_4},
+    {GPIOD,GPIO_PIN_0},
+    {GPIOC,GPIO_PIN_11},
+    {GPIOA,GPIO_PIN_15}
+};
+
+Pin_IC_Test_Mapping PIN_SIx[] = {
+    {GPIOB,GPIO_PIN_1},
+    {GPIOA,GPIO_PIN_8},
+    {GPIOB,GPIO_PIN_5},
+    {GPIOD,GPIO_PIN_2}
+};
+
+Pin_IC_Test_Mapping PIN_TXS_OEx[] = {
+    {GPIOB,GPIO_PIN_11},
+    {GPIOB,GPIO_PIN_12},
+    {GPIOB,GPIO_PIN_13}
+};
+
+Pin_IC_Test_Mapping PIN_SIGx[] = {
+    {GPIOD,GPIO_PIN_13},
+    {GPIOD,GPIO_PIN_12},
+    {GPIOD,GPIO_PIN_11},
+    {GPIOD,GPIO_PIN_10},
+    {GPIOD,GPIO_PIN_9},
+    {GPIOD,GPIO_PIN_8},
+    {GPIOB,GPIO_PIN_15},
+    {GPIOB,GPIO_PIN_14}
+};
+
+Pin_IC_Test_Mapping PIN_ADC_Sx[] = {
+    {GPIOE,GPIO_PIN_14},
+    {GPIOE,GPIO_PIN_13},
+    {GPIOE,GPIO_PIN_12},
+
+};
+
+Pin_IC_Test_Mapping PIN_ADC_ENx[] = {
+    {GPIOE,GPIO_PIN_11},
+    {GPIOE,GPIO_PIN_10},
+    {GPIOE,GPIO_PIN_9}
+};
+
+Pin_IC_Test_Mapping PIN_PULLx[] = {
+    {GPIOE,GPIO_PIN_8},
+    {GPIOE,GPIO_PIN_7}
+};
 
 uint8_t SHIFT_ICx[Shift_IC_MAX] = {Shift_IC1,Shift_IC2,Shift_IC3};
 GPIO_TypeDef* GPIO_PORT_IC[] = {GPIOE,GPIOE,GPIOB};
@@ -57,27 +129,37 @@ void Control_IC_begin(void)
     // Enable Shift Register IC
     // HAL_GPIO_WritePin(GPIO_PORT_IC[0],MRx[0],GPIO_PIN_SET);
     // HAL_GPIO_WritePin(GPIO_PORT_IC[1],MRx[1],GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIO_PORT_IC[2],MRx[2],GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(GPIO_PORT_IC[2],MRx[2],GPIO_PIN_SET);
 
     // Enable Shift Level IC 
-    HAL_GPIO_WritePin(TXS_OE1_GPIO_Port,TXS_OE1_Pin,GPIO_PIN_SET);
-    HAL_GPIO_WritePin(TXS_OE2_GPIO_Port,TXS_OE2_Pin,GPIO_PIN_SET);
-    HAL_GPIO_WritePin(TXS_OE3_GPIO_Port,TXS_OE3_Pin,GPIO_PIN_SET);
-    HAL_GPIO_WritePin(TXS_OE4_GPIO_Port,TXS_OE4_Pin,GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(TXS_OE1_GPIO_Port,TXS_OE1_Pin,GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(TXS_OE2_GPIO_Port,TXS_OE2_Pin,GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(TXS_OE3_GPIO_Port,TXS_OE3_Pin,GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(TXS_OE4_GPIO_Port,TXS_OE4_Pin,GPIO_PIN_SET);
 }
 
-void shift_out(uint8_t num, uint8_t data)
+void shift_out(uint8_t num, uint8_t *data)
 {
     for(uint8_t i =0; i < 8; i++ )
     {
-        HAL_GPIO_WritePin(GPIO_PORT_IC[num],CPx[num],GPIO_PIN_RESET);   // Clock LOW
+        HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_RESET);   // Clock LOW
         delay_us(1);
         // Data
-        HAL_GPIO_WritePin(GPIO_PORT_IC[num],DSAx[num], (data >> i) & 0x01 );
-        HAL_GPIO_WritePin(GPIO_PORT_IC[num],DSBx[num], (data >> i) & 0x01 );
+        HAL_GPIO_WritePin(PIN_SIx[num/3].Port_x,PIN_SIx[num/3].PIN_x, (data[i]));
+        HAL_GPIO_WritePin(PIN_SIx[num/3].Port_x,PIN_SIx[num/3].PIN_x, (data[i]));
         delay_us(1);
-        HAL_GPIO_WritePin(GPIO_PORT_IC[num],CPx[num],GPIO_PIN_SET);   // Clock HIGH
+        HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_SET);   // Clock HIGH
     }
+}
+
+void Write_data(uint8_t num, uint8_t *data) {
+    // Enable Latch
+    uint8_t data_array[8];
+    memcpy(data_array,data,sizeof(data_array));
+    HAL_GPIO_WritePin(PIN_RCKx[num].Port_x,PIN_RCKx[num].PIN_x,GPIO_PIN_RESET);
+    HAL_Delay(1);
+    shift_out(num,data_array);
+    HAL_GPIO_WritePin(PIN_RCKx[num].Port_x,PIN_RCKx[num].PIN_x,GPIO_PIN_SET);
 }
 
 /**
@@ -87,30 +169,172 @@ void shift_out(uint8_t num, uint8_t data)
 void Latch_IC_begin(void)
 {
     // Disable all Latch pin
-	for (uint8_t i = 0; i< 6; i++) {
-		HAL_GPIO_WritePin(PIN_LEx[i].Port_x,PIN_LEx[i].PIN_x,GPIO_PIN_RESET);
-	}
+	// for (uint8_t i = 0; i< 6; i++) {
+	// 	HAL_GPIO_WritePin(PIN_LEx[i].Port_x,PIN_LEx[i].PIN_x,GPIO_PIN_RESET);
+	// }
 
 	// Disable Latch IC Output IC test
-	for(uint8_t i = 0; i < 3; i++) {
-		HAL_GPIO_WritePin(PIN_OEx[i].Port_x,PIN_OEx[i].PIN_x,GPIO_PIN_SET);
-	}
+	// for(uint8_t i = 0; i < 3; i++) {
+	// 	HAL_GPIO_WritePin(PIN_OEx[i].Port_x,PIN_OEx[i].PIN_x,GPIO_PIN_SET);
+	// }
+    // HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);   // Clock LOW
+
+    HAL_GPIO_WritePin(PIN_TXS_OEx[0].Port_x,PIN_TXS_OEx[0].PIN_x,GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PIN_TXS_OEx[1].Port_x,PIN_TXS_OEx[1].PIN_x,GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PIN_TXS_OEx[2].Port_x,PIN_TXS_OEx[2].PIN_x,GPIO_PIN_RESET);
+
 }
 
 void Control_Vcc_pin(uint8_t data)
 {
-    shift_out(Shift_IC3,data);
+    //shift_out(Shift_IC3,data);
+}
+
+#define numPin 8
+#define numIC 5
+uint8_t output_latch[numIC][numPin];
+uint8_t reversed_latch[numIC][numPin];
+
+#define NUM_PIN_LATCH_IC_CONTROL  4 /* each latch IC control 4 pin of IC test */
+#define NUM_PIN_IC_TEST           20
+
+/* each Latch IC control 4 pins IC test */
+void compute_outputLatchIC(uint8_t *dataIC_test, uint8_t (*data_out_latchIC)[numPin]) {
+    uint8_t p_high; /* position HIGH */
+    uint8_t p_low;  /* position LOW */
+    uint8_t p_pin;  /* position IC test correspond to Latch IC */
+    uint8_t Latch_x;
+    /* clear all data latch ic */
+    for (uint8_t latchIC = 0; latchIC < 5; latchIC++) {
+        memset(data_out_latchIC[latchIC],0,numPin);
+    }
+
+    for (uint8_t latchIC_x = 0; latchIC_x < NUM_PIN_IC_TEST; latchIC_x++) {
+        Latch_x = latchIC_x / NUM_PIN_LATCH_IC_CONTROL;
+        p_pin = latchIC_x % NUM_PIN_LATCH_IC_CONTROL;
+        p_high = p_pin * 2;
+        p_low = p_high + 1;
+        switch (dataIC_test[latchIC_x]) {
+            case 1 : {
+                // ENA_HIGH = 0
+                // ENA_LOW = 0
+            } break;
+            case 0 : {
+                // ENA_HIGH = 1
+                // ENA_LOW = 1
+                data_out_latchIC[Latch_x][p_high] |= 1u;
+                data_out_latchIC[Latch_x][p_low] |= 1u;
+            } break;
+            case 2 : {
+                data_out_latchIC[Latch_x][p_high] |= 1u;
+            } break;
+
+            default : break;
+        }
+
+    }
+    
 }
 
 
 // Control the pin IO TEST
-void WritePin_ICTest(uint16_t pin) {
-    // HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET); // D0 
-    // HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET); // D1 
+void WritePin_ICTest(uint8_t *dataPin) {
+    compute_outputLatchIC(dataPin,output_latch);
+    /* reverse data */
+    for (int ic = 0; ic < numIC; ++ic) {
+        for (int p = 0; p < numPin; ++p) {
+            reversed_latch[ic][p] = output_latch[ic][numPin - 1 - p];
+        }
+    }
+    for (uint8_t latch_x = 0; latch_x < 5; latch_x++) {
+        Write_data(latch_x,reversed_latch[latch_x]);
+        HAL_Delay(1);
+    }
 
 }
 
+void WritePin_float_ICTest(void) {
+    uint8_t data_float[20];
+    memset(data_float,2,sizeof(data_float));
+    WritePin_ICTest(data_float);
+}
 
+
+
+void WritePin_Ron(uint8_t *dataPin) {
+    // for (uint8_t latch_x = 6; latch_x < 9; latch_x++) {
+    //     Write_data(latch_x,output_latch[latch_x]);
+    // }
+    Write_data(6,dataPin);
+    Write_data(7,dataPin);
+    Write_data(8,dataPin);
+}
+
+void WritePin_CurrentLeakage(uint8_t *dataPin) {
+    Write_data(9,dataPin);
+    Write_data(10,dataPin);
+    Write_data(11,dataPin);
+}
+
+void ReadPin_IC_test(uint8_t *dataPin) {
+    for (uint8_t Pinx = 0; Pinx < NUM_PIN_IC_TEST; Pinx++) {
+        switch (Pinx/8) {
+            case 0 : {
+                HAL_GPIO_WritePin(PIN_TXS_OEx[0].Port_x,PIN_TXS_OEx[0].PIN_x,GPIO_PIN_SET);
+                HAL_GPIO_WritePin(PIN_TXS_OEx[1].Port_x,PIN_TXS_OEx[1].PIN_x,GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(PIN_TXS_OEx[2].Port_x,PIN_TXS_OEx[2].PIN_x,GPIO_PIN_RESET);
+            } break;
+            case 1: {
+                HAL_GPIO_WritePin(PIN_TXS_OEx[0].Port_x,PIN_TXS_OEx[0].PIN_x,GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(PIN_TXS_OEx[1].Port_x,PIN_TXS_OEx[1].PIN_x,GPIO_PIN_SET);
+                HAL_GPIO_WritePin(PIN_TXS_OEx[2].Port_x,PIN_TXS_OEx[2].PIN_x,GPIO_PIN_RESET);
+            } break;
+            case 2: {
+                HAL_GPIO_WritePin(PIN_TXS_OEx[0].Port_x,PIN_TXS_OEx[0].PIN_x,GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(PIN_TXS_OEx[1].Port_x,PIN_TXS_OEx[1].PIN_x,GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(PIN_TXS_OEx[2].Port_x,PIN_TXS_OEx[2].PIN_x,GPIO_PIN_SET);
+            } break;
+            default : break;
+        }
+        dataPin[Pinx] = HAL_GPIO_ReadPin(PIN_SIGx[Pinx%8].Port_x,PIN_SIGx[Pinx%8].PIN_x);
+    }
+}
+
+void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf) {
+    /* disable all */
+    uint8_t channel_adc;
+    uint8_t index_pin;
+    for (uint8_t i = 0; i < 3; i++) {
+        HAL_GPIO_WritePin(PIN_ADC_ENx[i].Port_x,PIN_ADC_ENx[i].PIN_x,GPIO_PIN_SET);
+    }
+    HAL_GPIO_WritePin(PIN_ADC_ENx[pin/8].Port_x,PIN_ADC_ENx[pin/8].PIN_x,GPIO_PIN_RESET);
+
+    /* Control Select pin */
+    HAL_GPIO_WritePin(PIN_ADC_Sx[0].Port_x,PIN_ADC_Sx[0].PIN_x,(GPIO_PinState)(pin & 0x01));        /* bit 1*/
+    HAL_GPIO_WritePin(PIN_ADC_Sx[1].Port_x,PIN_ADC_Sx[1].PIN_x,(GPIO_PinState)((pin >> 1) & 0x01)); /* bit 2*/
+    HAL_GPIO_WritePin(PIN_ADC_Sx[2].Port_x,PIN_ADC_Sx[2].PIN_x,(GPIO_PinState)((pin >> 2) & 0x01));
+
+    index_pin = pin/8;
+    switch (index_pin) {
+        case 0 : {
+            channel_adc = CHANNEL_AIN0_GND;
+        } break;
+        case 1 : {
+            channel_adc = CHANNEL_AIN1_GND;
+        } break;
+        case 2 : {
+            channel_adc = CHANNEL_AIN2_GND;
+        } break;
+        default : break;
+    }
+    /* read value */
+    data_buf[pin] = ADS1115_single_getdata(pADS1115,channel_adc);
+}
+
+void Control_ADC_pin(uint8_t pin) {
+
+}
 
 void Control_Input_IC_Test(uint8_t num, uint16_t data) {
     /* Control the Latch IC with num */
@@ -129,7 +353,7 @@ void Control_Input_IC_Test(uint8_t num, uint16_t data) {
 void Control_Output_IC_Test(uint8_t num, uint8_t *array_data) {
     /* Control the Latch IC with num */
     HAL_GPIO_WritePin(PIN_LEx[num].Port_x,PIN_LEx[num].PIN_x,GPIO_PIN_SET);
-    HAL_GPIO_WritePin(PIN_OEx[num-3].Port_x,PIN_OEx[num-3].PIN_x,GPIO_PIN_RESET);
+    // HAL_GPIO_WritePin(PIN_OEx[num-3].Port_x,PIN_OEx[num-3].PIN_x,GPIO_PIN_RESET);
 
 
     /* Get the output data */
@@ -149,34 +373,34 @@ void Control_Output_IC_Test(uint8_t num, uint8_t *array_data) {
     
     /* Lock Latch IC */
     HAL_GPIO_WritePin(PIN_LEx[num].Port_x,PIN_LEx[num].PIN_x,GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(PIN_OEx[num-3].Port_x,PIN_OEx[num-3].PIN_x,GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(PIN_OEx[num-3].Port_x,PIN_OEx[num-3].PIN_x,GPIO_PIN_SET);
 
 }
 
-void Control_Program_IC_Test(char *data, uint8_t numPin) {
-    /* Get the data INPUT IC */
-    uint16_t data_input = 0;
-    for (uint8_t i = 0; i < numPin; i++) {
-        switch (data[i]) {
-            /* INPUT HIGH */
-            case 'V' :
-            case '1' : {
-                data_input |= (1u << i);
-            } break;
-            /* INPUT LOW */
-            case 'L' :
-            case 'H' :
-            case 'G' :
-            case '0' : {
-                data_input = data_input & ~(1u << i) ;
-            } break;
-            default :
-                break;
-             
-        }
-    }
+//void Control_Program_IC_Test(char *data, uint8_t numPin) {
+//    /* Get the data INPUT IC */
+//    uint16_t data_input = 0;
+//    for (uint8_t i = 0; i < numPin; i++) {
+//        switch (data[i]) {
+//            /* INPUT HIGH */
+//            case 'V' :
+//            case '1' : {
+//                data_input |= (1u << i);
+//            } break;
+//            /* INPUT LOW */
+//            case 'L' :
+//            case 'H' :
+//            case 'G' :
+//            case '0' : {
+//                data_input = data_input & ~(1u << i) ;
+//            } break;
+//            default :
+//                break;
+//
+//        }
+//    }
 
     /* Control input IC Test */
-    Control_Input_IC_Test(Latch_IC1,(uint8_t)(data_input&0xFF));
-    Control_Input_IC_Test(Latch_IC1,(uint8_t)(data_input>>8));
-}
+//    Control_Input_IC_Test(Latch_IC1,(uint8_t)(data_input&0xFF));
+//    Control_Input_IC_Test(Latch_IC1,(uint8_t)(data_input>>8));
+//}

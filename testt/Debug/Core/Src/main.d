@@ -30,12 +30,16 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/Control_IC.h ../Core/Inc/main.h \
- ../Core/Inc/Testing_program.h ../Core/Src/../../app/Screen.h \
+ ../Core/Inc/Testing_program.h ../Core/Inc/main.h \
+ ../Core/Inc/../../os/os.h ../Core/Inc/../../os/port/os_port.h \
+ ../Core/Inc/../../os/port/os_port.h ../Core/Src/../../app/Screen.h \
  ../Core/Src/../../app/../lib/DWIN_HMI.h \
  ../Core/Src/../../app/../lib/../Core/Inc/main.h \
  ../Core/Src/../../app/../lib/Common.h \
- ../Core/Src/../../app/../Core/Inc/main.h
+ ../Core/Src/../../app/../Core/Inc/main.h ../Core/Src/../../lib/AT24Cxx.h \
+ ../Core/Src/../../lib/../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+ ../Core/Src/../../lib/ADS1115.h ../Core/Src/../../lib/../Core/Inc/main.h \
+ ../Core/Inc/Control_IC.h ../Core/Inc/../../lib/ADS1115.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -68,11 +72,19 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/Control_IC.h:
-../Core/Inc/main.h:
 ../Core/Inc/Testing_program.h:
+../Core/Inc/main.h:
+../Core/Inc/../../os/os.h:
+../Core/Inc/../../os/port/os_port.h:
+../Core/Inc/../../os/port/os_port.h:
 ../Core/Src/../../app/Screen.h:
 ../Core/Src/../../app/../lib/DWIN_HMI.h:
 ../Core/Src/../../app/../lib/../Core/Inc/main.h:
 ../Core/Src/../../app/../lib/Common.h:
 ../Core/Src/../../app/../Core/Inc/main.h:
+../Core/Src/../../lib/AT24Cxx.h:
+../Core/Src/../../lib/../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
+../Core/Src/../../lib/ADS1115.h:
+../Core/Src/../../lib/../Core/Inc/main.h:
+../Core/Inc/Control_IC.h:
+../Core/Inc/../../lib/ADS1115.h:

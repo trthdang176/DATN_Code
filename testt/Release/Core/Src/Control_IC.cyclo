@@ -1,0 +1,8 @@
+../Core/Src/Control_IC.c:55:6:Control_IC_begin	1
+../Core/Src/Control_IC.c:69:6:shift_out	2
+../Core/Src/Control_IC.c:87:6:Latch_IC_begin	3
+../Core/Src/Control_IC.c:100:6:Control_Vcc_pin	1
+../Core/Src/Control_IC.c:107:6:WritePin_ICTest	1
+../Core/Src/Control_IC.c:115:6:Control_Input_IC_Test	2
+../Core/Src/Control_IC.c:129:6:Control_Output_IC_Test	7
+../Core/Src/Control_IC.c:156:6:Control_Program_IC_Test	8

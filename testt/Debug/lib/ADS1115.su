@@ -1,0 +1,7 @@
+../lib/ADS1115.c:8:15:ADS1115_Init	24	static
+../lib/ADS1115.c:22:7:ADS1115_single_getdata	40	static
+../lib/ADS1115.c:51:7:getValue	40	static
+../lib/ADS1115.c:68:6:ADS1115_updateConfig	32	static
+../lib/ADS1115.c:75:6:ADS1115_makeConfig_frame	16	static
+../lib/ADS1115.c:81:6:compute_VoltageConv	16	static
+../lib/ADS1115.c:106:6:ADS1115_setThresholds	32	static
