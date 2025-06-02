@@ -61,19 +61,19 @@ uint8_t test_Vcc_pin;
 
 uint8_t dataRX[100];
 uint8_t data_output[20] ={0};
-char *data_test[] = {
-  "$4053"                // NAME
-  "Description"          // Description
-  "16"                   // Num pin
-  "16"                   // Num case
-  "11L1100G0001011V",
-  "11L1100G0011101V",
-  "11L1100G0101110V",
-  "11L1100G0110111V",
-  "01L1100G1001111V",
-  "11L1000G1011111V",
-  "10L1100G1101111V",
-  "11L0100G1111111V"
+  // "$4053"                // NAME
+  // "Description"          // Description
+  // "16"                   // Num pin
+  // "8"                    // Num case
+char *data_test= {
+  "11L1100G0001011V\n"
+  "11L1100G0011101V\n"
+  "11L1100G0101110V\n"
+  "11L1100G0110111V\n"
+  "01L1100G1001111V\n"
+  "11L1000G1011111V\n"
+  "10L1100G1101111V\n"
+  "11L0100G1111111V\n"
 };
 /* USER CODE END PV */
 
@@ -161,7 +161,7 @@ int main(void)
   // Init custom code
 //  Control_IC_begin();
 
- Latch_IC_begin();
+// Latch_IC_begin();
   
   //  uint8_t IC_test_data[20] = {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0};
     // uint8_t IC_test_data[20] = {2,2,2,2,2,2,2,2,2,1,0,2,2,2,2,2,2,2,2,2};
@@ -170,37 +170,60 @@ int main(void)
   uint8_t IC_test_data[20] =   {2,2,2,2,2,2,2,2,2,1,0,2,2,2,2,2,2,2,2,2};
 //  uint8_t IC_test_data[20];
 //  memset(IC_test_data,1,sizeof(IC_test_data));
- WritePin_ICTest(IC_test_data);
-
-  uint8_t data_Ron[20];
-  memset(data_Ron,1,sizeof(data_Ron));
-  WritePin_Ron(data_Ron);
-
-  uint8_t data_Current[20];
-  memset(data_Current,0,sizeof(data_Current));
-  WritePin_CurrentLeakage(data_Current);
+  WritePin_ICTest(IC_test_data);
+//
+//  uint8_t data_Ron[20];
+//  memset(data_Ron,1,sizeof(data_Ron));
+//  WritePin_Ron(data_Ron);
+//
+//  uint8_t data_Current[20];
+//  memset(data_Current,0,sizeof(data_Current));
+//  WritePin_CurrentLeakage(data_Current);
 //  Control_Vcc_pin(0XFF); // disable all vcc in pin
 
-  uint8_t data_read[20] = {0};
+//  uint8_t data_read[20] = {0};
+//
+//  ADS1115_t ADS1115;
+//  config_reg_t config_reg_ads;
+//  config_reg_ads.PGA = PGA_6_144;
+//  config_reg_ads.channel = DEFAULT_VALUE_CHANNEL;
+//  config_reg_ads.compareMode = DEFAULT_VALUE_COMP_MODE;
+//  config_reg_ads.DataRate = DEFAULT_VALUE_DATARATE;
+//  config_reg_ads.latchingMode = DEFAULT_VALUE_COMP_LAT;
+//  config_reg_ads.mode = DEFAULT_VALUE_MODE;
+//  config_reg_ads.polarityMode = DEFAULT_VALUE_COMP_POL;
+//  config_reg_ads.queueComparator = DEFAULT_VALUE_COMP_QUE;
+//
+//  ADS1115.config = &config_reg_ads;
+//
+//  ADS1115_Init(&ADS1115,&hi2c1,ADS1115_READ_ADC_ADDRESS);
 
-  ADS1115_t ADS1115;
-  config_reg_t config_reg_ads;
-  config_reg_ads.PGA = PGA_6_144;
-  config_reg_ads.channel = DEFAULT_VALUE_CHANNEL;
-  config_reg_ads.compareMode = DEFAULT_VALUE_COMP_MODE;
-  config_reg_ads.DataRate = DEFAULT_VALUE_DATARATE;
-  config_reg_ads.latchingMode = DEFAULT_VALUE_COMP_LAT;
-  config_reg_ads.mode = DEFAULT_VALUE_MODE;
-  config_reg_ads.polarityMode = DEFAULT_VALUE_COMP_POL;
-  config_reg_ads.queueComparator = DEFAULT_VALUE_COMP_QUE;
-
-  ADS1115.config = &config_reg_ads;
-
-  ADS1115_Init(&ADS1115,&hi2c1,ADS1115_READ_ADC_ADDRESS);
 
 
+//  Screen_begin(&huart2);
 
-  Screen_begin(&huart2);
+  uint8_t num_case = 8;
+  uint8_t num_pin  = 16;
+  uint8_t (*data_control)[20] = malloc(num_case * sizeof(*data_control));
+
+  char * ptr_data_test = strtok(data_test,"\n");
+  uint8_t count_case = 0;
+  
+  uint8_t buffer[20];
+  /* convert data test to data control IC test */
+  while (ptr_data_test != NULL) {
+    convert_data_test(num_pin,ptr_data_test,data_control[count_case]);
+    memcpy(buffer,data_control[count_case],20);
+    count_case++;
+    // ptr_data_test = strchr(ptr_data_test,'\n');
+    ptr_data_test = strtok(NULL,"\n");
+    // ptr_data_test++;
+  }
+
+  Control_IC_Test_t Control_IC_test;
+
+  Control_IC_test.data_control_testing = &data_control[0][0];
+  Control_IC_test.cur_case = TEST_SHORT_CIRCUIT;
 //  AT24Cxx_t pAT24C256;
 //  AT24Cxx_Init(&pAT24C256,0x50,&hi2c1);
 
@@ -287,109 +310,26 @@ int main(void)
   //  uint8_t sendBuffer_2[] = {0x5A, 0xA5, 0x05, 0x82, 0x18, 0xF7, 0x00, 0x02};            // SP offset 7 Low
   //  HAL_UART_Transmit(&huart2,sendBuffer_2,sizeof(sendBuffer_2),500);
 
-  //  uint8_t sendBuffer_3[] = {
-  //   0x5A, 0xA5, 0xFB, 0x82,  
-  //   0x19, 0x00, 0x00, 0x02,
-  //   0x00, 0x3B, 0x01, 0xED,
-
-  //   // Clock 1
-  //   0x00, 0x19, 0x01, 0x18,  0x00, 0x3C, 0x01, 0x18,
-  //   0x00, 0x3C, 0x00, 0xFA,  0x00, 0x5F, 0x00, 0xFA,
-
-  //   // Clock 2
-  //   0x00, 0x5F, 0x01, 0x18,  0x00, 0x82, 0x01, 0x18,
-  //   0x00, 0x82, 0x00, 0xFA,  0x00, 0xA5, 0x00, 0xFA,
-
-  //   // Clock 3
-  //   0x00, 0xA5, 0x01, 0x18,  0x00, 0xC8, 0x01, 0x18,
-  //   0x00, 0xC8, 0x00, 0xFA,  0x00, 0xEB, 0x00, 0xFA,
-
-  //   // Clock 4
-  //   0x00, 0xEB, 0x01, 0x18,  0x01, 0x0E, 0x01, 0x18,
-  //   0x01, 0x0E, 0x00, 0xFA,  0x01, 0x31, 0x00, 0xFA,
-
-  //   // Clock 5
-  //   0x01, 0x31, 0x01, 0x18,  0x01, 0x54, 0x01, 0x18,
-  //   0x01, 0x54, 0x00, 0xFA,  0x01, 0x77, 0x00, 0xFA,
-
-  //   // Clock 6
-  //   0x01, 0x77, 0x01, 0x18,  0x01, 0x9A, 0x01, 0x18,
-  //   0x01, 0x9A, 0x00, 0xFA,  0x01, 0xBD, 0x00, 0xFA,
-
-  //   // Clock 7
-  //   0x01, 0xBD, 0x01, 0x18,  0x01, 0xE0, 0x01, 0x18,
-  //   0x01, 0xE0, 0x00, 0xFA,  0x02, 0x03, 0x00, 0xFA,
-
-  //   // Clock 8
-  //   0x02, 0x03, 0x01, 0x18,  0x02, 0x26, 0x01, 0x18,
-  //   0x02, 0x26, 0x00, 0xFA,  0x02, 0x49, 0x00, 0xFA,
-
-  //   // Clock 9
-  //   0x02, 0x49, 0x01, 0x18,  0x02, 0x6C, 0x01, 0x18,
-  //   0x02, 0x6C, 0x00, 0xFA,  0x02, 0x8F, 0x00, 0xFA,
-
-  //   // Clock 10
-  //   0x02, 0x8F, 0x01, 0x18,  0x02, 0xB2, 0x01, 0x18,
-  //   0x02, 0xB2, 0x00, 0xFA,  0x02, 0xD5, 0x00, 0xFA,
-
-  //   // Clock 11
-  //   0x02, 0xD5, 0x01, 0x18,  0x02, 0xF8, 0x01, 0x18,
-  //   0x02, 0xF8, 0x00, 0xFA,  0x03, 0x1B, 0x00, 0xFA,
-
-  //   // Clock 12
-  //   0x03, 0x1B, 0x01, 0x18,  0x03, 0x3E, 0x01, 0x18,
-  //   0x03, 0x3E, 0x00, 0xFA,  0x03, 0x61, 0x00, 0xFA,
-
-  //   // Clock 13
-  //   0x03, 0x61, 0x01, 0x18,  0x03, 0x84, 0x01, 0x18,
-  //   0x03, 0x84, 0x00, 0xFA,  0x03, 0xA7, 0x00, 0xFA,
-
-  //   // Clock 14
-  //   0x03, 0xA7, 0x01, 0x18,  0x03, 0xCA, 0x01, 0x18,
-  //   0x03, 0xCA, 0x00, 0xFA,  0x03, 0xED, 0x00, 0xFA,
-
-  //   // Clock 15
-  //   0x03, 0xED, 0x01, 0x18,  0x04, 0x10, 0x01, 0x18,
-  //   0x04, 0x10, 0x00, 0xFA,  0x04, 0x33, 0x00, 0xFA,
-
-  //   0xFF, 0x00};
-
-  //  HAL_UART_Transmit(&huart2,sendBuffer_3,sizeof(sendBuffer_3),500);
-
-  //   uint8_t sendBuffer_4[] = {0x5A, 0xA5, 0x05, 0x82, 0x19, 0xF7, 0x00, 0x02};            // SP offset 7 Low
-  //  HAL_UART_Transmit(&huart2,sendBuffer_4,sizeof(sendBuffer_4),500);
-
-  //  uint8_t sendBuffer_5[] = {
-  //   0x5A, 0xA5, 0x13, 0x82,  
-  //   0x30, 0x00, 0x00, 0x0A,
-  //   0x00, 0x01, 0x01, 0xED,
-  //   0x00, 0x3C, 0x00, 0x50,0x00, 0x3C, 0x01, 0x72,
-  //   0xFF, 0x00 };
-  //  HAL_UART_Transmit(&huart2,sendBuffer_5,sizeof(sendBuffer_5),500);
-
-
-//  uint8_t testBuffer[4] = {0x11, 0x22, 0x33, 0x44};
-//  HAL_UART_Transmit(&huart2, testBuffer, 4, 500);
-
-//  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
-//  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-//  	  HAL_CAN_Start(&hcan1);
 
     // Active the notification
-//    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+  	TxHeader.DLC = 6;
+    TxHeader.StdId = 0x103;
+    TxHeader.IDE = CAN_ID_STD;
+    TxHeader.RTR = CAN_RTR_DATA;
 
-//    TxHeader.DLC = 2; // data length
-//    TxHeader.IDE = CAN_ID_STD;
-//    TxHeader.RTR = CAN_RTR_DATA;
-//    //TxHeader.StdId = 0x407; // ID of sender
-//    TxHeader.StdId = 0x407; // ID of sender
+    uint8_t data_tx[6] = {'H','E','L','L','O','2'};
 
-    // Data Transmit
-//    TxData[0] = 200;
-//    TxData[1] = 5;
+
+  /* start the CAN */
+  HAL_CAN_Start(&hcan1);
+
+  HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+
+
+
+
 //
-//    HAL_Delay(1000);
-//    HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+
 
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
@@ -403,23 +343,26 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+      HAL_CAN_AddTxMessage(&hcan1, &TxHeader, data_tx, &TxMailbox);
+	  HAL_Delay(2000);
 	  //  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_9);
 	  //  HAL_Delay(1000);
 //    WritePin_ICTest(IC_test_data_1);
 //    ReadPin_IC_test(data_read);
     // WritePin_ICTest(IC_test_data);
     // ReadPin_IC_test(data_read);
-    for (uint8_t i = 0; i < 20; i++) {
-      Read_ADC_IC_test(&ADS1115,i,ADC_data);
-      // ADC_DUT1 = ADS1115_single_getdata(&ADS1115, CHANNEL_AIN0_GND);
-    }
-    Read_ADC_IC_test(&ADS1115,channel_read_adc,ADC_data);
+//    for (uint8_t i = 0; i < 20; i++) {
+//      Read_ADC_IC_test(&ADS1115,i,ADC_data);
+//      // ADC_DUT1 = ADS1115_single_getdata(&ADS1115, CHANNEL_AIN0_GND);
+//    }
+//    Read_ADC_IC_test(&ADS1115,channel_read_adc,ADC_data);
 //	  Control_Output_IC_Test(Latch_IC4,data_output);
 //	  Control_Output_IC_Test(Latch_IC5,data_output);
 //	  Control_Output_IC_Test(Latch_IC6,data_output);
 //	  HAL_Delay(10);
 	  // printf("SWO Debug!!!\n");
-	  HAL_Delay(1000);
+    //    HAL_Delay(1000);
+
 	  // HAL_Delay(1000);
 
 //	  for (int i = 0; i < sizeof(sendBuffer); i++) {
@@ -463,7 +406,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLN = 72;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -477,10 +420,10 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -502,11 +445,11 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
+  hcan1.Init.Prescaler = 4;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_15TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -518,7 +461,20 @@ static void MX_CAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN1_Init 2 */
+  CAN_FilterTypeDef canfilterconfig;
 
+  canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
+  canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
+  canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+  canfilterconfig.FilterIdHigh = 0x103<<5;
+  canfilterconfig.FilterIdLow = 0;
+  canfilterconfig.FilterMaskIdHigh = 0x103<<5;
+  canfilterconfig.FilterMaskIdLow = 0x0000;
+  canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  canfilterconfig.SlaveStartFilterBank = 20;
+
+  HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
   /* USER CODE END CAN1_Init 2 */
 
 }
@@ -598,7 +554,7 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM1_Init 2 */
-
+  
   /* USER CODE END TIM1_Init 2 */
 
 }

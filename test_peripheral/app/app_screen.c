@@ -13,7 +13,7 @@ static void screen_init(app_screen * const pOS_task, OS_event_t const * const pE
 static void screen_dispatch(app_screen * const pOS_task, OS_event_t const * const pEvent);
 
 static app_screen screen_instance;
-OS_task * const AO_task_screen = screen_instance.task;
+OS_task * const AO_task_screen = &screen_instance.task;
 
 void screen_task_init(void) {
     screen_ctor(&screen_instance);

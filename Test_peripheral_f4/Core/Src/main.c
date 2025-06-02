@@ -106,16 +106,18 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+
   HAL_CAN_Start(&hcan1);
 
   // Active the notification
-  HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+  HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO1_MSG_PENDING);
+
 
   TxHeader.DLC = 2; // data length
   TxHeader.IDE = CAN_ID_STD;
   TxHeader.RTR = CAN_RTR_DATA;
   //TxHeader.StdId = 0x407; // ID of sender
-  TxHeader.StdId = 0x417; // ID of sender
+  TxHeader.StdId = 0x407; // ID of sender
 
   // Data Transmit
   TxData[0] = 200;
@@ -124,7 +126,7 @@ int main(void)
   HAL_Delay(1000);
   HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
 
-  Write_Input_IC_TEST(0x00,0x00,0x80);
+  // Write_Input_IC_TEST(0x00,0x00,0x80);
 
   /* USER CODE END 2 */
 
@@ -135,19 +137,22 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  // if (RxCAn == 1) {
+	  HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO1, &RxHeader, RxData);
+ 	  if (RxData[0] != 0) {
+		  TxData[0] = 1;
+	  }
+//	  if (RxCAn == 1) {
 //		  TxData[0] = RxData[0] + 200;
 //		  TxData[1] = RxData[1] + 5;
-		  // for(uint8_t i = 0; i < RxData[1]; i++) {
-			//   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_2);
-			//   HAL_Delay(RxData[0]);
-		  // }
+//		  // for(uint8_t i = 0; i < RxData[1]; i++) {
+//			//   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_2);
+//			//   HAL_Delay(RxData[0]);
+//		  }
 
 		  // TxData[0] = RxData[0];
 		  // TxData[1] = RxData[1];
-		  // HAL_Delay(1000);
-		  // HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
+//		   HAL_Delay(2000);
+//		   HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
 	  // }
 
   }
@@ -216,11 +221,11 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 12;
+  hcan1.Init.Prescaler = 21;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_2TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_4TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -235,18 +240,29 @@ static void MX_CAN1_Init(void)
 
   CAN_FilterTypeDef canfilterconfig;
 
-    canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
-    canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
-    canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-    canfilterconfig.FilterIdHigh = 0x407<<5;
-    canfilterconfig.FilterIdLow = 0;
-    canfilterconfig.FilterMaskIdHigh = 0x407<<5;
-    canfilterconfig.FilterMaskIdLow = 0x0000;
-    canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
-    canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
-    canfilterconfig.SlaveStartFilterBank = 20;
+  // canfilterconfig.FilterBank             = 1;
+  // canfilterconfig.FilterMode             = CAN_FILTERMODE_IDMASK;
+  // canfilterconfig.FilterScale            = CAN_FILTERSCALE_32BIT;
+  // canfilterconfig.FilterIdHigh           = 0x0000;
+  // canfilterconfig.FilterIdLow            = 0x0000;
+  // canfilterconfig.FilterMaskIdHigh       = 0x0000;
+  // canfilterconfig.FilterMaskIdLow        = 0x0000;
+  // canfilterconfig.FilterFIFOAssignment   = CAN_RX_FIFO1;
+  // canfilterconfig.FilterActivation       = ENABLE;
+  // canfilterconfig.SlaveStartFilterBank    = 14;  // for dual CAN, otherwise 14
 
-    HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
+  canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
+  canfilterconfig.FilterBank = 5;  // which filter bank to use from the assigned ones
+  canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO1;
+  canfilterconfig.FilterIdHigh = 0;
+  canfilterconfig.FilterIdLow = 0;
+  canfilterconfig.FilterMaskIdHigh = 0;
+  canfilterconfig.FilterMaskIdLow = 0;
+  canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  canfilterconfig.SlaveStartFilterBank = 14;
+
+  HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
 
   /* USER CODE END CAN1_Init 2 */
 
@@ -319,10 +335,10 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
-	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, RxData);
-	RxCAn = 1;
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData);
 }
+
 
 void shift_out(uint8_t data)
 {

@@ -25,6 +25,7 @@
 "./app/app_eeprom.o"
 "./app/app_main.o"
 "./app/app_post_test.o"
+"./app/app_screen.o"
 "./app/app_uart_esp32.o"
 "./app/test_os.o"
 "./lib/AT24Cxx.o"

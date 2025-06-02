@@ -55,6 +55,15 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+
+CAN_TxHeaderTypeDef TxHeader;
+CAN_RxHeaderTypeDef RxHeader;
+
+uint8_t TxData[8];
+uint8_t RxData[8];
+
+uint32_t TxMailbox;
+
 uint8_t dataRX[100];
 uint8_t data_output[20] ={0};
 char *data_test[] = {
@@ -177,49 +186,49 @@ int main(void)
 //	printf("SWO Debug!!!\n");
 //  }
 
- BSP_init();
+// BSP_init();
+//
+// Post_task_init();
+// static OS_event_t const *q_app_post[10];
+// OS_task_create(AO_taskPost,
+//   1,
+//   q_app_post,
+//   ARRAY_ELEMENT(q_app_post),
+//   (OS_event_t *)0 );
+//
+// eeprom_task_init(&hi2c1,EEPROM_ADDRESS);
+// static OS_event_t const *q_eeprom_event[10];
+// OS_task_create( AO_task_eeprom,
+//   1,
+//   q_eeprom_event,
+//   ARRAY_ELEMENT(q_eeprom_event),
+//   (OS_event_t *)0 );
+//
+//  uart_esp32_task_init(&huart1);
+//  static OS_event_t const *q_uart_esp32_event[10];
+//  OS_task_create(AO_task_uart_esp32,
+//  1,
+//  q_uart_esp32_event,
+//  ARRAY_ELEMENT(q_uart_esp32_event),
+//  (OS_event_t *)0);
+//
+//  BlinkyTest_app_init();
+//  static OS_event_t const *TestOS_blinky[10]; /* Event queue */
+//  OS_task_create(
+//    AO_BlinkyTest,
+//    1,
+//    TestOS_blinky,
+//    ARRAY_ELEMENT(TestOS_blinky),
+//    TestOS_Work()
+//  );
 
- Post_task_init();
- static OS_event_t const *q_app_post[10];
- OS_task_create(AO_taskPost,
-   1,
-   q_app_post,
-   ARRAY_ELEMENT(q_app_post),
-   (OS_event_t *)0 );
-
- eeprom_task_init(&hi2c1,EEPROM_ADDRESS);
- static OS_event_t const *q_eeprom_event[10];
- OS_task_create( AO_task_eeprom,
-   1,
-   q_eeprom_event,
-   ARRAY_ELEMENT(q_eeprom_event),
-   (OS_event_t *)0 );
-
-  uart_esp32_task_init(&huart1);
-  static OS_event_t const *q_uart_esp32_event[10];
-  OS_task_create(AO_task_uart_esp32,
-  1,
-  q_uart_esp32_event,
-  ARRAY_ELEMENT(q_uart_esp32_event),
-  (OS_event_t *)0);
-
-  BlinkyTest_app_init();
-  static OS_event_t const *TestOS_blinky[10]; /* Event queue */
-  OS_task_create(
-    AO_BlinkyTest,
-    1,
-    TestOS_blinky,
-    ARRAY_ELEMENT(TestOS_blinky),
-    TestOS_Work()
-  );
-
-  app_can_bus_init(&hcan);
-  static OS_event_t const *Can_app_event[10];
-  OS_task_create( AO_task_can_bus,
-  1,
-  Can_app_event,
-  ARRAY_ELEMENT(Can_app_event),
-  (OS_event_t *)0);
+//  app_can_bus_init(&hcan);
+//  static OS_event_t const *Can_app_event[10];
+//  OS_task_create( AO_task_can_bus,
+//  1,
+//  Can_app_event,
+//  ARRAY_ELEMENT(Can_app_event),
+//  (OS_event_t *)0);
 
 
   //    uint8_t sendBuffer_3[] = {
@@ -294,21 +303,20 @@ int main(void)
 //  			  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
 //  			  HAL_Delay(500);
 //  		  }
+  HAL_CAN_Start(&hcan);
 
-  // HAL_CAN_Start(&hcan);
-  CAN_TxHeaderTypeDef Txheader;
-
-  txheader.DLC = 5;
-  Txheader.StdId = 0x103;
-  Txheader.IDE = CAN_ID_STD;
-  Txheader.RTR = CAN_RTR_DATA;
+  TxHeader.DLC = 5;
+  TxHeader.StdId = 0x103;
+  TxHeader.IDE = CAN_ID_STD;
+  TxHeader.RTR = CAN_RTR_DATA;
 
   uint8_t data_tx[5] = {'H','E','L','L','O'};
-  uint32_t mailBox;
 
-  HAL_CAN_AddTxMessage(&hcan,&Txheader, data_tx, &mailBox);
 
-  // HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
+  HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING);
+
+
+     //HAL_CAN_AddTxMessage(&hcan,&TxHeader, data_tx, &TxMailbox);
 
   // TxHeader.DLC = 2; // data length
   // TxHeader.IDE = CAN_ID_STD;
@@ -330,6 +338,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	     //HAL_CAN_AddTxMessage(&hcan,&TxHeader, data_tx, &TxMailbox);
+	     //HAL_Delay(2000);
 	  // if( datacheck ) {
 		//   for (uint8_t i=0; i < RxData[1]; i++) {
 		// 	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
@@ -427,14 +437,14 @@ static void MX_CAN_Init(void)
   /* USER CODE END CAN_Init 1 */
   hcan.Instance = CAN1;
   hcan.Init.Prescaler = 4;
-  hcan.Init.Mode = CAN_MODE_LOOPBACK;
+  hcan.Init.Mode = CAN_MODE_NORMAL;
   hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
   hcan.Init.TimeSeg1 = CAN_BS1_15TQ;
   hcan.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan.Init.TimeTriggeredMode = DISABLE;
   hcan.Init.AutoBusOff = DISABLE;
   hcan.Init.AutoWakeUp = DISABLE;
-  hcan.Init.AutoRetransmission = ENABLE;
+  hcan.Init.AutoRetransmission = DISABLE;
   hcan.Init.ReceiveFifoLocked = DISABLE;
   hcan.Init.TransmitFifoPriority = DISABLE;
   if (HAL_CAN_Init(&hcan) != HAL_OK)
@@ -442,7 +452,20 @@ static void MX_CAN_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN_Init 2 */
+  CAN_FilterTypeDef canfilterconfig;
 
+    canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
+    canfilterconfig.FilterBank = 10;  // which filter bank to use from the assigned ones
+    canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO1;
+    canfilterconfig.FilterIdHigh = 0x103<<5;
+    canfilterconfig.FilterIdLow = 0;
+    canfilterconfig.FilterMaskIdHigh = 0;
+    canfilterconfig.FilterMaskIdLow = 0;
+    canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
+    canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
+    canfilterconfig.SlaveStartFilterBank = 0;
+
+    HAL_CAN_ConfigFilter(&hcan, &canfilterconfig);
   /* USER CODE END CAN_Init 2 */
 
 }
@@ -605,13 +628,9 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hi2c) {
   OS_task_post_event(AO_task_eeprom, WAIT_WRITE_TIMEOUT, (uint8_t *)0, 0);
 }
 
-// void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
-// 	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
-
-// 	if( RxHeader.DLC == 2 ) {
-// 		datacheck = 1;
-// 	}
-// }
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData);
+}
 
 int _write(int file, char *ptr, int len) {
     for (int i = 0; i < len; i++) {

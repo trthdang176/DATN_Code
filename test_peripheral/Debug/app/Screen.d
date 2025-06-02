@@ -25,7 +25,13 @@ app/Screen.o: ../app/Screen.c ../app/Screen.h ../app/../lib/DWIN_HMI.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- ../app/../lib/Common.h ../app/../Core/Inc/main.h
+ ../app/../lib/Common.h ../app/../Core/Inc/main.h ../app/app_main.h \
+ ../app/test_os.h ../app/app_post_test.h ../app/../os/os.h \
+ ../app/../os/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+ ../app/app_eeprom.h ../app/../lib/AT24Cxx.h \
+ ../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+ ../app/app_uart_esp32.h ../app/app_can_bus.h ../app/../os/os_event.h \
+ ../app/../os/os.h
 ../app/Screen.h:
 ../app/../lib/DWIN_HMI.h:
 ../app/../lib/../Core/Inc/main.h:
@@ -56,3 +62,15 @@ app/Screen.o: ../app/Screen.c ../app/Screen.h ../app/../lib/DWIN_HMI.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
 ../app/../lib/Common.h:
 ../app/../Core/Inc/main.h:
+../app/app_main.h:
+../app/test_os.h:
+../app/app_post_test.h:
+../app/../os/os.h:
+../app/../os/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
+../app/app_eeprom.h:
+../app/../lib/AT24Cxx.h:
+../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
+../app/app_uart_esp32.h:
+../app/app_can_bus.h:
+../app/../os/os_event.h:
+../app/../os/os.h:

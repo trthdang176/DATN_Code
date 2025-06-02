@@ -27,17 +27,18 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Src/../../app/Screen.h ../Core/Src/../../app/../lib/DWIN_HMI.h \
  ../Core/Src/../../app/../lib/../Core/Inc/main.h \
  ../Core/Src/../../app/../lib/Common.h \
- ../Core/Src/../../app/../Core/Inc/main.h ../Core/Src/../../lib/AT24Cxx.h \
- ../Core/Src/../../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
- ../Core/Src/../../os/os.h \
- ../Core/Src/../../os/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+ ../Core/Src/../../app/../Core/Inc/main.h \
  ../Core/Src/../../app/app_main.h ../Core/Src/../../app/test_os.h \
  ../Core/Src/../../app/app_post_test.h ../Core/Src/../../app/../os/os.h \
+ ../Core/Src/../../app/../os/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Src/../../app/app_eeprom.h \
- ../Core/Src/../../app/../lib/AT24Cxx.h ../Core/Src/../../app/Screen.h \
- ../Core/Src/../../app/app_uart_esp32.h \
+ ../Core/Src/../../app/../lib/AT24Cxx.h \
+ ../Core/Src/../../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
+ ../Core/Src/../../app/Screen.h ../Core/Src/../../app/app_uart_esp32.h \
  ../Core/Src/../../app/app_can_bus.h \
- ../Core/Src/../../app/../os/os_event.h ../Core/Src/../../app/../os/os.h
+ ../Core/Src/../../app/../os/os_event.h ../Core/Src/../../app/../os/os.h \
+ ../Core/Src/../../lib/AT24Cxx.h ../Core/Src/../../os/os.h \
+ ../Core/Src/../../app/app_main.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -69,18 +70,19 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Src/../../app/../lib/../Core/Inc/main.h:
 ../Core/Src/../../app/../lib/Common.h:
 ../Core/Src/../../app/../Core/Inc/main.h:
-../Core/Src/../../lib/AT24Cxx.h:
-../Core/Src/../../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
-../Core/Src/../../os/os.h:
-../Core/Src/../../os/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Src/../../app/app_main.h:
 ../Core/Src/../../app/test_os.h:
 ../Core/Src/../../app/app_post_test.h:
 ../Core/Src/../../app/../os/os.h:
+../Core/Src/../../app/../os/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Src/../../app/app_eeprom.h:
 ../Core/Src/../../app/../lib/AT24Cxx.h:
+../Core/Src/../../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Src/../../app/Screen.h:
 ../Core/Src/../../app/app_uart_esp32.h:
 ../Core/Src/../../app/app_can_bus.h:
 ../Core/Src/../../app/../os/os_event.h:
 ../Core/Src/../../app/../os/os.h:
+../Core/Src/../../lib/AT24Cxx.h:
+../Core/Src/../../os/os.h:
+../Core/Src/../../app/app_main.h:

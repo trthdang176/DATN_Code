@@ -32,6 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdlib.h>   
+#include <string.h>
 #include "Testing_program.h"
 #include "../../os/os.h"
 #include "../../os/port/os_port.h"

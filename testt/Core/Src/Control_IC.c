@@ -1,5 +1,8 @@
 #include "Control_IC.h"
 
+
+uint8_t convert_character_input(char c_input);
+
 uint16_t DSAx[] = {DSA1,DSA2,DSA3};
 uint16_t DSBx[] = {DSB1,DSB2,DSB3};
 uint16_t CPx[] =  {CP1,CP2,CP3};
@@ -376,6 +379,51 @@ void Control_Output_IC_Test(uint8_t num, uint8_t *array_data) {
     // HAL_GPIO_WritePin(PIN_OEx[num-3].Port_x,PIN_OEx[num-3].PIN_x,GPIO_PIN_SET);
 
 }
+
+uint8_t convert_character_input(char c_input) {
+    switch (c_input) {
+        case 'V' :
+        case '1' : {
+            return 1;
+        } break;
+        case 'G' :
+        case '0' : {
+            return 0;
+        } break;
+        case 'L' :
+        case 'H' : {
+            return 2;
+        } break;
+
+        default : {
+            return 2;
+        } break;
+    }
+}
+
+void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control) {
+    data_control[8]  = 2;
+    data_control[9]  = 1;
+    data_control[10] = 0;
+    data_control[11] = 2;
+
+    for (uint8_t i = 0; i < 8; i++) {
+        data_control[i] = convert_character_input(data_test[i]);
+    }
+
+    if (num_pin == 18) {
+        data_control[8] = convert_character_input(data_test[8]);
+        data_control[11] = convert_character_input(data_test[9]);
+        for (uint8_t i = 10; i < 18; i++) {
+            data_control[12 + (i - 10)] = convert_character_input(data_test[i]);
+        }
+    } else { 
+        for (uint8_t i = 8; i < 16; i++) {
+            data_control[12 + (i - 8)] = convert_character_input(data_test[i]);
+        }
+    }
+}
+
 
 //void Control_Program_IC_Test(char *data, uint8_t numPin) {
 //    /* Get the data INPUT IC */

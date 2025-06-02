@@ -85,6 +85,20 @@ typedef struct {
     uint16_t PIN_x;
 } Pin_IC_Test_Mapping;
 
+typedef enum {
+    TEST_SHORT_CIRCUIT  = 0,
+    TEST_FUNCTION          ,
+    TEST_RON
+} Test_State_t;
+
+typedef struct {
+    Test_State_t cur_state;
+    uint8_t cur_case;
+    uint8_t *data_control_testing;
+    uint8_t *result_short_circuit;
+    uint8_t *result_test_function;
+} Control_IC_Test_t;
+
 void Control_IC_begin(void);
 void Control_Vcc_pin(uint8_t data);
 void Latch_IC_begin(void);
@@ -103,5 +117,7 @@ void WritePin_Ron(uint8_t *dataPin);
 void WritePin_CurrentLeakage(uint8_t *dataPin);
 
 void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf);
+
+void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control);
 
 #endif /* INC_CONTROL_IC_H_ */

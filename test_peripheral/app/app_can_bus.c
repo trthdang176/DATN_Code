@@ -7,7 +7,7 @@
 typedef struct {
     OS_task task;
 
-    /* Test timeer */
+    /* Test timer */
     OS_TimeEvt te;
 } app_can;
 
@@ -31,7 +31,7 @@ void can_bus_ctor(app_can *pAO) {
 }
 
 static void can_bus_init(app_can * const pOS_task, OS_event_t const * const pEvent) {
-    OS_TimeEvt_Stop(pOS_task->te);
+    OS_TimeEvt_Stop(&pOS_task->te);
 
     UNUSED(pEvent);
 }

@@ -1,17 +1,10 @@
-16:28:23 **** Incremental Build of configuration Debug for project test_peripheral ****
+17:07:21 **** Incremental Build of configuration Debug for project test_peripheral ****
 make -j12 all 
-arm-none-eabi-gcc "../os/os_event.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"os/os_event.d" -MT"os/os_event.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "os/os_event.o"
-arm-none-eabi-gcc -o "test_peripheral.elf" @"objects.list"   -mcpu=cortex-m3 -T"F:\UTE\DATN\Code\test_peripheral\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test_peripheral.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: test_peripheral.elf
- 
 arm-none-eabi-size  test_peripheral.elf 
-arm-none-eabi-objdump -h -S test_peripheral.elf  > "test_peripheral.list"
    text	   data	    bss	    dec	    hex	filename
-  56096	    568	   4920	  61584	   f090	test_peripheral.elf
+  50664	    524	   4068	  55256	   d7d8	test_peripheral.elf
 Finished building: default.size.stdout
  
-Finished building: test_peripheral.list
- 
 
-16:28:24 Build Finished. 0 errors, 0 warnings. (took 1s.200ms)
+17:07:21 Build Finished. 0 errors, 0 warnings. (took 407ms)
 
