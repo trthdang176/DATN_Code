@@ -31,9 +31,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/Inc/Testing_program.h ../Core/Inc/main.h \
- ../Core/Inc/../../os/os.h ../Core/Inc/../../os/port/os_port.h \
- ../Core/Inc/../../os/port/os_port.h ../Core/Src/../../app/Screen.h \
- ../Core/Src/../../app/../lib/DWIN_HMI.h \
+ ../Core/Inc/../../lib/ISO_TP/isotp.h \
+ ../Core/Inc/../../lib/ISO_TP/isotp_defines.h \
+ ../Core/Inc/../../lib/ISO_TP/isotp_config.h \
+ ../Core/Inc/../../lib/ISO_TP/isotp_user.h ../Core/Inc/../../os/os.h \
+ ../Core/Inc/../../os/port/os_port.h ../Core/Inc/../../os/port/os_port.h \
+ ../Core/Src/../../app/Screen.h ../Core/Src/../../app/../lib/DWIN_HMI.h \
  ../Core/Src/../../app/../lib/../Core/Inc/main.h \
  ../Core/Src/../../app/../lib/Common.h \
  ../Core/Src/../../app/../Core/Inc/main.h ../Core/Src/../../lib/AT24Cxx.h \
@@ -74,6 +77,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/Testing_program.h:
 ../Core/Inc/main.h:
+../Core/Inc/../../lib/ISO_TP/isotp.h:
+../Core/Inc/../../lib/ISO_TP/isotp_defines.h:
+../Core/Inc/../../lib/ISO_TP/isotp_config.h:
+../Core/Inc/../../lib/ISO_TP/isotp_user.h:
 ../Core/Inc/../../os/os.h:
 ../Core/Inc/../../os/port/os_port.h:
 ../Core/Inc/../../os/port/os_port.h:

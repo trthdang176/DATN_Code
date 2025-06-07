@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "stdbool.h"
+
 #include "../../app/Screen.h"
 
 #include "../../lib/AT24Cxx.h"
@@ -57,7 +59,8 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint8_t test_Vcc_pin;
+
+uint8_t Data_test_short_circuit[20] = {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2};
 
 uint8_t dataRX[100];
 uint8_t data_output[20] ={0};
@@ -65,16 +68,18 @@ uint8_t data_output[20] ={0};
   // "Description"          // Description
   // "16"                   // Num pin
   // "8"                    // Num case
-char *data_test= {
-  "11L1100G0001011V\n"
-  "11L1100G0011101V\n"
-  "11L1100G0101110V\n"
-  "11L1100G0110111V\n"
-  "01L1100G1001111V\n"
-  "11L1000G1011111V\n"
-  "10L1100G1101111V\n"
-  "11L0100G1111111V\n"
-};
+// char *data_test = {
+//   "11L1100G0001011V\n"
+//   "11L1100G0011101V\n"
+//   "11L1100G0101110V\n"
+//   "11L1100G0110111V\n"
+//   "01L1100G1001111V\n"
+//   "11L1000G1011111V\n"
+//   "10L1100G1101111V\n"
+//   "11L0100G1111111V\n"
+// 		"end"
+// };
+char data_test[250];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,6 +118,13 @@ uint8_t RxCAn = 0;
 float ADC_data[20] = {0};
 float ADC_DUT1;
 uint8_t channel_read_adc = 0;
+
+IsoTpLink CAN_iso;
+static uint8_t can_iso_recv_buf[250];
+static uint8_t can_iso_send_buf[250];
+
+Control_IC_Test_t Control_IC_test;
+bool flag_run_test;
 
 /* USER CODE END 0 */
 
@@ -155,7 +167,7 @@ int main(void)
   // Init STM32
 //  HAL_Delay(3000);
   HAL_UARTEx_ReceiveToIdle_IT(&huart2, dataRX, sizeof(dataRX)); // Enable interrupt UART
-//  HAL_UART_Receive_IT(&huart2, dataRX, 1);
+
   HAL_TIM_Base_Start(&htim1);
 
   // Init custom code
@@ -167,157 +179,87 @@ int main(void)
     // uint8_t IC_test_data[20] = {2,2,2,2,2,2,2,2,2,1,0,2,2,2,2,2,2,2,2,2};
   uint8_t IC_test_data_1[20] = {0,0,2,0,0,0,0,0,2,1,0,2,0,0,0,0,1,0,0,1};  // 0
   uint8_t IC_test_data_2[20] = {0,0,2,0,0,0,0,0,2,1,0,2,0,0,0,0,0,0,0,1};  // 0
-  uint8_t IC_test_data[20] =   {2,2,2,2,2,2,2,2,2,1,0,2,2,2,2,2,2,2,2,2};
+  uint8_t IC_test_data[20] =   {2,2,2,2,2,2,2,2,2,0,1,2,2,2,2,2,2,2,2,2};
+
 //  uint8_t IC_test_data[20];
-//  memset(IC_test_data,1,sizeof(IC_test_data));
+  memset(IC_test_data,2,sizeof(IC_test_data));
   WritePin_ICTest(IC_test_data);
-//
-//  uint8_t data_Ron[20];
-//  memset(data_Ron,1,sizeof(data_Ron));
-//  WritePin_Ron(data_Ron);
-//
-//  uint8_t data_Current[20];
-//  memset(data_Current,0,sizeof(data_Current));
-//  WritePin_CurrentLeakage(data_Current);
-//  Control_Vcc_pin(0XFF); // disable all vcc in pin
+  TurnOff_short_circuit();
+  uint8_t data_Ron[20];
+  memset(data_Ron,1,sizeof(data_Ron));
+  WritePin_Ron(data_Ron);
 
-//  uint8_t data_read[20] = {0};
-//
-//  ADS1115_t ADS1115;
-//  config_reg_t config_reg_ads;
-//  config_reg_ads.PGA = PGA_6_144;
-//  config_reg_ads.channel = DEFAULT_VALUE_CHANNEL;
-//  config_reg_ads.compareMode = DEFAULT_VALUE_COMP_MODE;
-//  config_reg_ads.DataRate = DEFAULT_VALUE_DATARATE;
-//  config_reg_ads.latchingMode = DEFAULT_VALUE_COMP_LAT;
-//  config_reg_ads.mode = DEFAULT_VALUE_MODE;
-//  config_reg_ads.polarityMode = DEFAULT_VALUE_COMP_POL;
-//  config_reg_ads.queueComparator = DEFAULT_VALUE_COMP_QUE;
-//
-//  ADS1115.config = &config_reg_ads;
-//
-//  ADS1115_Init(&ADS1115,&hi2c1,ADS1115_READ_ADC_ADDRESS);
+  flag_run_test = false;
+  //  uint8_t data_Current[20] = {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//  memset(data_Current,1,sizeof(data_Current));
+  //  WritePin_CurrentLeakage(data_Current);
+
+  ADS1115_t ADS1115;
+  config_reg_t config_reg_ads;
+  config_reg_ads.PGA = PGA_6_144;
+  config_reg_ads.channel = DEFAULT_VALUE_CHANNEL;
+  config_reg_ads.compareMode = DEFAULT_VALUE_COMP_MODE;
+  config_reg_ads.DataRate = DEFAULT_VALUE_DATARATE;
+  config_reg_ads.latchingMode = DEFAULT_VALUE_COMP_LAT;
+  config_reg_ads.mode = DEFAULT_VALUE_MODE;
+  config_reg_ads.polarityMode = DEFAULT_VALUE_COMP_POL;
+  config_reg_ads.queueComparator = DEFAULT_VALUE_COMP_QUE;
+
+  ADS1115.config = &config_reg_ads;
+
+  ADS1115_Init(&ADS1115,&hi2c1,ADS1115_READ_ADC_ADDRESS);
 
 
+  // TurnOn_short_circuit();
+  // for (uint8_t i = 0; i < 20; i++) {
+  //   Read_ADC_IC_test(&ADS1115,i,ADC_data);
+  // }
+  // TurnOff_short_circuit();
+  //   memset(IC_test_data,1,sizeof(IC_test_data));
+  //   WritePin_ICTest(IC_test_data);
+  // for (uint8_t i = 0; i < 20; i++) {
+  //   Read_ADC_IC_test(&ADS1115,i,ADC_data);
+  // }
 
 //  Screen_begin(&huart2);
 
   uint8_t num_case = 8;
   uint8_t num_pin  = 16;
+  uint8_t num_pin_control = 20;
   uint8_t (*data_control)[20] = malloc(num_case * sizeof(*data_control));
 
-  char * ptr_data_test = strtok(data_test,"\n");
+  char * ptr_data_test ;
   uint8_t count_case = 0;
   
   uint8_t buffer[20];
+  uint8_t can_send_result_test[500];
   /* convert data test to data control IC test */
-  while (ptr_data_test != NULL) {
-    convert_data_test(num_pin,ptr_data_test,data_control[count_case]);
-    memcpy(buffer,data_control[count_case],20);
-    count_case++;
-    // ptr_data_test = strchr(ptr_data_test,'\n');
-    ptr_data_test = strtok(NULL,"\n");
-    // ptr_data_test++;
-  }
-
-  Control_IC_Test_t Control_IC_test;
-
-  Control_IC_test.data_control_testing = &data_control[0][0];
-  Control_IC_test.cur_case = TEST_SHORT_CIRCUIT;
-//  AT24Cxx_t pAT24C256;
-//  AT24Cxx_Init(&pAT24C256,0x50,&hi2c1);
+//  ptr_data_test = strtok(data_test,"\n");
+//  while (ptr_data_test != NULL) {
+//    convert_data_test(num_pin,ptr_data_test,data_control[count_case]);
+//    memcpy(buffer,data_control[count_case],20);
+//    count_case++;
+//    // ptr_data_test = strchr(ptr_data_test,'\n');
+//    ptr_data_test = strtok(NULL,"\n");
+//    // ptr_data_test++;
+//  }
 
   //  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET); // D0
   //  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET); // D1
 
-  // Control_Input_IC_Test(Latch_IC1,0x00); // 0000 1111
-  // Control_Input_IC_Test(Latch_IC2,0x00); // 0000 1111
-  // Control_Input_IC_Test(Latch_IC3,0x40); // 0000 1111
-
 //  Control_Program_IC_Test(data_test[1],16);
 
+  // Active the notification
+  TxHeader.DLC = 6;
+  TxHeader.StdId = 0x103;
+  TxHeader.IDE = CAN_ID_STD;
+  TxHeader.RTR = CAN_RTR_DATA;
 
-  //  uint8_t sendBuffer[10] = {0x5A, 0xA5, 0x07, 0x83, 0x00, 0x84, 0x5A, 0x01, 0x00, 139};
-  //  uint8_t sendBuffer[] = {
-  //   0x5A, 0xA5, 0xFB, 0x82,  
-  //   0x18, 0x00, 0x00, 0x02,
-  //   0x00, 0x3B, 0x01, 0xED,
+  uint8_t data_tx[6] = {'H','E','L','L','O','3'};
+  // HAL_CAN_AddTxMessage(&hcan1, &TxHeader, data_tx, &TxMailbox);
 
-  //   // Clock 1
-  //   0x00, 0x19, 0x00, 0xC8, 0x00, 0x3C, 0x00, 0xC8,
-  //   // 0x00, 0x3C, 0x00, 0xAA,  0x00, 0x5F, 0x00, 0xAA,
-  //   0x00, 0x3C, 0x00, 0xC8, 0x00, 0x5F, 0x00, 0xC8,
-
-  //   // Clock 2
-  //   0x00, 0x5F, 0x00, 0xC8,  0x00, 0x82, 0x00, 0xC8,
-  //   0x00, 0x82, 0x00, 0xAA,  0x00, 0xA5, 0x00, 0xAA,
-
-  //   // Clock 3
-  //   0x00, 0xA5, 0x00, 0xC8,  0x00, 0xC8, 0x00, 0xC8,
-  //   0x00, 0xC8, 0x00, 0xAA,  0x00, 0xEB, 0x00, 0xAA,
-
-  //   // Clock 4
-  //   0x00, 0xEB, 0x00, 0xC8,  0x01, 0x0E, 0x00, 0xC8,
-  //   0x01, 0x0E, 0x00, 0xAA,  0x01, 0x31, 0x00, 0xAA,
-
-  //   // Clock 5
-  //   0x01, 0x31, 0x00, 0xC8,  0x01, 0x54, 0x00, 0xC8,
-  //   0x01, 0x54, 0x00, 0xAA,  0x01, 0x77, 0x00, 0xAA,
-
-  //   // Clock 6
-  //   0x01, 0x77, 0x00, 0xC8,  0x01, 0x9A, 0x00, 0xC8,
-  //   0x01, 0x9A, 0x00, 0xAA,  0x01, 0xBD, 0x00, 0xAA,
-
-  //   // Clock 7
-  //   0x01, 0xBD, 0x00, 0xC8,  0x01, 0xE0, 0x00, 0xC8,
-  //   0x01, 0xE0, 0x00, 0xAA,  0x02, 0x03, 0x00, 0xAA,
-
-  //   // Clock 8
-  //   0x02, 0x03, 0x00, 0xC8,  0x02, 0x26, 0x00, 0xC8,
-  //   0x02, 0x26, 0x00, 0xAA,  0x02, 0x49, 0x00, 0xAA,
-
-  //   // Clock 9
-  //   0x02, 0x49, 0x00, 0xC8,  0x02, 0x6C, 0x00, 0xC8,
-  //   0x02, 0x6C, 0x00, 0xAA,  0x02, 0x8F, 0x00, 0xAA,
-
-  //   // Clock 10
-  //   0x02, 0x8F, 0x00, 0xC8,  0x02, 0xB2, 0x00, 0xC8,
-  //   0x02, 0xB2, 0x00, 0xAA,  0x02, 0xD5, 0x00, 0xAA,
-
-  //   // Clock 11
-  //   0x02, 0xD5, 0x00, 0xC8,  0x02, 0xF8, 0x00, 0xC8,
-  //   0x02, 0xF8, 0x00, 0xAA,  0x03, 0x1B, 0x00, 0xAA,
-
-  //   // Clock 12
-  //   0x03, 0x1B, 0x00, 0xC8,  0x03, 0x3E, 0x00, 0xC8,
-  //   0x03, 0x3E, 0x00, 0xAA,  0x03, 0x61, 0x00, 0xAA,
-
-  //   // Clock 13
-  //   0x03, 0x61, 0x00, 0xC8,  0x03, 0x84, 0x00, 0xC8,
-  //   0x03, 0x84, 0x00, 0xAA,  0x03, 0xA7, 0x00, 0xAA,
-
-  //   // Clock 14
-  //   0x03, 0xA7, 0x00, 0xC8,  0x03, 0xCA, 0x00, 0xC8,
-  //   0x03, 0xCA, 0x00, 0xAA,  0x03, 0xED, 0x00, 0xAA,
-
-  //   // Clock 15
-  //   0x03, 0xED, 0x00, 0xC8,  0x04, 0x10, 0x00, 0xC8,
-  //   0x04, 0x10, 0x00, 0xAA,  0x04, 0x33, 0x00, 0xAA,
-
-  //   0xFF, 0x00};
-  //  HAL_UART_Transmit(&huart2,sendBuffer,sizeof(sendBuffer),500);
-
-  //  uint8_t sendBuffer_2[] = {0x5A, 0xA5, 0x05, 0x82, 0x18, 0xF7, 0x00, 0x02};            // SP offset 7 Low
-  //  HAL_UART_Transmit(&huart2,sendBuffer_2,sizeof(sendBuffer_2),500);
-
-
-    // Active the notification
-  	TxHeader.DLC = 6;
-    TxHeader.StdId = 0x103;
-    TxHeader.IDE = CAN_ID_STD;
-    TxHeader.RTR = CAN_RTR_DATA;
-
-    uint8_t data_tx[6] = {'H','E','L','L','O','2'};
+  isotp_init_link(&CAN_iso, 0x471, can_iso_send_buf , sizeof(can_iso_send_buf)
+		  	  	  	  	  	  	  	, can_iso_recv_buf, sizeof(can_iso_recv_buf));
 
 
   /* start the CAN */
@@ -325,15 +267,8 @@ int main(void)
 
   HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
-
-
-
-//
-
-
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-
+  // uint32_t pre;
+  // pre = 0; 
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -343,8 +278,16 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-      HAL_CAN_AddTxMessage(&hcan1, &TxHeader, data_tx, &TxMailbox);
-	  HAL_Delay(2000);
+
+//    if (HAL_GetTick() - pre > 2000) {
+//      uint8_t send_data[200];
+//      memcpy(send_data,data_test,140);
+//      isotp_send(&CAN_iso, send_data, 140);
+//      pre = HAL_GetTick();
+//    }
+
+      // HAL_CAN_AddTxMessage(&hcan1, &TxHeader, data_tx, &TxMailbox);
+	    // HAL_Delay(2000);
 	  //  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_9);
 	  //  HAL_Delay(1000);
 //    WritePin_ICTest(IC_test_data_1);
@@ -356,28 +299,86 @@ int main(void)
 //      // ADC_DUT1 = ADS1115_single_getdata(&ADS1115, CHANNEL_AIN0_GND);
 //    }
 //    Read_ADC_IC_test(&ADS1115,channel_read_adc,ADC_data);
-//	  Control_Output_IC_Test(Latch_IC4,data_output);
-//	  Control_Output_IC_Test(Latch_IC5,data_output);
-//	  Control_Output_IC_Test(Latch_IC6,data_output);
 //	  HAL_Delay(10);
-	  // printf("SWO Debug!!!\n");
-    //    HAL_Delay(1000);
-
-	  // HAL_Delay(1000);
-
-//	  for (int i = 0; i < sizeof(sendBuffer); i++) {
-//	      HAL_UART_Transmit(&huart2, &sendBuffer[i], 1, 500);
-//	  }
-//	  HAL_UART_Transmit(&huart2,sendBuffer,sizeof(sendBuffer),500);
-
-//	  HAL_Delay(3000);
-
-//	  if (RxCAn == 1) {
-//	  		  TxData[0] = RxData[0];
-//	  		  TxData[1] = RxData[1] + 5;
-//	  		  HAL_Delay(1000);
-//	  		  HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox);
-//	  	  }
+    if (flag_run_test) {
+      /* First test short circuit */
+      switch (Control_IC_test.cur_case) {
+        case TEST_SHORT_CIRCUIT : {
+          /* setup float pin IC test, enable PULLUP,PULLDOWN */
+          Control_IC_test.data_control_testing = &Data_test_short_circuit;
+          WritePin_ICTest(Control_IC_test.data_control_testing);
+          TurnOn_short_circuit();
+          Control_IC_test.result_short_circuit = malloc(20 * sizeof(float));
+          /* read the adc pin */
+          for (uint8_t i = 0; i < 20; i++) {
+            Read_ADC_IC_test(&ADS1115,i,Control_IC_test.result_short_circuit);
+          }
+          TurnOff_short_circuit();
+          memcpy(ADC_data,Control_IC_test.result_short_circuit,20*4);
+          Control_IC_test.cur_case = TEST_FUNCTION;
+        }
+        case TEST_FUNCTION : {
+          /* convert data test to data control IC test */
+          Control_IC_test.data_control_testing = malloc(num_case * num_pin_control);
+          count_case = 0;
+          ptr_data_test = strtok(data_test,"\n");
+          while (ptr_data_test != NULL) {
+            convert_data_test(num_pin,ptr_data_test,(Control_IC_test.data_control_testing + (num_pin_control * count_case)));
+            memcpy(buffer,Control_IC_test.data_control_testing + (num_pin_control * count_case),20);
+            count_case++;
+            ptr_data_test = strtok(NULL,"\n"); /* go to next case test data */
+          }
+          /* control pin with data test */
+          TurnOff_short_circuit();
+          Control_IC_test.result_test_function = malloc(num_case * num_pin);
+          count_case = 0;
+          while (count_case < num_case) {
+            WritePin_ICTest(Control_IC_test.data_control_testing + (num_pin_control * count_case));
+//            memcpy(buffer,Control_IC_test.data_control_testing + (num_pin_control * count_case),20);
+            HAL_Delay(10);
+            ReadPin_IC_test(Control_IC_test.result_test_function + (num_pin * count_case),num_pin);
+//              memcpy(buffer,Control_IC_test.result_test_function + (num_pin * count_case),num_pin);
+            count_case++;
+          }
+          memcpy(can_send_result_test,Control_IC_test.result_test_function,num_pin * num_case);
+          /* check result */
+          Control_IC_test.result_case = malloc(num_case * sizeof(uint8_t));
+          memset(Control_IC_test.result_case,1,num_case);
+          count_case = 0;
+          uint8_t data_convert;
+          ptr_data_test = strtok(data_test,"\n");
+          while (ptr_data_test != NULL) {
+            // uint8_t *result_case = (uint8_t *)(Control_IC_test.result_test_function + (num_pin * count_case));
+            // memcpy(buffer,result_case,num_pin);
+            for (uint8_t pin = 0; pin < num_pin; pin++) {
+              if (convert_data_compare(ptr_data_test[pin]) != can_send_result_test[pin + (count_case * num_pin)]) {
+                Control_IC_test.result_case[count_case] = 0;
+                break;
+              }
+            }
+            count_case++;
+            ptr_data_test = strtok(NULL,"\n");
+          }
+          memcpy(buffer,Control_IC_test.result_case,num_case);
+          Control_IC_test.cur_case = FINISH_TEST;
+        } break;
+        case FINISH_TEST : {
+          /* send data to master */
+          uint8_t total_data_send_can[500];
+          memcpy(total_data_send_can,Control_IC_test.result_test_function,num_case*num_pin);
+          // total_data_send_can[num_case*num_pin] = '\n';
+          memcpy(&total_data_send_can[num_case*num_pin+1],Control_IC_test.result_case,num_case);
+          /* convert data to char type */
+          for (uint16_t i = 0; i < ((num_case * num_pin) + num_case + 1); i++) {
+            total_data_send_can[i] = '0' + total_data_send_can[i];
+          }
+          total_data_send_can[num_case*num_pin] = '\0';
+          isotp_send(&CAN_iso,total_data_send_can,((num_case * num_pin) + num_case + 1));
+          flag_run_test = false;
+        } break;
+        default : break;
+      }
+    }
 
   }
   /* USER CODE END 3 */
@@ -466,10 +467,10 @@ static void MX_CAN1_Init(void)
   canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
   canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
   canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-  canfilterconfig.FilterIdHigh = 0x103<<5;
+  canfilterconfig.FilterIdHigh = 0x131<<5;
   canfilterconfig.FilterIdLow = 0;
-  canfilterconfig.FilterMaskIdHigh = 0x103<<5;
-  canfilterconfig.FilterMaskIdLow = 0x0000;
+  canfilterconfig.FilterMaskIdHigh = 0x131<<5;
+  canfilterconfig.FilterMaskIdLow = 0;
   canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
   canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
   canfilterconfig.SlaveStartFilterBank = 20;
@@ -495,7 +496,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.ClockSpeed = 200000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -747,8 +748,31 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, RxData);
-	RxCAn = 1;
+	uint8_t payload[200];
+	uint16_t act_size = 0;
+  isotp_on_can_message(&CAN_iso, RxData, RxHeader.DLC);
+  isotp_poll(&CAN_iso);
+  if (CAN_iso.receive_status == ISOTP_RECEIVE_STATUS_FULL) {
+	  isotp_receive(&CAN_iso, payload, sizeof(payload), &act_size);
+    /* Receive full data test */
+    memcpy(data_test,payload,act_size);
+    Control_IC_test.cur_case = TEST_SHORT_CIRCUIT;
+    flag_run_test = true;
+  }
+
 }
+
+//void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan) {
+//	  isotp_poll(&CAN_iso);
+//}
+//
+//void HAL_CAN_TxMailbox1CompleteCallback(CAN_HandleTypeDef *hcan) {
+//	  isotp_poll(&CAN_iso);
+//}
+//
+//void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan) {
+//	  isotp_poll(&CAN_iso);
+//}
 
 
 int _write(int file, char *ptr, int len) {
@@ -767,6 +791,29 @@ void delay_us(uint16_t delay_us) {
 	while(__HAL_TIM_GET_COUNTER(&htim1) < delay_us );
 }
 
+/* FUNCTION USING IN CAN ISO TP */
+int isotp_user_send_can(const uint32_t arbitration_id, const uint8_t* data, const uint8_t size) {
+  TxHeader.DLC = size;
+  TxHeader.StdId = arbitration_id;
+  TxHeader.IDE = CAN_ID_STD;
+  TxHeader.RTR = CAN_RTR_DATA;
+
+  if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, data, &TxMailbox) == HAL_OK) {
+	  //while (HAL_CAN_IsTxMessagePending(&hcan1, TxMailbox));
+	  return ISOTP_RET_OK;
+  }
+
+  return ISOTP_RET_ERROR;
+}
+
+
+uint32_t isotp_user_get_ms(void) {
+	return HAL_GetTick();
+}
+
+void isotp_user_debug(const char* message, ...) {
+  
+}
 
 
 /* USER CODE END 4 */

@@ -11,6 +11,7 @@ RM := rm -rf
 -include sources.mk
 -include os/port/subdir.mk
 -include os/subdir.mk
+-include lib/ISO_TP/subdir.mk
 -include lib/subdir.mk
 -include app/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk

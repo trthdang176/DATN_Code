@@ -32,7 +32,11 @@ lib/AT24Cxx.o: ../lib/AT24Cxx.c ../lib/AT24Cxx.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../lib/../Core/Inc/main.h ../lib/../Core/Inc/Testing_program.h \
- ../lib/../Core/Inc/main.h ../lib/../Core/Inc/../../os/os.h \
+ ../lib/../Core/Inc/main.h ../lib/../Core/Inc/../../lib/ISO_TP/isotp.h \
+ ../lib/../Core/Inc/../../lib/ISO_TP/isotp_defines.h \
+ ../lib/../Core/Inc/../../lib/ISO_TP/isotp_config.h \
+ ../lib/../Core/Inc/../../lib/ISO_TP/isotp_user.h \
+ ../lib/../Core/Inc/../../os/os.h \
  ../lib/../Core/Inc/../../os/port/os_port.h \
  ../lib/../Core/Inc/../../os/port/os_port.h
 ../lib/AT24Cxx.h:
@@ -71,6 +75,10 @@ lib/AT24Cxx.o: ../lib/AT24Cxx.c ../lib/AT24Cxx.h \
 ../lib/../Core/Inc/main.h:
 ../lib/../Core/Inc/Testing_program.h:
 ../lib/../Core/Inc/main.h:
+../lib/../Core/Inc/../../lib/ISO_TP/isotp.h:
+../lib/../Core/Inc/../../lib/ISO_TP/isotp_defines.h:
+../lib/../Core/Inc/../../lib/ISO_TP/isotp_config.h:
+../lib/../Core/Inc/../../lib/ISO_TP/isotp_user.h:
 ../lib/../Core/Inc/../../os/os.h:
 ../lib/../Core/Inc/../../os/port/os_port.h:
 ../lib/../Core/Inc/../../os/port/os_port.h:

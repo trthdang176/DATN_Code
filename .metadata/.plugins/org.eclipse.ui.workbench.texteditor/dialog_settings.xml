@@ -3,8 +3,11 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
-		<item value="FIFO0"/>
+		<item value="get_data_testing_ic"/>
+		<item value="data_send_test"/>
 		<item value="FIFO1"/>
+		<item value="WritePin_ICTest"/>
+		<item value="FIFO0"/>
 		<item value="TxData"/>
 		<item value="CAN_remote_transmission_request"/>
 		<item value="CAN_identifier_type"/>
@@ -15,14 +18,15 @@
 		<item value="Screen_CheckInput_Keyboard"/>
 		<item value="Write_Input_IC_TEST"/>
 		<item value="datacheck"/>
-		<item value="lastByte"/>
-		<item value="Screen_excute_RX_function"/>
-		<item value="dataRX"/>
 	</list>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item key="selection" value=""/>
 		<list key="findhistory">
 			<item value=""/>
 		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="646"/>
+		<item key="DIALOG_Y_ORIGIN" value="349"/>
 	</section>
 </section>

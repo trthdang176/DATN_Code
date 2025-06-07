@@ -34,6 +34,8 @@ extern "C" {
 #include <stdlib.h>   
 #include <string.h>
 #include "Testing_program.h"
+
+#include "../../lib/ISO_TP/isotp.h"
 #include "../../os/os.h"
 #include "../../os/port/os_port.h"
 
@@ -42,7 +44,8 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+extern IsoTpLink CAN_iso;
+extern uint32_t TxMailbox;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

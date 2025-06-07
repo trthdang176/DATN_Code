@@ -16,7 +16,6 @@ ADS115_Status ADS1115_Init(ADS1115_t *pADS1115, I2C_HandleTypeDef *i2c, uint16_t
         return ADS1115_Init_OK;
     }
     return ADS1115_Init_Fail;
-    HAL_Delay(1);
 }
 
 float ADS1115_single_getdata(ADS1115_t *pADS1115, MultiplexerConfig_t channel) {

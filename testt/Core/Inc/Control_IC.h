@@ -88,15 +88,16 @@ typedef struct {
 typedef enum {
     TEST_SHORT_CIRCUIT  = 0,
     TEST_FUNCTION          ,
-    TEST_RON
+    FINISH_TEST
 } Test_State_t;
 
 typedef struct {
     Test_State_t cur_state;
     uint8_t cur_case;
     uint8_t *data_control_testing;
-    uint8_t *result_short_circuit;
+    float *result_short_circuit;
     uint8_t *result_test_function;
+    uint8_t *result_case;
 } Control_IC_Test_t;
 
 void Control_IC_begin(void);
@@ -105,13 +106,8 @@ void Latch_IC_begin(void);
 
 void shift_out(uint8_t num, uint8_t *data);
 
-void Control_Input_IC_Test(uint8_t num, uint16_t data);
-void Control_Output_IC_Test(uint8_t num, uint8_t *array_data);
-
-void Control_Program_IC_Test(char *data, uint8_t numPin);
-
 void WritePin_ICTest(uint8_t *dataPin);
-void ReadPin_IC_test(uint8_t *dataPin);
+void ReadPin_IC_test(uint8_t *dataPin,uint8_t num_pin);
 
 void WritePin_Ron(uint8_t *dataPin);
 void WritePin_CurrentLeakage(uint8_t *dataPin);
@@ -119,5 +115,9 @@ void WritePin_CurrentLeakage(uint8_t *dataPin);
 void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf);
 
 void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control);
+uint8_t convert_data_compare(char c_input);
+
+void TurnOn_short_circuit(void);
+void TurnOff_short_circuit(void);
 
 #endif /* INC_CONTROL_IC_H_ */

@@ -1,0 +1,4 @@
+../app/app_can_bus.c:21:6:app_can_bus_init	16	static
+../app/app_can_bus.c:27:6:can_bus_ctor	16	static
+../app/app_can_bus.c:33:13:can_bus_init	16	static
+../app/app_can_bus.c:39:13:can_bus_dispatch	16	static

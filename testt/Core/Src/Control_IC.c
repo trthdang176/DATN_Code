@@ -235,9 +235,7 @@ void compute_outputLatchIC(uint8_t *dataIC_test, uint8_t (*data_out_latchIC)[num
 
             default : break;
         }
-
     }
-    
 }
 
 
@@ -280,7 +278,23 @@ void WritePin_CurrentLeakage(uint8_t *dataPin) {
     Write_data(11,dataPin);
 }
 
-void ReadPin_IC_test(uint8_t *dataPin) {
+void TurnOn_short_circuit(void) {
+    uint8_t data_pin[8] = {0,0,0,0,0,0,1,0};
+    Write_data(9,data_pin);
+    memset(data_pin,1,8);
+    Write_data(10,data_pin);
+    Write_data(11,data_pin);
+}
+
+void TurnOff_short_circuit(void) {
+    uint8_t data_pin[8] = {0,0,0,0,0,0,0,1};
+    Write_data(9,data_pin);
+    memset(data_pin,1,8);
+    Write_data(10,data_pin);
+    Write_data(11,data_pin);
+}
+
+void ReadPin_IC_test(uint8_t *dataPin,uint8_t num_pin) {
     for (uint8_t Pinx = 0; Pinx < NUM_PIN_IC_TEST; Pinx++) {
         switch (Pinx/8) {
             case 0 : {
@@ -300,7 +314,17 @@ void ReadPin_IC_test(uint8_t *dataPin) {
             } break;
             default : break;
         }
+        HAL_Delay(5);
         dataPin[Pinx] = HAL_GPIO_ReadPin(PIN_SIGx[Pinx%8].Port_x,PIN_SIGx[Pinx%8].PIN_x);
+    }
+    if (num_pin == 18) {
+        for (uint8_t i = 9; i < num_pin; i++) {
+            dataPin[i] = dataPin[i + 2];
+        }
+    } else if (num_pin == 16) {
+        for (uint8_t i = 8; i < num_pin; i++) {
+            dataPin[i] = dataPin[i + 4];
+        }
     }
 }
 
@@ -312,12 +336,12 @@ void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf) {
         HAL_GPIO_WritePin(PIN_ADC_ENx[i].Port_x,PIN_ADC_ENx[i].PIN_x,GPIO_PIN_SET);
     }
     HAL_GPIO_WritePin(PIN_ADC_ENx[pin/8].Port_x,PIN_ADC_ENx[pin/8].PIN_x,GPIO_PIN_RESET);
-
+    HAL_Delay(5);
     /* Control Select pin */
     HAL_GPIO_WritePin(PIN_ADC_Sx[0].Port_x,PIN_ADC_Sx[0].PIN_x,(GPIO_PinState)(pin & 0x01));        /* bit 1*/
     HAL_GPIO_WritePin(PIN_ADC_Sx[1].Port_x,PIN_ADC_Sx[1].PIN_x,(GPIO_PinState)((pin >> 1) & 0x01)); /* bit 2*/
     HAL_GPIO_WritePin(PIN_ADC_Sx[2].Port_x,PIN_ADC_Sx[2].PIN_x,(GPIO_PinState)((pin >> 2) & 0x01));
-
+    HAL_Delay(5);
     index_pin = pin/8;
     switch (index_pin) {
         case 0 : {
@@ -333,51 +357,6 @@ void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf) {
     }
     /* read value */
     data_buf[pin] = ADS1115_single_getdata(pADS1115,channel_adc);
-}
-
-void Control_ADC_pin(uint8_t pin) {
-
-}
-
-void Control_Input_IC_Test(uint8_t num, uint16_t data) {
-    /* Control the Latch IC with num */
-    HAL_GPIO_WritePin(PIN_LEx[num].Port_x,PIN_LEx[num].PIN_x,GPIO_PIN_SET);
-
-    /* Set the input data */
-    for (uint8_t i = 0; i < 8; i++) {
-        HAL_GPIO_WritePin(Pin_IC_Test[i].Port_x,Pin_IC_Test[i].PIN_x,(GPIO_PinState)(data >> i) & (0x01));
-    }
-
-    /* Lock Latch IC */
-    HAL_GPIO_WritePin(PIN_LEx[num].Port_x,PIN_LEx[num].PIN_x,GPIO_PIN_RESET);
-
-}
-
-void Control_Output_IC_Test(uint8_t num, uint8_t *array_data) {
-    /* Control the Latch IC with num */
-    HAL_GPIO_WritePin(PIN_LEx[num].Port_x,PIN_LEx[num].PIN_x,GPIO_PIN_SET);
-    // HAL_GPIO_WritePin(PIN_OEx[num-3].Port_x,PIN_OEx[num-3].PIN_x,GPIO_PIN_RESET);
-
-
-    /* Get the output data */
-    if (num == Latch_IC4) {
-        for (uint8_t i = 0; i < 8; i++) {
-            array_data[i] = HAL_GPIO_ReadPin(PIN_IC_Test_Output[i].Port_x,PIN_IC_Test_Output[i].PIN_x);
-        }
-    } else if (num == Latch_IC5) {
-        for (uint8_t i = 0; i < 4; i++) {
-            array_data[i+8] = HAL_GPIO_ReadPin(PIN_IC_Test_Output[i].Port_x,PIN_IC_Test_Output[i].PIN_x);
-        }
-    } else if (num == Latch_IC6) {
-        for (uint8_t i = 0; i < 8; i++) {
-            array_data[i+12] = HAL_GPIO_ReadPin(PIN_IC_Test_Output[i].Port_x,PIN_IC_Test_Output[i].PIN_x);
-        }
-    }
-    
-    /* Lock Latch IC */
-    HAL_GPIO_WritePin(PIN_LEx[num].Port_x,PIN_LEx[num].PIN_x,GPIO_PIN_RESET);
-    // HAL_GPIO_WritePin(PIN_OEx[num-3].Port_x,PIN_OEx[num-3].PIN_x,GPIO_PIN_SET);
-
 }
 
 uint8_t convert_character_input(char c_input) {
@@ -401,9 +380,24 @@ uint8_t convert_character_input(char c_input) {
     }
 }
 
+uint8_t convert_data_compare(char c_input) {
+    switch (c_input) {
+        case 'V' :
+        case 'H' :
+        case '1' : {
+            return 1;
+        } break;
+        case 'G' :
+        case 'L' :
+        case '0' : {
+            return 0;
+        } break;
+    }
+}
+
 void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control) {
     data_control[8]  = 2;
-    data_control[9]  = 1;
+    data_control[9]  = 0;
     data_control[10] = 0;
     data_control[11] = 2;
 
@@ -423,32 +417,3 @@ void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control) 
         }
     }
 }
-
-
-//void Control_Program_IC_Test(char *data, uint8_t numPin) {
-//    /* Get the data INPUT IC */
-//    uint16_t data_input = 0;
-//    for (uint8_t i = 0; i < numPin; i++) {
-//        switch (data[i]) {
-//            /* INPUT HIGH */
-//            case 'V' :
-//            case '1' : {
-//                data_input |= (1u << i);
-//            } break;
-//            /* INPUT LOW */
-//            case 'L' :
-//            case 'H' :
-//            case 'G' :
-//            case '0' : {
-//                data_input = data_input & ~(1u << i) ;
-//            } break;
-//            default :
-//                break;
-//
-//        }
-//    }
-
-    /* Control input IC Test */
-//    Control_Input_IC_Test(Latch_IC1,(uint8_t)(data_input&0xFF));
-//    Control_Input_IC_Test(Latch_IC1,(uint8_t)(data_input>>8));
-//}

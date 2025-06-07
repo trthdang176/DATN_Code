@@ -28,6 +28,7 @@ Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
 app \
 lib \
+lib/ISO_TP \
 os \
 os/port \
 

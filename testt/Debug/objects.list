@@ -31,6 +31,7 @@
 "./lib/AT24Cxx.o"
 "./lib/Common.o"
 "./lib/DWIN_HMI.o"
+"./lib/ISO_TP/isotp.o"
 "./os/bsp.o"
 "./os/os.o"
 "./os/port/os_port.o"

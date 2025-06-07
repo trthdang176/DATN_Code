@@ -145,8 +145,8 @@ int main(void)
 
 //  uint8_t test_eeprom_buf[500] = {0};
 //  uint8_t test_write_eeprom_buf[10] = {1,2,3,4,5,6,7,8,9,10};
-  // AT24Cxx_t pEeprom;
-  // AT24Cxx_Init(&pEeprom, 0x50, &hi2c1);
+  AT24Cxx_t pEeprom;
+  AT24Cxx_Init(&pEeprom, 0x50, &hi2c1);
 //  char text_program_1[] = "0";
 //  char *text_program_2 = "Program test2,74hc560,20";
 //  char *text_program_3 = "Program test3,74hc580,40";
@@ -186,49 +186,49 @@ int main(void)
 //	printf("SWO Debug!!!\n");
 //  }
 
-// BSP_init();
-//
-// Post_task_init();
-// static OS_event_t const *q_app_post[10];
-// OS_task_create(AO_taskPost,
-//   1,
-//   q_app_post,
-//   ARRAY_ELEMENT(q_app_post),
-//   (OS_event_t *)0 );
-//
-// eeprom_task_init(&hi2c1,EEPROM_ADDRESS);
-// static OS_event_t const *q_eeprom_event[10];
-// OS_task_create( AO_task_eeprom,
-//   1,
-//   q_eeprom_event,
-//   ARRAY_ELEMENT(q_eeprom_event),
-//   (OS_event_t *)0 );
-//
-//  uart_esp32_task_init(&huart1);
-//  static OS_event_t const *q_uart_esp32_event[10];
-//  OS_task_create(AO_task_uart_esp32,
-//  1,
-//  q_uart_esp32_event,
-//  ARRAY_ELEMENT(q_uart_esp32_event),
-//  (OS_event_t *)0);
-//
-//  BlinkyTest_app_init();
-//  static OS_event_t const *TestOS_blinky[10]; /* Event queue */
-//  OS_task_create(
-//    AO_BlinkyTest,
-//    1,
-//    TestOS_blinky,
-//    ARRAY_ELEMENT(TestOS_blinky),
-//    TestOS_Work()
-//  );
+ BSP_init();
 
-//  app_can_bus_init(&hcan);
-//  static OS_event_t const *Can_app_event[10];
-//  OS_task_create( AO_task_can_bus,
-//  1,
-//  Can_app_event,
-//  ARRAY_ELEMENT(Can_app_event),
-//  (OS_event_t *)0);
+ Post_task_init();
+ static OS_event_t const *q_app_post[10];
+ OS_task_create(AO_taskPost,
+   1,
+   q_app_post,
+   ARRAY_ELEMENT(q_app_post),
+   (OS_event_t *)0 );
+
+ eeprom_task_init(&hi2c1,EEPROM_ADDRESS);
+ static OS_event_t const *q_eeprom_event[10];
+ OS_task_create( AO_task_eeprom,
+   1,
+   q_eeprom_event,
+   ARRAY_ELEMENT(q_eeprom_event),
+   (OS_event_t *)0 );
+
+  uart_esp32_task_init(&huart1);
+  static OS_event_t const *q_uart_esp32_event[10];
+  OS_task_create(AO_task_uart_esp32,
+  1,
+  q_uart_esp32_event,
+  ARRAY_ELEMENT(q_uart_esp32_event),
+  (OS_event_t *)0);
+
+  BlinkyTest_app_init();
+  static OS_event_t const *TestOS_blinky[10]; /* Event queue */
+  OS_task_create(
+    AO_BlinkyTest,
+    1,
+    TestOS_blinky,
+    ARRAY_ELEMENT(TestOS_blinky),
+    TestOS_Work()
+  );
+
+  app_can_bus_init(&hcan);
+  static OS_event_t const *Can_app_event[10];
+  OS_task_create( AO_task_can_bus,
+  1,
+  Can_app_event,
+  ARRAY_ELEMENT(Can_app_event),
+  (OS_event_t *)0);
 
 
   //    uint8_t sendBuffer_3[] = {

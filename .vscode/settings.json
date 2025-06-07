@@ -12,7 +12,12 @@
     "type_traits": "c",
     "stm32f1xx_hal.h": "c",
     "stdint.h": "c",
-    "ads1115.h": "c"
+    "ads1115.h": "c",
+    "screen.h": "c",
+    "app_main.h": "c",
+    "app_eeprom_data.h": "c",
+    "at24cxx.h": "c",
+    "common.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

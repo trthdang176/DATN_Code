@@ -30,7 +30,10 @@ Core/Src/Control_IC.o: ../Core/Src/Control_IC.c ../Core/Inc/Control_IC.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/Testing_program.h ../Core/Inc/../../os/os.h \
+ ../Core/Inc/Testing_program.h ../Core/Inc/../../lib/ISO_TP/isotp.h \
+ ../Core/Inc/../../lib/ISO_TP/isotp_defines.h \
+ ../Core/Inc/../../lib/ISO_TP/isotp_config.h \
+ ../Core/Inc/../../lib/ISO_TP/isotp_user.h ../Core/Inc/../../os/os.h \
  ../Core/Inc/../../os/port/os_port.h ../Core/Inc/../../os/port/os_port.h \
  ../Core/Inc/../../lib/ADS1115.h ../Core/Inc/../../lib/../Core/Inc/main.h
 ../Core/Inc/Control_IC.h:
@@ -67,6 +70,10 @@ Core/Src/Control_IC.o: ../Core/Src/Control_IC.c ../Core/Inc/Control_IC.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/Testing_program.h:
+../Core/Inc/../../lib/ISO_TP/isotp.h:
+../Core/Inc/../../lib/ISO_TP/isotp_defines.h:
+../Core/Inc/../../lib/ISO_TP/isotp_config.h:
+../Core/Inc/../../lib/ISO_TP/isotp_user.h:
 ../Core/Inc/../../os/os.h:
 ../Core/Inc/../../os/port/os_port.h:
 ../Core/Inc/../../os/port/os_port.h:

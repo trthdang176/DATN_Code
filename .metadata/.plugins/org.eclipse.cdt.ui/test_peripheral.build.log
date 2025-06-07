@@ -1,10 +1,46 @@
-17:07:21 **** Incremental Build of configuration Debug for project test_peripheral ****
+17:19:56 **** Incremental Build of configuration Debug for project test_peripheral ****
 make -j12 all 
-arm-none-eabi-size  test_peripheral.elf 
-   text	   data	    bss	    dec	    hex	filename
-  50664	    524	   4068	  55256	   d7d8	test_peripheral.elf
-Finished building: default.size.stdout
- 
+arm-none-eabi-gcc "../lib/DS3231.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"lib/DS3231.d" -MT"lib/DS3231.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "lib/DS3231.o"
+In file included from ../lib/DS3231.c:1:
+../lib/DS3231.h:17:5: error: 'I2C_HandleTypeDef' redeclared as different kind of symbol
+   17 |     I2C_HandleTypeDef *i2c_port;
+      |     ^~~~~~~~~~~~~~~~~
+In file included from ../Core/Inc/stm32f1xx_hal_conf.h:298,
+                 from ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:29,
+                 from ../lib/../Core/Inc/main.h:30,
+                 from ../lib/DS3231.h:5:
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h:243:3: note: previous declaration of 'I2C_HandleTypeDef' with type 'I2C_HandleTypeDef'
+  243 | } I2C_HandleTypeDef;
+      |   ^~~~~~~~~~~~~~~~~
+../lib/DS3231.h:17:23: error: expected ',' or '}' before '*' token
+   17 |     I2C_HandleTypeDef *i2c_port;
+      |                       ^
+../lib/DS3231.h:23:27: error: unknown type name 'ADS1115_t'
+   23 | DS3231_Status DS3231_Init(ADS1115_t *pADS1115, I2C_HandleTypeDef *i2c, uint16_t dev_address);
+      |                           ^~~~~~~~~
+../lib/DS3231.h:23:48: error: expected declaration specifiers or '...' before 'I2C_HandleTypeDef'
+   23 | DS3231_Status DS3231_Init(ADS1115_t *pADS1115, I2C_HandleTypeDef *i2c, uint16_t dev_address);
+      |                                                ^~~~~~~~~~~~~~~~~
+../lib/DS3231.h:24:32: error: unknown type name 'ADS1115_t'
+   24 | DS3231_Status DS3231_Read_time(ADS1115_t *pADS1115, uint8_t *data_read);
+      |                                ^~~~~~~~~
+../lib/DS3231.c:6:27: error: unknown type name 'ADS1115_t'
+    6 | DS3231_Status DS3231_Init(ADS1115_t *pADS1115, I2C_HandleTypeDef *i2c, uint16_t dev_address) {
+      |                           ^~~~~~~~~
+../lib/DS3231.c:6:48: error: expected declaration specifiers or '...' before 'I2C_HandleTypeDef'
+    6 | DS3231_Status DS3231_Init(ADS1115_t *pADS1115, I2C_HandleTypeDef *i2c, uint16_t dev_address) {
+      |                                                ^~~~~~~~~~~~~~~~~
+../lib/DS3231.c:16:32: error: unknown type name 'ADS1115_t'
+   16 | DS3231_Status DS3231_Read_time(ADS1115_t *pADS1115, uint8_t *data_read) {
+      |                                ^~~~~~~~~
+../lib/DS3231.c:35:12: warning: 'bcdToDec' defined but not used [-Wunused-function]
+   35 | static int bcdToDec(uint8_t val)
+      |            ^~~~~~~~
+../lib/DS3231.c:30:16: warning: 'decToBcd' defined but not used [-Wunused-function]
+   30 | static uint8_t decToBcd(int val)
+      |                ^~~~~~~~
+make: *** [lib/subdir.mk:28: lib/DS3231.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
 
-17:07:21 Build Finished. 0 errors, 0 warnings. (took 407ms)
+17:19:57 Build Failed. 9 errors, 2 warnings. (took 1s.58ms)
 

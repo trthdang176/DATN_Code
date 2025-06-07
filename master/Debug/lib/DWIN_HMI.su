@@ -1,0 +1,12 @@
+../lib/DWIN_HMI.c:3:6:DWIN_SetPage	32	static
+../lib/DWIN_HMI.c:10:6:DWIN_SetText	72	dynamic
+../lib/DWIN_HMI.c:24:6:DWIN_ClearText	16	static
+../lib/DWIN_HMI.c:28:6:DWIN_SetColorText	24	static
+../lib/DWIN_HMI.c:38:6:DWIN_SetVariable_Icon	24	static
+../lib/DWIN_HMI.c:46:6:DWIN_SetArray_Icon	72	dynamic
+../lib/DWIN_HMI.c:62:6:DWIN_Create_Basic_line	336	static
+../lib/DWIN_HMI.c:102:6:DWIN_SetWidth_Basic_line	24	static
+../lib/DWIN_HMI.c:110:9:DWIN_GetPage	24	static
+../lib/DWIN_HMI.c:118:6:CRC_Control	16	static
+../lib/DWIN_HMI.c:130:6:DWIN_SetCallback	16	static
+../lib/DWIN_HMI.c:135:6:DWIN_Listen	24	static

@@ -30,6 +30,7 @@
 "./app/test_os.o"
 "./lib/AT24Cxx.o"
 "./lib/Common.o"
+"./lib/DS3231.o"
 "./lib/DWIN_HMI.o"
 "./os/bsp.o"
 "./os/os.o"
