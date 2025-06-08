@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=RCK7 Pin=U2-12
+Removed Pin From Net: NetName=RCK8 Pin=U4-12
+Removed Pin From Net: NetName=RCK9 Pin=U6-12
+Added Pin To Net: NetName=RCK10 Pin=U2-12
+Added Pin To Net: NetName=RCK11 Pin=U4-12
+Added Pin To Net: NetName=RCK12 Pin=U6-12
+Added Pin To Net: NetName=RCK9 Pin=U7-13
+Added Pin To Net: NetName=RCK8 Pin=U7-15
+Added Pin To Net: NetName=RCK7 Pin=U7-17
+Added Pin To Net: NetName=RCK7 Pin=U9-12
+Added Pin To Net: NetName=RCK8 Pin=U10-12
+Added Pin To Net: NetName=RCK9 Pin=U11-12

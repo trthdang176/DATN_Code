@@ -1,0 +1,229 @@
+Removed Pin From Net: NetName=OE1 Pin=U7-3
+Removed Pin From Net: NetName=OE3 Pin=U7-5
+Removed Pin From Net: NetName=OE4 Pin=U7-6
+Removed Pin From Net: NetName=OE5 Pin=U7-10
+Removed Pin From Net: NetName=OE6 Pin=U7-11
+Removed Pin From Net: NetName=OE7 Pin=U7-12
+Removed Pin From Net: NetName=LE1 Pin=U8-3
+Removed Pin From Net: NetName=LE2 Pin=U8-4
+Removed Pin From Net: NetName=LE3 Pin=U8-5
+Removed Pin From Net: NetName=LE4 Pin=U8-6
+Removed Pin From Net: NetName=LE5 Pin=U8-10
+Removed Pin From Net: NetName=LE6 Pin=U8-11
+Removed Pin From Net: NetName=LE7 Pin=U8-12
+Added Pin To Net: NetName=LE2 Pin=U7-3
+Added Pin To Net: NetName=LE5 Pin=U7-5
+Added Pin To Net: NetName=OE5 Pin=U7-6
+Added Pin To Net: NetName=LE4 Pin=U7-10
+Added Pin To Net: NetName=OE4 Pin=U7-11
+Added Pin To Net: NetName=LE1 Pin=U7-12
+Added Pin To Net: NetName=OE1 Pin=U7-13
+Added Pin To Net: NetName=LE3 Pin=U8-3
+Added Pin To Net: NetName=OE3 Pin=U8-4
+Added Pin To Net: NetName=LE6 Pin=U8-5
+Added Pin To Net: NetName=OE6 Pin=U8-6
+Added Pin To Net: NetName=LE7 Pin=U8-10
+Added Pin To Net: NetName=OE7 Pin=U8-11
+Added Member To Class: ClassName=BD Member=Component * MicroSD
+Added Member To Class: ClassName=BD Member=Component BT1 SPST_DIP
+Added Member To Class: ClassName=BD Member=Component BT2 cr1220
+Added Member To Class: ClassName=BD Member=Component BT3 SPST_DIP
+Added Member To Class: ClassName=BD Member=Component BT4 SPST_DIP
+Added Member To Class: ClassName=BD Member=Component BZ1 DIP_BUZZER
+Added Member To Class: ClassName=BD Member=Component C1 10uF/50V
+Added Member To Class: ClassName=BD Member=Component C2 100nF/50V
+Added Member To Class: ClassName=BD Member=Component C3 100nF
+Added Member To Class: ClassName=BD Member=Component C4 100nF
+Added Member To Class: ClassName=BD Member=Component C5 10uF/50V
+Added Member To Class: ClassName=BD Member=Component C6 10uF/50V
+Added Member To Class: ClassName=BD Member=Component C7 10uF/50V
+Added Member To Class: ClassName=BD Member=Component C8 10uF/50V
+Added Member To Class: ClassName=BD Member=Component C9 10uF/50V
+Added Member To Class: ClassName=BD Member=Component C10 10uF/50V
+Added Member To Class: ClassName=BD Member=Component C11 10uF
+Added Member To Class: ClassName=BD Member=Component C12 100nF
+Added Member To Class: ClassName=BD Member=Component C13 100nF
+Added Member To Class: ClassName=BD Member=Component C14 10uF
+Added Member To Class: ClassName=BD Member=Component C15 100nF
+Added Member To Class: ClassName=BD Member=Component C16 100nF
+Added Member To Class: ClassName=BD Member=Component C17 100nF
+Added Member To Class: ClassName=BD Member=Component C18 100nF
+Added Member To Class: ClassName=BD Member=Component C19 100nF
+Added Member To Class: ClassName=BD Member=Component C20 100nF
+Added Member To Class: ClassName=BD Member=Component C21 100nF
+Added Member To Class: ClassName=BD Member=Component C22 20pF
+Added Member To Class: ClassName=BD Member=Component C23 20pF
+Added Member To Class: ClassName=BD Member=Component C24 2.2uF
+Added Member To Class: ClassName=BD Member=Component C25 2.2uF
+Added Member To Class: ClassName=BD Member=Component C26 100nF
+Added Member To Class: ClassName=BD Member=Component C27 10uF
+Added Member To Class: ClassName=BD Member=Component C28 10uF
+Added Member To Class: ClassName=BD Member=Component C29 10uF
+Added Member To Class: ClassName=BD Member=Component C30 100nF
+Added Member To Class: ClassName=BD Member=Component C31 100nF
+Added Member To Class: ClassName=BD Member=Component C32 10uF
+Added Member To Class: ClassName=BD Member=Component C33 100nF
+Added Member To Class: ClassName=BD Member=Component C34 10uF
+Added Member To Class: ClassName=BD Member=Component C35 100nF
+Added Member To Class: ClassName=BD Member=Component C36 100nF
+Added Member To Class: ClassName=BD Member=Component C37 100nF
+Added Member To Class: ClassName=BD Member=Component C38 100nF
+Added Member To Class: ClassName=BD Member=Component C39 100nF
+Added Member To Class: ClassName=BD Member=Component C40 100nF
+Added Member To Class: ClassName=BD Member=Component C41 100nF
+Added Member To Class: ClassName=BD Member=Component C42 100nF
+Added Member To Class: ClassName=BD Member=Component C43 100nF
+Added Member To Class: ClassName=BD Member=Component C44 100nF
+Added Member To Class: ClassName=BD Member=Component C45 100nF
+Added Member To Class: ClassName=BD Member=Component C46 100nF
+Added Member To Class: ClassName=BD Member=Component C47 100uF 50V
+Added Member To Class: ClassName=BD Member=Component C48 100uF 50V
+Added Member To Class: ClassName=BD Member=Component C53 100nF
+Added Member To Class: ClassName=BD Member=Component C54 100nF
+Added Member To Class: ClassName=BD Member=Component C55 100nF
+Added Member To Class: ClassName=BD Member=Component C56 100nF
+Added Member To Class: ClassName=BD Member=Component D1 Z3v3
+Added Member To Class: ClassName=BD Member=Component D2 SS54F
+Added Member To Class: ClassName=BD Member=Component D3 SS54F
+Added Member To Class: ClassName=BD Member=Component D4 SS54F
+Added Member To Class: ClassName=BD Member=Component D5 SS54F
+Added Member To Class: ClassName=BD Member=Component D6 SS54F
+Added Member To Class: ClassName=BD Member=Component D7 SS54F
+Added Member To Class: ClassName=BD Member=Component D8 1N4148WS
+Added Member To Class: ClassName=BD Member=Component F1 Fuse_Holder_1808
+Added Member To Class: ClassName=BD Member=Component FL1 FerriteBeads_0805
+Added Member To Class: ClassName=BD Member=Component H1 MalePin_1x4
+Added Member To Class: ClassName=BD Member=Component H2 MalePin_1x3
+Added Member To Class: ClassName=BD Member=Component H4 MalePin_1x2
+Added Member To Class: ClassName=BD Member=Component H5 MalePin_1x7
+Added Member To Class: ClassName=BD Member=Component IC1 TPS5430
+Added Member To Class: ClassName=BD Member=Component IC2 LD1117
+Added Member To Class: ClassName=BD Member=Component IC3 STM32F407VET6
+Added Member To Class: ClassName=BD Member=Component IC4 DS3231
+Added Member To Class: ClassName=BD Member=Component IC5 MCP2551
+Added Member To Class: ClassName=BD Member=Component IC6 LD1117
+Added Member To Class: ClassName=BD Member=Component IC7 ESP32-WROOM-32E
+Added Member To Class: ClassName=BD Member=Component J1 KF128-2P
+Added Member To Class: ClassName=BD Member=Component J2 KF128-4P
+Added Member To Class: ClassName=BD Member=Component J3 KF128-2P
+Added Member To Class: ClassName=BD Member=Component J USBA_X1
+Added Member To Class: ClassName=BD Member=Component L1 10uH
+Added Member To Class: ClassName=BD Member=Component L2 10uH
+Added Member To Class: ClassName=BD Member=Component M1 APM4015P
+Added Member To Class: ClassName=BD Member=Component M2 Si2302
+Added Member To Class: ClassName=BD Member=Component M3 Si2301
+Added Member To Class: ClassName=BD Member=Component M4 Si2302
+Added Member To Class: ClassName=BD Member=Component M5 Si2302
+Added Member To Class: ClassName=BD Member=Component M6 SI2302
+Added Member To Class: ClassName=BD Member=Component M7 SI2302
+Added Member To Class: ClassName=BD Member=Component M8 MOSFETN_SOT23
+Added Member To Class: ClassName=BD Member=Component M20 Si2301
+Added Member To Class: ClassName=BD Member=Component M21 Si2301
+Added Member To Class: ClassName=BD Member=Component M22 Si2301
+Added Member To Class: ClassName=BD Member=Component M23 Si2301
+Added Member To Class: ClassName=BD Member=Component M24 Si2301
+Added Member To Class: ClassName=BD Member=Component M25 Si2301
+Added Member To Class: ClassName=BD Member=Component M26 Si2301
+Added Member To Class: ClassName=BD Member=Component M27 Si2301
+Added Member To Class: ClassName=BD Member=Component O1 25MHz
+Added Member To Class: ClassName=BD Member=Component R1 10K
+Added Member To Class: ClassName=BD Member=Component R2 10K
+Added Member To Class: ClassName=BD Member=Component R3 100
+Added Member To Class: ClassName=BD Member=Component R4 1K
+Added Member To Class: ClassName=BD Member=Component R5 100
+Added Member To Class: ClassName=BD Member=Component R6 10K
+Added Member To Class: ClassName=BD Member=Component R7 10K
+Added Member To Class: ClassName=BD Member=Component R8 4.7K
+Added Member To Class: ClassName=BD Member=Component R9 100
+Added Member To Class: ClassName=BD Member=Component R10 10K
+Added Member To Class: ClassName=BD Member=Component R11 10K
+Added Member To Class: ClassName=BD Member=Component R12 10K
+Added Member To Class: ClassName=BD Member=Component R13 4.7K
+Added Member To Class: ClassName=BD Member=Component R14 1.8K
+Added Member To Class: ClassName=BD Member=Component R15 4.7K
+Added Member To Class: ClassName=BD Member=Component R16 10K
+Added Member To Class: ClassName=BD Member=Component R17 10K
+Added Member To Class: ClassName=BD Member=Component R18 10K
+Added Member To Class: ClassName=BD Member=Component R19 1K
+Added Member To Class: ClassName=BD Member=Component R20 4.7K
+Added Member To Class: ClassName=BD Member=Component R21 10K
+Added Member To Class: ClassName=BD Member=Component R22 1K
+Added Member To Class: ClassName=BD Member=Component R23 0
+Added Member To Class: ClassName=BD Member=Component R24 120
+Added Member To Class: ClassName=BD Member=Component R25 0
+Added Member To Class: ClassName=BD Member=Component R26 4.7K
+Added Member To Class: ClassName=BD Member=Component R27 10K
+Added Member To Class: ClassName=BD Member=Component R28 10K
+Added Member To Class: ClassName=BD Member=Component R29 10K
+Added Member To Class: ClassName=BD Member=Component R30 1K
+Added Member To Class: ClassName=BD Member=Component R31 1K
+Added Member To Class: ClassName=BD Member=Component R32 1K
+Added Member To Class: ClassName=BD Member=Component R33 1K
+Added Member To Class: ClassName=BD Member=Component R34 1K
+Added Member To Class: ClassName=BD Member=Component R35 1K
+Added Member To Class: ClassName=BD Member=Component R36 1K
+Added Member To Class: ClassName=BD Member=Component R37 1K
+Added Member To Class: ClassName=BD Member=Component R38 1K
+Added Member To Class: ClassName=BD Member=Component R39 1K
+Added Member To Class: ClassName=BD Member=Component R40 1K
+Added Member To Class: ClassName=BD Member=Component R41 1K
+Added Member To Class: ClassName=BD Member=Component R42 1K
+Added Member To Class: ClassName=BD Member=Component R43 1K
+Added Member To Class: ClassName=BD Member=Component R44 1K
+Added Member To Class: ClassName=BD Member=Component R45 1K
+Added Member To Class: ClassName=BD Member=Component R46 1K
+Added Member To Class: ClassName=BD Member=Component R47 1K
+Added Member To Class: ClassName=BD Member=Component R48 1K
+Added Member To Class: ClassName=BD Member=Component R49 1K
+Added Member To Class: ClassName=BD Member=Component R52 10K
+Added Member To Class: ClassName=BD Member=Component R53 10K
+Added Member To Class: ClassName=BD Member=Component R54 4.7K
+Added Member To Class: ClassName=BD Member=Component R55 4.7K
+Added Member To Class: ClassName=BD Member=Component R56 100
+Added Member To Class: ClassName=BD Member=Component R57 10K
+Added Member To Class: ClassName=BD Member=Component R74 10K
+Added Member To Class: ClassName=BD Member=Component R75 10K
+Added Member To Class: ClassName=BD Member=Component R76 100
+Added Member To Class: ClassName=BD Member=Component R77 100
+Added Member To Class: ClassName=BD Member=Component R78 0
+Added Member To Class: ClassName=BD Member=Component R79 0
+Added Member To Class: ClassName=BD Member=Component R80 10K
+Added Member To Class: ClassName=BD Member=Component R81 10K
+Added Member To Class: ClassName=BD Member=Component R82 100
+Added Member To Class: ClassName=BD Member=Component R83 100
+Added Member To Class: ClassName=BD Member=Component R84 0
+Added Member To Class: ClassName=BD Member=Component R85 0
+Added Member To Class: ClassName=BD Member=Component R86 10K
+Added Member To Class: ClassName=BD Member=Component R87 10K
+Added Member To Class: ClassName=BD Member=Component R88 100
+Added Member To Class: ClassName=BD Member=Component R89 100
+Added Member To Class: ClassName=BD Member=Component R90 0
+Added Member To Class: ClassName=BD Member=Component R91 0
+Added Member To Class: ClassName=BD Member=Component R92 10K
+Added Member To Class: ClassName=BD Member=Component R93 10K
+Added Member To Class: ClassName=BD Member=Component R94 100
+Added Member To Class: ClassName=BD Member=Component R95 100
+Added Member To Class: ClassName=BD Member=Component R96 0
+Added Member To Class: ClassName=BD Member=Component R97 0
+Added Member To Class: ClassName=BD Member=Component R130 Varistor_07D
+Added Member To Class: ClassName=BD Member=Component S1 SOCKET_1.27SMD
+Added Member To Class: ClassName=BD Member=Component U1 74HC573D,653
+Added Member To Class: ClassName=BD Member=Component U2 74HC573D,653
+Added Member To Class: ClassName=BD Member=Component U3 74HC164D,653
+Added Member To Class: ClassName=BD Member=Component U4 74HC573D,653
+Added Member To Class: ClassName=BD Member=Component U5 74HC573D,653
+Added Member To Class: ClassName=BD Member=Component U6 74HC573D,653
+Added Member To Class: ClassName=BD Member=Component U7 74HC164D,653
+Added Member To Class: ClassName=BD Member=Component U8 74HC164D,653
+Added Member To Class: ClassName=BD Member=Component U9 74HC573D,653
+Added Member To Class: ClassName=BD Member=Component U10 74HC573D,653
+Added Member To Class: ClassName=BD Member=Component U13 TXS0108EPWRG4
+Added Member To Class: ClassName=BD Member=Component U14 TXS0108EPWRG4
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB

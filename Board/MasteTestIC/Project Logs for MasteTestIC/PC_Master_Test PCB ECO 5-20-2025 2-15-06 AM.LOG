@@ -1,0 +1,64 @@
+Added Component: Designator=TP6(TestPoint_1MM)
+Added Component: Designator=TP7(TestPoint_1MM)
+Added Component: Designator=TP8(TestPoint_1MM)
+Added Component: Designator=TP9(TestPoint_1MM)
+Added Component: Designator=TP10(TestPoint_1MM)
+Added Component: Designator=TP11(TestPoint_1MM)
+Added Component: Designator=TP12(TestPoint_1MM)
+Added Component: Designator=TP13(TestPoint_1MM)
+Added Component: Designator=TP14(TestPoint_1MM)
+Added Component: Designator=TP15(TestPoint_1MM)
+Added Component: Designator=TP16(TestPoint_1MM)
+Added Component: Designator=TP17(TestPoint_1MM)
+Added Component: Designator=TP18(TestPoint_1MM)
+Added Component: Designator=TP19(TestPoint_1MM)
+Added Component: Designator=TP20(TestPoint_1MM)
+Added Component: Designator=TP21(TestPoint_1MM)
+Added Pin To Net: NetName=IO2 Pin=IC8-24
+Added Pin To Net: NetName=IO2 Pin=TP6-1
+Added Net: Name=IO2
+Added Pin To Net: NetName=IO4 Pin=IC8-26
+Added Pin To Net: NetName=IO4 Pin=TP8-1
+Added Net: Name=IO4
+Added Pin To Net: NetName=IO12 Pin=IC8-14
+Added Pin To Net: NetName=IO12 Pin=TP10-1
+Added Net: Name=IO12
+Added Pin To Net: NetName=IO13 Pin=IC8-16
+Added Pin To Net: NetName=IO13 Pin=TP12-1
+Added Net: Name=IO13
+Added Pin To Net: NetName=IO14 Pin=IC8-13
+Added Pin To Net: NetName=IO14 Pin=TP14-1
+Added Net: Name=IO14
+Added Pin To Net: NetName=IO15 Pin=IC8-23
+Added Pin To Net: NetName=IO15 Pin=TP16-1
+Added Net: Name=IO15
+Added Pin To Net: NetName=IO21 Pin=IC8-33
+Added Pin To Net: NetName=IO21 Pin=TP18-1
+Added Net: Name=IO21
+Added Pin To Net: NetName=IO22 Pin=IC8-36
+Added Pin To Net: NetName=IO22 Pin=TP20-1
+Added Net: Name=IO22
+Added Pin To Net: NetName=IO25 Pin=IC8-10
+Added Pin To Net: NetName=IO25 Pin=TP21-1
+Added Net: Name=IO25
+Added Pin To Net: NetName=IO26 Pin=IC8-11
+Added Pin To Net: NetName=IO26 Pin=TP7-1
+Added Net: Name=IO26
+Added Pin To Net: NetName=IO27 Pin=IC8-12
+Added Pin To Net: NetName=IO27 Pin=TP9-1
+Added Net: Name=IO27
+Added Pin To Net: NetName=IO32 Pin=IC8-8
+Added Pin To Net: NetName=IO32 Pin=TP11-1
+Added Net: Name=IO32
+Added Pin To Net: NetName=IO33 Pin=IC8-9
+Added Pin To Net: NetName=IO33 Pin=TP13-1
+Added Net: Name=IO33
+Added Pin To Net: NetName=IO34 Pin=IC8-6
+Added Pin To Net: NetName=IO34 Pin=TP15-1
+Added Net: Name=IO34
+Added Pin To Net: NetName=IO35 Pin=IC8-7
+Added Pin To Net: NetName=IO35 Pin=TP17-1
+Added Net: Name=IO35
+Added Pin To Net: NetName=VN Pin=IC8-5
+Added Pin To Net: NetName=VN Pin=TP19-1
+Added Net: Name=VN

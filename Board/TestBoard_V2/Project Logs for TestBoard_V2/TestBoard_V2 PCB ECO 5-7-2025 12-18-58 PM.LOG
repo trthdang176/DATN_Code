@@ -1,0 +1,26 @@
+Removed Pin From Net: NetName=STM32OUT_RCK12 Pin=IC2-61
+Removed Pin From Net: NetName=STM32OUT_SCK12 Pin=IC2-62
+Removed Pin From Net: NetName=STM32OUT_RCK11 Pin=IC2-63
+Removed Pin From Net: NetName=STM32OUT_SCK11 Pin=IC2-64
+Removed Pin From Net: NetName=STM32OUT_RCK10 Pin=IC2-65
+Removed Pin From Net: NetName=STM32OUT_SCK10 Pin=IC2-66
+Removed Pin From Net: NetName=STM32OUT_SI4 Pin=IC2-67
+Removed Pin From Net: NetName=STM32OUT_RCK5 Pin=IC2-79
+Removed Pin From Net: NetName=STM32OUT_SCK5 Pin=IC2-81
+Removed Pin From Net: NetName=STM32OUT_RCK4 Pin=IC2-82
+Removed Pin From Net: NetName=STM32OUT_SCK4 Pin=IC2-83
+Removed Pin From Net: NetName=STM32OUT_SI2 Pin=IC2-84
+Added Pin To Net: NetName=STM32OUT_RCK5 Pin=IC2-63
+Added Pin To Net: NetName=STM32OUT_SCK5 Pin=IC2-64
+Added Pin To Net: NetName=STM32OUT_RCK4 Pin=IC2-65
+Added Pin To Net: NetName=STM32OUT_SCK4 Pin=IC2-66
+Added Pin To Net: NetName=STM32OUT_SI2 Pin=IC2-67
+Added Pin To Net: NetName=STM32OUT_RCK12 Pin=IC2-77
+Added Pin To Net: NetName=STM32OUT_SCK12 Pin=IC2-78
+Added Pin To Net: NetName=STM32OUT_RCK11 Pin=IC2-79
+Added Pin To Net: NetName=STM32OUT_SCK11 Pin=IC2-80
+Added Pin To Net: NetName=STM32OUT_RCK10 Pin=IC2-81
+Added Pin To Net: NetName=STM32OUT_SCK10 Pin=IC2-82
+Added Pin To Net: NetName=STM32OUT_SI4 Pin=IC2-83
+Change Net Name : Old Net Name=STM32OUT_EN2 New Net Name=STM32OUT_EN3
+Change Net Name : Old Net Name=STM32OUT_EN3 New Net Name=STM32OUT_EN2

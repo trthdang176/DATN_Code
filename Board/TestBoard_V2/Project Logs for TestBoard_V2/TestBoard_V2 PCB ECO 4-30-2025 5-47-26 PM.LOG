@@ -1,0 +1,118 @@
+Change Component Designator: OldDesignator=C? NewDesignator=C29
+Change Component Designator: OldDesignator=C? NewDesignator=C30
+Change Component Designator: OldDesignator=C? NewDesignator=C31
+Change Component Designator: OldDesignator=C? NewDesignator=C32
+Change Component Designator: OldDesignator=C? NewDesignator=C33
+Change Component Designator: OldDesignator=C? NewDesignator=C34
+Change Component Designator: OldDesignator=FL? NewDesignator=FL2
+Change Component Designator: OldDesignator=M? NewDesignator=M23
+Change Component Designator: OldDesignator=M? NewDesignator=M24
+Change Component Designator: OldDesignator=M? NewDesignator=M25
+Change Component Designator: OldDesignator=M? NewDesignator=M26
+Change Component Designator: OldDesignator=M? NewDesignator=M27
+Change Component Designator: OldDesignator=M? NewDesignator=M28
+Change Component Designator: OldDesignator=M? NewDesignator=M29
+Change Component Designator: OldDesignator=M? NewDesignator=M30
+Change Component Designator: OldDesignator=M? NewDesignator=M31
+Change Component Designator: OldDesignator=M? NewDesignator=M32
+Change Component Designator: OldDesignator=M? NewDesignator=M33
+Change Component Designator: OldDesignator=M? NewDesignator=M34
+Change Component Designator: OldDesignator=M? NewDesignator=M35
+Change Component Designator: OldDesignator=M? NewDesignator=M36
+Change Component Designator: OldDesignator=M? NewDesignator=M37
+Change Component Designator: OldDesignator=M? NewDesignator=M38
+Change Component Designator: OldDesignator=M? NewDesignator=M39
+Change Component Designator: OldDesignator=M? NewDesignator=M40
+Change Component Designator: OldDesignator=M? NewDesignator=M41
+Change Component Designator: OldDesignator=M? NewDesignator=M42
+Change Component Designator: OldDesignator=R? NewDesignator=R125
+Change Component Designator: OldDesignator=R? NewDesignator=R126
+Change Component Designator: OldDesignator=R? NewDesignator=R127
+Change Component Designator: OldDesignator=R? NewDesignator=R128
+Change Component Designator: OldDesignator=R? NewDesignator=R129
+Change Component Designator: OldDesignator=R? NewDesignator=R130
+Change Component Designator: OldDesignator=R? NewDesignator=R131
+Change Component Designator: OldDesignator=R? NewDesignator=R132
+Change Component Designator: OldDesignator=R? NewDesignator=R133
+Change Component Designator: OldDesignator=R? NewDesignator=R134
+Change Component Designator: OldDesignator=R? NewDesignator=R135
+Change Component Designator: OldDesignator=R? NewDesignator=R136
+Change Component Designator: OldDesignator=R? NewDesignator=R137
+Change Component Designator: OldDesignator=R? NewDesignator=R138
+Change Component Designator: OldDesignator=R? NewDesignator=R139
+Change Component Designator: OldDesignator=R? NewDesignator=R140
+Change Component Designator: OldDesignator=R? NewDesignator=R141
+Change Component Designator: OldDesignator=R? NewDesignator=R142
+Change Component Designator: OldDesignator=R? NewDesignator=R143
+Change Component Designator: OldDesignator=R? NewDesignator=R144
+Change Component Designator: OldDesignator=R? NewDesignator=R145
+Change Component Designator: OldDesignator=R? NewDesignator=R146
+Change Component Designator: OldDesignator=R? NewDesignator=R147
+Change Component Designator: OldDesignator=R? NewDesignator=R148
+Change Component Designator: OldDesignator=R? NewDesignator=R149
+Change Component Designator: OldDesignator=R? NewDesignator=R150
+Change Component Designator: OldDesignator=R? NewDesignator=R151
+Change Component Designator: OldDesignator=R? NewDesignator=R152
+Change Component Designator: OldDesignator=R? NewDesignator=R153
+Change Component Designator: OldDesignator=R? NewDesignator=R154
+Change Component Designator: OldDesignator=R? NewDesignator=R155
+Change Component Designator: OldDesignator=R? NewDesignator=R156
+Change Component Designator: OldDesignator=R? NewDesignator=R157
+Change Component Designator: OldDesignator=R? NewDesignator=R158
+Change Component Designator: OldDesignator=R? NewDesignator=R159
+Change Component Designator: OldDesignator=R? NewDesignator=R160
+Change Component Designator: OldDesignator=R? NewDesignator=R161
+Change Component Designator: OldDesignator=R? NewDesignator=R162
+Change Component Designator: OldDesignator=R? NewDesignator=R163
+Change Component Designator: OldDesignator=R? NewDesignator=R164
+Change Component Designator: OldDesignator=R? NewDesignator=R165
+Change Component Designator: OldDesignator=R? NewDesignator=R166
+Change Component Designator: OldDesignator=R? NewDesignator=R167
+Change Component Designator: OldDesignator=R? NewDesignator=R168
+Change Component Designator: OldDesignator=R? NewDesignator=R169
+Change Component Designator: OldDesignator=R? NewDesignator=R170
+Change Component Designator: OldDesignator=U? NewDesignator=U7
+Change Component Designator: OldDesignator=U? NewDesignator=U8
+Change Component Designator: OldDesignator=U? NewDesignator=U9
+Change Component Designator: OldDesignator=U? NewDesignator=U10
+Change Component Designator: OldDesignator=U? NewDesignator=U11
+Change Net Name : Old Net Name=NetC?_1 New Net Name=NetC31_1
+Change Net Name : Old Net Name=NetR?_1 New Net Name=NetR162_1
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN2" already exists
+Add Net: Net with name "AIN3" already exists
+Added Pin To Net: NetName=NetR131_1 Pin=R131-1
+Added Pin To Net: NetName=NetR131_1 Pin=U7-10
+Added Net: Name=NetR131_1
+Added Pin To Net: NetName=NetR144_1 Pin=R144-1
+Added Pin To Net: NetName=NetR144_1 Pin=U8-2
+Added Net: Name=NetR144_1
+Added Pin To Net: NetName=NetR145_1 Pin=R145-1
+Added Pin To Net: NetName=NetR145_1 Pin=U8-1
+Added Net: Name=NetR145_1
+Added Pin To Net: NetName=NetR146_1 Pin=R146-1
+Added Pin To Net: NetName=NetR146_1 Pin=U9-10
+Added Net: Name=NetR146_1
+Added Pin To Net: NetName=NetR155_1 Pin=R155-1
+Added Pin To Net: NetName=NetR155_1 Pin=U10-10
+Added Net: Name=NetR155_1
+Add Net: Net with name "PULLDOWN" already exists
+Add Net: Net with name "PULLUP" already exists
+Add Net: Net with name "RCK7" already exists
+Add Net: Net with name "RCK8" already exists
+Add Net: Net with name "RCK9" already exists
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=Qu?c B?o & Thành Ðang

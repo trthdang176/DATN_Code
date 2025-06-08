@@ -1,0 +1,21 @@
+Removed Pin From Net: NetName=CAN_H Pin=H4-2
+Removed Pin From Net: NetName=CAN_H Pin=R24-1
+Added Pin To Net: NetName=CAN_H Pin=R24-2
+Added Pin To Net: NetName=CAN_H Pin=R25-1
+Added Pin To Net: NetName=NetH4_2 Pin=H4-2
+Added Pin To Net: NetName=NetH4_2 Pin=R24-1
+Added Net: Name=NetH4_2
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB

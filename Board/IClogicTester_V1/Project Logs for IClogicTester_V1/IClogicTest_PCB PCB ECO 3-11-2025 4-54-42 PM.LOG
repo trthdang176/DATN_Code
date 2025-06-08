@@ -1,0 +1,86 @@
+Removed Pin From Net: NetName=STM_OUT1 Pin=IC3-39
+Removed Pin From Net: NetName=STM_OUT2 Pin=IC3-40
+Removed Pin From Net: NetName=STM_OUT3 Pin=IC3-41
+Removed Pin From Net: NetName=STM_OUT4 Pin=IC3-42
+Removed Pin From Net: NetName=STM_OUT5 Pin=IC3-43
+Removed Pin From Net: NetName=STM_OUT6 Pin=IC3-44
+Removed Pin From Net: NetName=STM_OUT7 Pin=IC3-45
+Removed Pin From Net: NetName=STM_OUT8 Pin=IC3-46
+Removed Pin From Net: NetName=STM_OUT9 Pin=IC3-47
+Removed Pin From Net: NetName=STM_OUT10 Pin=IC3-48
+Removed Pin From Net: NetName=STM_OUT11 Pin=IC3-51
+Removed Pin From Net: NetName=STM_OUT12 Pin=IC3-52
+Removed Pin From Net: NetName=STM_OUT13 Pin=IC3-55
+Removed Pin From Net: NetName=STM_OUT14 Pin=IC3-56
+Removed Pin From Net: NetName=STM_OUT15 Pin=IC3-57
+Removed Pin From Net: NetName=STM_OUT16 Pin=IC3-58
+Removed Pin From Net: NetName=STM_OUT17 Pin=IC3-59
+Removed Pin From Net: NetName=STM_OUT18 Pin=IC3-60
+Removed Pin From Net: NetName=STM_OUT19 Pin=IC3-61
+Removed Pin From Net: NetName=STM_OUT20 Pin=IC3-62
+Removed Pin From Net: NetName=STM32_IN0 Pin=IC3-81
+Removed Pin From Net: NetName=STM32_IN1 Pin=IC3-82
+Removed Pin From Net: NetName=STM32_IN2 Pin=IC3-83
+Removed Pin From Net: NetName=STM32_IN3 Pin=IC3-84
+Removed Pin From Net: NetName=STM32_IN4 Pin=IC3-85
+Removed Pin From Net: NetName=STM32_IN5 Pin=IC3-86
+Removed Pin From Net: NetName=STM32_IN6 Pin=IC3-87
+Removed Pin From Net: NetName=STM32_IN7 Pin=IC3-88
+Added Pin To Net: NetName=STM_OUT8 Pin=IC3-39
+Added Pin To Net: NetName=STM_OUT7 Pin=IC3-40
+Added Pin To Net: NetName=STM_OUT6 Pin=IC3-41
+Added Pin To Net: NetName=STM_OUT5 Pin=IC3-42
+Added Pin To Net: NetName=STM_OUT4 Pin=IC3-43
+Added Pin To Net: NetName=STM_OUT3 Pin=IC3-44
+Added Pin To Net: NetName=STM_OUT2 Pin=IC3-45
+Added Pin To Net: NetName=STM_OUT1 Pin=IC3-46
+Added Pin To Net: NetName=STM_OUT12 Pin=IC3-47
+Added Pin To Net: NetName=STM_OUT11 Pin=IC3-48
+Added Pin To Net: NetName=STM_OUT10 Pin=IC3-51
+Added Pin To Net: NetName=STM_OUT9 Pin=IC3-52
+Added Pin To Net: NetName=STM_OUT20 Pin=IC3-55
+Added Pin To Net: NetName=STM_OUT19 Pin=IC3-56
+Added Pin To Net: NetName=STM_OUT18 Pin=IC3-57
+Added Pin To Net: NetName=STM_OUT17 Pin=IC3-58
+Added Pin To Net: NetName=STM_OUT16 Pin=IC3-59
+Added Pin To Net: NetName=STM_OUT15 Pin=IC3-60
+Added Pin To Net: NetName=STM_OUT14 Pin=IC3-61
+Added Pin To Net: NetName=STM_OUT13 Pin=IC3-62
+Added Pin To Net: NetName=STM32_IN7 Pin=IC3-81
+Added Pin To Net: NetName=STM32_IN6 Pin=IC3-82
+Added Pin To Net: NetName=STM32_IN5 Pin=IC3-83
+Added Pin To Net: NetName=STM32_IN4 Pin=IC3-84
+Added Pin To Net: NetName=STM32_IN3 Pin=IC3-85
+Added Pin To Net: NetName=STM32_IN2 Pin=IC3-86
+Added Pin To Net: NetName=STM32_IN1 Pin=IC3-87
+Added Pin To Net: NetName=STM32_IN0 Pin=IC3-88
+Added Pin To Net: NetName=NetIC3_38 Pin=IC3-38
+Added Pin To Net: NetName=NetIC3_38 Pin=R50-1
+Added Pin To Net: NetName=NetIC3_38 Pin=U11-10
+Added Net: Name=NetIC3_38
+Added Pin To Net: NetName=NetIC3_63 Pin=IC3-63
+Added Pin To Net: NetName=NetIC3_63 Pin=R53-1
+Added Pin To Net: NetName=NetIC3_63 Pin=U14-10
+Added Net: Name=NetIC3_63
+Added Pin To Net: NetName=NetIC3_89 Pin=IC3-89
+Added Pin To Net: NetName=NetIC3_89 Pin=R52-1
+Added Pin To Net: NetName=NetIC3_89 Pin=U13-10
+Added Net: Name=NetIC3_89
+Added Pin To Net: NetName=NetIC3_96 Pin=IC3-96
+Added Pin To Net: NetName=NetIC3_96 Pin=R51-1
+Added Pin To Net: NetName=NetIC3_96 Pin=U12-10
+Added Net: Name=NetIC3_96
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB

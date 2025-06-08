@@ -1,0 +1,14 @@
+Added Pin To Net: NetName=GND Pin=C47-2
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=RGB(0, 163, 110)
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=RGB(0, 163, 110)
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=RGB(0, 163, 110)
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=RGB(0, 163, 110)
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN2" already exists
+Add Net: Net with name "AIN3" already exists
+Add Net: Net with name "RCK7" already exists
+Add Net: Net with name "RCK8" already exists
+Add Net: Net with name "RCK9" already exists

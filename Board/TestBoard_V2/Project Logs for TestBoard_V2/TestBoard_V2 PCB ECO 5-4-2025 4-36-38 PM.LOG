@@ -1,0 +1,134 @@
+Added Pin To Net: NetName=NetD5_A Pin=D5-A
+Added Pin To Net: NetName=DUT1 Pin=D5-C
+Added Pin To Net: NetName=NetD6_A Pin=D6-A
+Added Pin To Net: NetName=DUT2 Pin=D6-C
+Added Pin To Net: NetName=NetD7_A Pin=D7-A
+Added Pin To Net: NetName=DUT3 Pin=D7-C
+Added Pin To Net: NetName=NetD8_A Pin=D8-A
+Added Pin To Net: NetName=DUT4 Pin=D8-C
+Added Pin To Net: NetName=NetD9_A Pin=D9-A
+Added Pin To Net: NetName=DUT5 Pin=D9-C
+Added Pin To Net: NetName=NetD10_A Pin=D10-A
+Added Pin To Net: NetName=DUT6 Pin=D10-C
+Added Pin To Net: NetName=NetD11_A Pin=D11-A
+Added Pin To Net: NetName=DUT7 Pin=D11-C
+Added Pin To Net: NetName=NetD12_A Pin=D12-A
+Added Pin To Net: NetName=DUT8 Pin=D12-C
+Added Pin To Net: NetName=NetD13_A Pin=D13-A
+Added Pin To Net: NetName=DUT9 Pin=D13-C
+Added Pin To Net: NetName=NetD14_A Pin=D14-A
+Added Pin To Net: NetName=DUT10 Pin=D14-C
+Added Pin To Net: NetName=DUT3 Pin=D15-A
+Added Pin To Net: NetName=NetD15_C Pin=D15-C
+Added Pin To Net: NetName=DUT1 Pin=D16-A
+Added Pin To Net: NetName=NetD16_C Pin=D16-C
+Added Pin To Net: NetName=DUT2 Pin=D17-A
+Added Pin To Net: NetName=NetD17_C Pin=D17-C
+Added Pin To Net: NetName=DUT5 Pin=D18-A
+Added Pin To Net: NetName=NetD18_C Pin=D18-C
+Added Pin To Net: NetName=DUT6 Pin=D19-A
+Added Pin To Net: NetName=NetD19_C Pin=D19-C
+Added Pin To Net: NetName=DUT4 Pin=D20-A
+Added Pin To Net: NetName=NetD20_C Pin=D20-C
+Added Pin To Net: NetName=DUT7 Pin=D21-A
+Added Pin To Net: NetName=NetD21_C Pin=D21-C
+Added Pin To Net: NetName=DUT8 Pin=D22-A
+Added Pin To Net: NetName=NetD22_C Pin=D22-C
+Added Pin To Net: NetName=DUT9 Pin=D23-A
+Added Pin To Net: NetName=NetD23_C Pin=D23-C
+Added Pin To Net: NetName=DUT10 Pin=D24-A
+Added Pin To Net: NetName=NetD24_C Pin=D24-C
+Added Pin To Net: NetName=NetD5_A Pin=R85-1
+Added Pin To Net: NetName=PULLUP Pin=R85-2
+Added Pin To Net: NetName=NetD6_A Pin=R86-1
+Added Pin To Net: NetName=PULLUP Pin=R86-2
+Added Pin To Net: NetName=NetD7_A Pin=R87-1
+Added Pin To Net: NetName=PULLUP Pin=R87-2
+Added Pin To Net: NetName=NetD8_A Pin=R88-1
+Added Pin To Net: NetName=PULLUP Pin=R88-2
+Added Pin To Net: NetName=NetD9_A Pin=R89-1
+Added Pin To Net: NetName=PULLUP Pin=R89-2
+Added Pin To Net: NetName=NetD10_A Pin=R90-1
+Added Pin To Net: NetName=PULLUP Pin=R90-2
+Added Pin To Net: NetName=NetD11_A Pin=R91-1
+Added Pin To Net: NetName=PULLUP Pin=R91-2
+Added Pin To Net: NetName=NetD12_A Pin=R92-1
+Added Pin To Net: NetName=PULLUP Pin=R92-2
+Added Pin To Net: NetName=NetD13_A Pin=R93-1
+Added Pin To Net: NetName=PULLUP Pin=R93-2
+Added Pin To Net: NetName=NetD14_A Pin=R94-1
+Added Pin To Net: NetName=PULLUP Pin=R94-2
+Added Pin To Net: NetName=PULLDOWN Pin=R95-1
+Added Pin To Net: NetName=NetD16_C Pin=R95-2
+Added Pin To Net: NetName=PULLDOWN Pin=R96-1
+Added Pin To Net: NetName=NetD17_C Pin=R96-2
+Added Pin To Net: NetName=PULLDOWN Pin=R97-1
+Added Pin To Net: NetName=NetD15_C Pin=R97-2
+Added Pin To Net: NetName=PULLDOWN Pin=R98-1
+Added Pin To Net: NetName=NetD20_C Pin=R98-2
+Added Pin To Net: NetName=PULLDOWN Pin=R99-1
+Added Pin To Net: NetName=NetD18_C Pin=R99-2
+Added Pin To Net: NetName=PULLDOWN Pin=R100-1
+Added Pin To Net: NetName=NetD19_C Pin=R100-2
+Added Pin To Net: NetName=PULLDOWN Pin=R101-1
+Added Pin To Net: NetName=NetD21_C Pin=R101-2
+Added Pin To Net: NetName=PULLDOWN Pin=R102-1
+Added Pin To Net: NetName=NetD22_C Pin=R102-2
+Added Pin To Net: NetName=PULLDOWN Pin=R103-1
+Added Pin To Net: NetName=NetD23_C Pin=R103-2
+Added Pin To Net: NetName=PULLDOWN Pin=R104-1
+Added Pin To Net: NetName=NetD24_C Pin=R104-2
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN2" already exists
+Add Net: Net with name "AIN3" already exists
+Add Net: Net with name "RCK7" already exists
+Add Net: Net with name "RCK8" already exists
+Add Net: Net with name "RCK9" already exists
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D5 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D6 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D7 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D8 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D9 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D10 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D11 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D12 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D13 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D14 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D15 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D16 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D17 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D18 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D19 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D20 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D21 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D22 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D23 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component D24 1N4148WS
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R85 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R86 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R87 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R88 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R89 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R90 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R91 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R92 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R93 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R94 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R95 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R96 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R97 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R98 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R99 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R100 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R101 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R102 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R103 6.8K
+Added Member To Class: ClassName=Qu?c B?o & Thành Ðang Member=Component R104 6.8K

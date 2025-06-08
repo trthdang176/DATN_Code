@@ -1,0 +1,36 @@
+Removed Pin From Net: NetName=GND Pin=BT1-1
+Removed Pin From Net: NetName=RST Pin=BT1-2
+Removed Member From Class: ClassName=B?o Ðang Member=BT1
+Added Component: Designator=S?(button 3x6mm)
+Add component (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/TS10-63-26-BE-250-SMT-TR/Same+Sky/view-part/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Same Sky"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "TS10-63-26-BE-250-SMT-TR"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/TS10-63-26-BE-250-SMT-TR/Same+Sky/view-part/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=S?-1
+Added Pin To Net: NetName=RST Pin=S?-2
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN2" already exists
+Add Net: Net with name "AIN3" already exists
+Add Net: Net with name "PULLDOWN" already exists
+Add Net: Net with name "PULLUP" already exists
+Add Net: Net with name "RCK7" already exists
+Add Net: Net with name "RCK8" already exists
+Add Net: Net with name "RCK9" already exists
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Added Member To Class: ClassName=B?o Ðang Member=Component S? Button
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=Qu?c B?o & Thành Ðang

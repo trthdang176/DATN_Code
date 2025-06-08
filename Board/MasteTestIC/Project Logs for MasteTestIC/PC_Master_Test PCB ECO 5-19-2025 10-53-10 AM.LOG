@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=GND Pin=H1-2
+Removed Pin From Net: NetName=SWIO Pin=H1-3
+Removed Pin From Net: NetName=SWCLK Pin=H1-4
+Removed Member From Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=H1
+Change Footprint: Cannot match pads with new footprint in component :J Footprint:USB_A_X1
+Added Component: Designator=H?(MALEPIN_1x4)
+Added Pin To Net: NetName=GND Pin=H?-2
+Added Pin To Net: NetName=SWIO Pin=H?-3
+Added Pin To Net: NetName=SWCLK Pin=H?-4
+Added Pin To Net: NetName=3V_SWD Pin=D7-A
+Added Pin To Net: NetName=3V_SWD Pin=H?-1
+Added Net: Name=3V_SWD

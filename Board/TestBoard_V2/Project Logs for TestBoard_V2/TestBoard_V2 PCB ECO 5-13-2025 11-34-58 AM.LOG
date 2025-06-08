@@ -1,0 +1,4 @@
+Removed Pin From Net: NetName=STM32OUT_TXS_OE3 Pin=IC2-48
+Removed Pin From Net: NetName=STM32OUT_TXS_OE1 Pin=IC2-52
+Added Pin To Net: NetName=STM32OUT_TXS_OE1 Pin=IC2-48
+Added Pin To Net: NetName=STM32OUT_TXS_OE3 Pin=IC2-52

@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BoasToolsConfig>
+  <ViewModels>
+    <BalanceViewModel>
+      <param name="Filltype" value="Rhombus" />
+      <param name="Copbalwidth" value="1.500mm" />
+      <param name="Copbaldistance" value="1.500mm" />
+      <param name="Copbalcrop" value="false" />
+      <param name="Unit" value="mm" />
+    </BalanceViewModel>
+    <IBomViewModel>
+      <param name="Title" value="IClogicTest_PCB" />
+      <param name="Company" value="MyCompany" />
+      <param name="Revision" value="Rev: v1" />
+      <param name="DarkMode" value="false" />
+      <param name="FabLayer" value="false" />
+      <param name="Nets" value="true" />
+      <param name="SelectByClick" value="true" />
+      <param name="HighlightFirstPin" value="false" />
+      <param name="AddFirstPin" value="true" />
+      <param name="ShowTexts" value="true" />
+      <param name="GroupDes" value="false" />
+      <param name="ShowValue" value="true" />
+      <param name="Selectedvalue" value="Value" />
+      <param name="ParameterCheckboxes" value="System.ComponentModel.BindingList`1[BoasTools.Helpers.CheckboxData]">
+        <checkbox parameter="[Comment]" checked="True" visible="True" />
+        <checkbox parameter="[Description]" checked="False" visible="False" />
+        <checkbox parameter="[DesignItemID]" checked="True" visible="True" />
+        <checkbox parameter="[Footprint]" checked="True" visible="True" />
+        <checkbox parameter="Arrow_Asia-Purchase-URL" checked="False" visible="False" />
+        <checkbox parameter="Arrow_Electronics-Purchase-URL" checked="False" visible="False" />
+        <checkbox parameter="Arrow_Europe-Purchase-URL" checked="False" visible="False" />
+        <checkbox parameter="Availability" checked="False" visible="False" />
+        <checkbox parameter="Case Code (Imperial)" checked="False" visible="False" />
+        <checkbox parameter="Case Code (Metric)" checked="False" visible="False" />
+        <checkbox parameter="Case/Package" checked="False" visible="False" />
+        <checkbox parameter="Category" checked="False" visible="False" />
+        <checkbox parameter="Check_prices" checked="False" visible="False" />
+        <checkbox parameter="Construction" checked="False" visible="False" />
+        <checkbox parameter="Contact Plating" checked="False" visible="False" />
+        <checkbox parameter="Depth" checked="False" visible="False" />
+        <checkbox parameter="DeviceName" checked="False" visible="False" />
+        <checkbox parameter="DeviceSetName" checked="False" visible="False" />
+        <checkbox parameter="DigiKey-Purchase-URL" checked="False" visible="False" />
+        <checkbox parameter="Features" checked="False" visible="False" />
+        <checkbox parameter="GateName_1" checked="False" visible="False" />
+        <checkbox parameter="Height" checked="False" visible="False" />
+        <checkbox parameter="Lead Free" checked="False" visible="False" />
+        <checkbox parameter="Length" checked="False" visible="False" />
+        <checkbox parameter="LibraryName" checked="False" visible="False" />
+        <checkbox parameter="Manufacturer" checked="False" visible="False" />
+        <checkbox parameter="Manufacturer Part Number" checked="False" visible="False" />
+        <checkbox parameter="Max Operating Temperature" checked="False" visible="False" />
+        <checkbox parameter="Max Power Dissipation" checked="False" visible="False" />
+        <checkbox parameter="MF" checked="False" visible="False" />
+        <checkbox parameter="Military Standard" checked="False" visible="False" />
+        <checkbox parameter="Min Operating Temperature" checked="False" visible="False" />
+        <checkbox parameter="Mouser-Purchase-URL" checked="False" visible="False" />
+        <checkbox parameter="MP" checked="False" visible="False" />
+        <checkbox parameter="Number of Terminations" checked="False" visible="False" />
+        <checkbox parameter="Package" checked="False" visible="False" />
+        <checkbox parameter="Packaging" checked="False" visible="False" />
+        <checkbox parameter="Power Rating" checked="False" visible="False" />
+        <checkbox parameter="Price" checked="False" visible="False" />
+        <checkbox parameter="Pricing" checked="False" visible="False" />
+        <checkbox parameter="Purchase-URL" checked="False" visible="False" />
+        <checkbox parameter="Reach SVHC Compliant" checked="False" visible="False" />
+        <checkbox parameter="Resistance Tolerance" checked="False" visible="False" />
+        <checkbox parameter="Resistor Type" checked="False" visible="False" />
+        <checkbox parameter="RoHS" checked="False" visible="False" />
+        <checkbox parameter="RoHS Compliant" checked="False" visible="False" />
+        <checkbox parameter="Series" checked="False" visible="False" />
+        <checkbox parameter="SnapEDA_Link" checked="False" visible="False" />
+        <checkbox parameter="Stock" checked="False" visible="False" />
+        <checkbox parameter="Supplier" checked="False" visible="False" />
+        <checkbox parameter="Supplier Part Number" checked="False" visible="False" />
+        <checkbox parameter="SymbolName_1" checked="False" visible="False" />
+        <checkbox parameter="Technology" checked="False" visible="False" />
+        <checkbox parameter="Temperature Coefficient" checked="False" visible="False" />
+        <checkbox parameter="Termination" checked="False" visible="False" />
+        <checkbox parameter="Texas_Instruments-Purchase-URL" checked="False" visible="False" />
+        <checkbox parameter="Tolerance" checked="False" visible="False" />
+        <checkbox parameter="Voltage Rating" checked="False" visible="False" />
+      </param>
+      <param name="CustomFabrication" value="false" />
+      <param name="FabricationColor" value="#FFBF5BBF" />
+      <param name="CustomSilkscreen" value="false" />
+      <param name="SilkscreenColor" value="#FFAAAA44" />
+      <param name="CustomNet" value="false" />
+      <param name="NetColor" value="#FFDEF5F1" />
+      <param name="CustomHighlight" value="false" />
+      <param name="HightlightColor" value="#FF00FF00" />
+      <param name="CustompadHighlight" value="false" />
+      <param name="PadHightlightColor" value="#FF00FF00" />
+      <param name="CustompinHighlight" value="false" />
+      <param name="PinHightlightColor" value="#FFFFB629" />
+      <param name="LayerView" value="FB" />
+      <param name="AddToProject" value="true" />
+      <param name="ID_Components" value="System.Collections.Generic.Dictionary`2[System.String,PCB.IPCB_Component]" />
+      <param name="IBomExpanded" value="false" />
+      <param name="ShowFootprint" value="false" />
+    </IBomViewModel>
+    <TrimViewModel>
+      <param name="TrimExpansion" value="0.150mm" />
+      <param name="TrimNeck" value="false" />
+      <param name="NeckWidth" value="0.200mm" />
+      <param name="TrimHoleSize" value="true" />
+      <param name="MinHoleSize" value="0.200mm" />
+      <param name="Unit" value="mm" />
+    </TrimViewModel>
+    <QtViewModel>
+      <param name="CodeType" value="QR" />
+      <param name="Size" value="10.000mm" />
+      <param name="Layer" value="TopOverlay" />
+      <param name="Invert" value="true" />
+      <param name="Unit" value="mm" />
+    </QtViewModel>
+    <PuncherViewModel>
+      <param name="Unit" value="mm" />
+      <param name="Punchdistance" value="1.500mm" />
+      <param name="Punchoffset" value="1.500mm" />
+    </PuncherViewModel>
+    <PreviewViewModel>
+      <param name="Parent" value="BoasTools.ViewModel.PanelViewModel" />
+      <param name="Picture_Transparency" value="50%" />
+      <param name="Picture_Width" value="100.000mm" />
+      <param name="Picture_Height" value="0.000mm" />
+      <param name="Unit" value="mm" />
+      <param name="Picture_DPI" value="1" />
+    </PreviewViewModel>
+  </ViewModels>
+  <Parameters>
+    <param name="Unitstxt" value="MMs" />
+    <param name="IBomExpanded" value="true" />
+    <param name="TrimExpanded" value="false" />
+    <param name="BalanceExpanded" value="false" />
+    <param name="QrExpanded" value="false" />
+    <param name="PreviewExpanded" value="false" />
+    <param name="PuncherExpanded" value="false" />
+    <param name="Visible" value="true" />
+  </Parameters>
+</BoasToolsConfig>

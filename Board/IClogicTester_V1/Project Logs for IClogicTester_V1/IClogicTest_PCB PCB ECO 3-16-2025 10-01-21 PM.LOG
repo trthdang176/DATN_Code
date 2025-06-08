@@ -1,0 +1,22 @@
+Removed Pin From Net: NetName=LE4 Pin=U7-10
+Removed Pin From Net: NetName=OE4 Pin=U7-11
+Removed Pin From Net: NetName=LE1 Pin=U7-12
+Removed Pin From Net: NetName=OE1 Pin=U7-13
+Added Pin To Net: NetName=LE1 Pin=U7-10
+Added Pin To Net: NetName=OE1 Pin=U7-11
+Added Pin To Net: NetName=LE4 Pin=U7-12
+Added Pin To Net: NetName=OE4 Pin=U7-13
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB

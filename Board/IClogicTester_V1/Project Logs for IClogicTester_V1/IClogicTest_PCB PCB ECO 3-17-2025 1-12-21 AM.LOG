@@ -1,0 +1,26 @@
+Removed Pin From Net: NetName=Buzzer Pin=IC3-7
+Removed Pin From Net: NetName=NetC3_2 Pin=IC3-53
+Removed Pin From Net: NetName=UART2_TX Pin=J-02
+Removed Pin From Net: NetName=UART2_RX Pin=J-03
+Added Pin To Net: NetName=Buzzer Pin=IC3-34
+Added Pin To Net: NetName=NetC3_2 Pin=IC3-96
+Added Pin To Net: NetName=UART2_RX Pin=J-02
+Added Pin To Net: NetName=UART2_TX Pin=J-03
+Added Pin To Net: NetName=NetIC3_97 Pin=IC3-97
+Added Pin To Net: NetName=NetIC3_97 Pin=R5-2
+Added Pin To Net: NetName=NetIC3_97 Pin=R9-1
+Added Net: Name=NetIC3_97
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB

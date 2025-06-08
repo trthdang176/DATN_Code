@@ -1,0 +1,32 @@
+Removed Pin From Net: NetName=5V Pin=D3-C
+Removed Member From Class: ClassName=BD Member=D3
+Change Component Footprint: Designator=H1 Old Footprint=JST-XH-04-PACKAGE-LONG-PAD New Footprint=MALEPIN_1x4
+Change Component Footprint: Designator=H5 Old Footprint=JST-XH-07-PACKAGE-LONG-PAD New Footprint=MALEPIN_1x7
+Change Component Comment : Designator=H1 Old Comment=XH2.54_4Y New Comment=MalePin_1x4
+Change Component Comment : Designator=H5 Old Comment=XH2.54_7Y New Comment=MalePin_1x7
+Added Component: Designator=D?(SMAF)
+Add component (AddParameter): Name = "DeviceName"; Value = ""; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DeviceSetName"; Value = "SS54F"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "GateName_1"; Value = "G$1"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LibraryName"; Value = "Uy_SMD"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "SMAF"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SymbolName_1"; Value = "DIODE_S"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=5V Pin=D?-C
+Added Pin To Net: NetName=NetD?_A Pin=D?-A
+Added Pin To Net: NetName=NetD?_A Pin=H1-1
+Added Net: Name=NetD?_A
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Added Member To Class: ClassName=BD Member=Component D? SS54F
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB

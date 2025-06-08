@@ -1,0 +1,7 @@
+Removed Pin From Net: NetName=Buzzer Pin=IC4-11
+Added Component: Designator=TP?(TestPoint_1MM)
+Added Pin To Net: NetName=Buzzer Pin=IC4-29
+Added Pin To Net: NetName=NetIC4_21 Pin=IC4-21
+Added Pin To Net: NetName=NetIC4_21 Pin=TP?-1
+Added Net: Name=NetIC4_21
+Added Member To Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=Component TP? TestPoint_1MM

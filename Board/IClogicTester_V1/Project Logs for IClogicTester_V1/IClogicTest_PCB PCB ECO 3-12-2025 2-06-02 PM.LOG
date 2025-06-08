@@ -1,0 +1,16 @@
+Added Pin To Net: NetName=NetIC3_55 Pin=IC3-55
+Added Pin To Net: NetName=NetIC3_55 Pin=R51-1
+Added Pin To Net: NetName=NetIC3_55 Pin=U12-10
+Added Net: Name=NetIC3_55
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Change Room Name: Old Name=BD_6 New Name=BD
+Change Room Name: Old Name=BD_5 New Name=BD
+Change Room Name: Old Name=BD_4 New Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD

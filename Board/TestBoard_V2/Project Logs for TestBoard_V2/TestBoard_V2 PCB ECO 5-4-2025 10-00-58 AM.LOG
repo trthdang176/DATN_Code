@@ -1,0 +1,62 @@
+Removed Pin From Net: NetName=DUT20 Pin=S1-11
+Removed Pin From Net: NetName=DUT19 Pin=S1-12
+Removed Pin From Net: NetName=DUT18 Pin=S1-13
+Removed Pin From Net: NetName=DUT17 Pin=S1-14
+Removed Pin From Net: NetName=DUT16 Pin=S1-15
+Removed Pin From Net: NetName=DUT15 Pin=S1-16
+Removed Pin From Net: NetName=DUT14 Pin=S1-17
+Removed Pin From Net: NetName=DUT13 Pin=S1-18
+Removed Pin From Net: NetName=DUT12 Pin=S1-19
+Removed Pin From Net: NetName=DUT11 Pin=S1-20
+Added Pin To Net: NetName=PULLDOWN Pin=R95-1
+Added Pin To Net: NetName=PULLDOWN Pin=R96-1
+Added Pin To Net: NetName=PULLDOWN Pin=R97-1
+Added Pin To Net: NetName=PULLDOWN Pin=R98-1
+Added Pin To Net: NetName=PULLDOWN Pin=R99-1
+Added Pin To Net: NetName=PULLDOWN Pin=R100-1
+Added Pin To Net: NetName=PULLDOWN Pin=R101-1
+Added Pin To Net: NetName=PULLDOWN Pin=R102-1
+Added Pin To Net: NetName=PULLDOWN Pin=R103-1
+Added Pin To Net: NetName=PULLDOWN Pin=R104-1
+Added Pin To Net: NetName=PULLDOWN Pin=R115-1
+Added Pin To Net: NetName=PULLDOWN Pin=R116-1
+Added Pin To Net: NetName=PULLDOWN Pin=R117-1
+Added Pin To Net: NetName=PULLDOWN Pin=R118-1
+Added Pin To Net: NetName=PULLDOWN Pin=R119-1
+Added Pin To Net: NetName=PULLDOWN Pin=R120-1
+Added Pin To Net: NetName=PULLDOWN Pin=R121-1
+Added Pin To Net: NetName=PULLDOWN Pin=R122-1
+Added Pin To Net: NetName=PULLDOWN Pin=R123-1
+Added Pin To Net: NetName=PULLDOWN Pin=R124-1
+Added Pin To Net: NetName=DUT11 Pin=S1-11
+Added Pin To Net: NetName=DUT12 Pin=S1-12
+Added Pin To Net: NetName=DUT13 Pin=S1-13
+Added Pin To Net: NetName=DUT14 Pin=S1-14
+Added Pin To Net: NetName=DUT15 Pin=S1-15
+Added Pin To Net: NetName=DUT16 Pin=S1-16
+Added Pin To Net: NetName=DUT17 Pin=S1-17
+Added Pin To Net: NetName=DUT18 Pin=S1-18
+Added Pin To Net: NetName=DUT19 Pin=S1-19
+Added Pin To Net: NetName=DUT20 Pin=S1-20
+Added Pin To Net: NetName=PULLUP Pin=U12-13
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN0" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN1" already exists
+Add Net: Net with name "AIN2" already exists
+Add Net: Net with name "AIN3" already exists
+Add Net: Net with name "RCK7" already exists
+Add Net: Net with name "RCK8" already exists
+Add Net: Net with name "RCK9" already exists
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Add Class: Class already exists: B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=B?o Ðang
+Added Room: Name=Qu?c B?o & Thành Ðang

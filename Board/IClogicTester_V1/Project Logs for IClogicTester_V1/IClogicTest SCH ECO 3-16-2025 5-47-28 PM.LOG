@@ -1,0 +1,13 @@
+Change Net Color : Net Name= 3v3ESP Old Net Color=Default New Net Color=RGB(158, 161, 117)
+Change Net Color : Net Name= Q_OUT0 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Net Color : Net Name= Q_OUT1 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Net Color : Net Name= Q_OUT2 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Net Color : Net Name= Q_OUT3 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Net Color : Net Name= Q_OUT4 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Net Color : Net Name= Q_OUT5 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Net Color : Net Name= Q_OUT6 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Net Color : Net Name= Q_OUT7 Old Net Color=RGB(50, 53, 67) New Net Color=RGB(140, 111, 186)
+Change Pin Designator/Name:  Old Designator=U8-3 Old Name=Q0 New Designator =Q2 New Name=5
+Change Pin Designator/Name:  Old Designator=U8-4 Old Name=Q1 New Designator =Q3 New Name=6
+Change Pin Designator/Name:  Old Designator=U8-5 Old Name=Q2 New Designator =Q0 New Name=3
+Change Pin Designator/Name:  Old Designator=U8-6 Old Name=Q3 New Designator =Q1 New Name=4

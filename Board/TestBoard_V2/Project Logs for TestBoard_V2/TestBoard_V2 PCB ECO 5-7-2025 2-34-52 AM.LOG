@@ -1,0 +1,4 @@
+Removed Pin From Net: NetName=STM32OUT_S1 Pin=IC2-47
+Removed Pin From Net: NetName=STM32OUT_S0 Pin=IC2-48
+Added Pin To Net: NetName=STM32OUT_S1 Pin=IC2-44
+Added Pin To Net: NetName=STM32OUT_S0 Pin=IC2-45

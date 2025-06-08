@@ -1,0 +1,36 @@
+Change Component Designator: OldDesignator=H? NewDesignator=H7
+Change Component Designator: OldDesignator=J? NewDesignator=J1
+Change Component Description : Designator=J4 Old Description=MCP4011-502E/SN, Digi Potentiometer 5kOhm 64-Position Serial-2 Wire 8-Pin SOIC New Description=MCP4011-502E/SN, Digi Potentiometer 5kOhm 64-Position Serial-2 Wire 8-Pin SOIC | Microchip Technology Inc. MCP4011-502E/SN
+Added Component: Designator=H1(MALEPIN_1x4)
+Added Component: Designator=TP1(TestPoint_1MM)
+Added Component: Designator=TP2(TestPoint_1MM)
+Added Component: Designator=TP3(TestPoint_1MM)
+Added Component: Designator=TP4(TestPoint_1MM)
+Added Component: Designator=TP5(TestPoint_1MM)
+Added Pin To Net: NetName=SPI2_SCK Pin=H1-2
+Added Pin To Net: NetName=SPI2_MISO Pin=H1-3
+Added Pin To Net: NetName=SPI2_MOSI Pin=H1-4
+Added Pin To Net: NetName=NetIC4_2 Pin=IC4-2
+Added Pin To Net: NetName=NetIC4_2 Pin=TP3-1
+Added Net: Name=NetIC4_2
+Added Pin To Net: NetName=NetIC4_3 Pin=IC4-3
+Added Pin To Net: NetName=NetIC4_3 Pin=TP4-1
+Added Net: Name=NetIC4_3
+Added Pin To Net: NetName=NetIC4_4 Pin=IC4-4
+Added Pin To Net: NetName=NetIC4_4 Pin=TP5-1
+Added Net: Name=NetIC4_4
+Added Pin To Net: NetName=NetIC4_10 Pin=IC4-10
+Added Pin To Net: NetName=NetIC4_10 Pin=TP1-1
+Added Net: Name=NetIC4_10
+Added Pin To Net: NetName=NetIC4_11 Pin=IC4-11
+Added Pin To Net: NetName=NetIC4_11 Pin=TP2-1
+Added Net: Name=NetIC4_11
+Added Pin To Net: NetName=SPI2_CS Pin=H1-1
+Added Pin To Net: NetName=SPI2_CS Pin=IC4-25
+Added Net: Name=SPI2_CS
+Added Member To Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=Component H1 MalePin_1x4
+Added Member To Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=Component TP1 TestPoint_1MM
+Added Member To Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=Component TP2 TestPoint_1MM
+Added Member To Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=Component TP3 TestPoint_1MM
+Added Member To Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=Component TP4 TestPoint_1MM
+Added Member To Class: ClassName=Bùi Duong Qu?c B?o & Tr?n Thành Ðang Member=Component TP5 TestPoint_1MM

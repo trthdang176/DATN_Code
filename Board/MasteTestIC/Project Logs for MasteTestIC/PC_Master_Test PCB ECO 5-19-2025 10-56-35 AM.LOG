@@ -1,0 +1,14 @@
+Added Component: Designator=J(USB_A_X1)
+Add component (AddParameter): Name = "Availability"; Value = "Unavailable"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Samtec"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "USB-A-S-S-B-SM2-TR"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/USB-A-S-S-B-SM2-TR/Samtec%20Inc./view-part/1341120/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=NetH2_2 Pin=J-01
+Added Pin To Net: NetName=ST_RX2_HMI Pin=J-02
+Added Pin To Net: NetName=ST_TX2_HMI Pin=J-03
+Added Pin To Net: NetName=GND Pin=J-04
+Added Pin To Net: NetName=GND Pin=J-S1
+Added Pin To Net: NetName=GND Pin=J-S2

@@ -1,0 +1,38 @@
+Removed Pin From Net: NetName=STM_OUT20 Pin=IC3-55
+Removed Pin From Net: NetName=STM_OUT19 Pin=IC3-56
+Removed Pin From Net: NetName=STM_OUT18 Pin=IC3-57
+Removed Pin From Net: NetName=STM_OUT17 Pin=IC3-58
+Removed Pin From Net: NetName=STM_OUT16 Pin=IC3-59
+Removed Pin From Net: NetName=STM_OUT15 Pin=IC3-60
+Removed Pin From Net: NetName=STM_OUT14 Pin=IC3-61
+Removed Pin From Net: NetName=STM_OUT13 Pin=IC3-62
+Added Pin To Net: NetName=STM_OUT20 Pin=IC3-57
+Added Pin To Net: NetName=STM_OUT19 Pin=IC3-58
+Added Pin To Net: NetName=STM_OUT18 Pin=IC3-59
+Added Pin To Net: NetName=STM_OUT17 Pin=IC3-60
+Added Pin To Net: NetName=STM_OUT16 Pin=IC3-61
+Added Pin To Net: NetName=STM_OUT15 Pin=IC3-62
+Added Pin To Net: NetName=STM_OUT14 Pin=IC3-63
+Added Pin To Net: NetName=STM_OUT13 Pin=IC3-64
+Added Pin To Net: NetName=NetIC3_56 Pin=IC3-56
+Added Pin To Net: NetName=NetIC3_56 Pin=R53-1
+Added Pin To Net: NetName=NetIC3_56 Pin=U14-10
+Added Net: Name=NetIC3_56
+Added Pin To Net: NetName=NetIC3_79 Pin=IC3-79
+Added Pin To Net: NetName=NetIC3_79 Pin=R52-1
+Added Pin To Net: NetName=NetIC3_79 Pin=U13-10
+Added Net: Name=NetIC3_79
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB

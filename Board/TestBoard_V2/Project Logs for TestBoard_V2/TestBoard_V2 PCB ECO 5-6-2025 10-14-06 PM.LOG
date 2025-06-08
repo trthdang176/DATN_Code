@@ -1,0 +1,32 @@
+Removed Pin From Net: NetName=STM32OUT_SI3 Pin=IC2-85
+Removed Pin From Net: NetName=STM32OUT_SCK7 Pin=IC2-86
+Removed Pin From Net: NetName=STM32OUT_RCK7 Pin=IC2-87
+Removed Pin From Net: NetName=STM32OUT_RCK8 Pin=IC2-89
+Removed Pin From Net: NetName=STM32OUT_SCK9 Pin=IC2-90
+Removed Pin From Net: NetName=STM32OUT_RCK9 Pin=IC2-91
+Added Pin To Net: NetName=STM32OUT_RCK9 Pin=IC2-85
+Added Pin To Net: NetName=STM32OUT_SCK9 Pin=IC2-86
+Added Pin To Net: NetName=STM32OUT_RCK8 Pin=IC2-87
+Added Pin To Net: NetName=STM32OUT_RCK7 Pin=IC2-89
+Added Pin To Net: NetName=STM32OUT_SCK7 Pin=IC2-90
+Added Pin To Net: NetName=STM32OUT_SI3 Pin=IC2-91
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)
+Change Net Color : Old Net Color=RGB(23, 132, 121) New Net Color=RGB(104, 109, 152)

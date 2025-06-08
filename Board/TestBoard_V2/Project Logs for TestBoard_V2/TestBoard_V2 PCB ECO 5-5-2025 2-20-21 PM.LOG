@@ -1,0 +1,11 @@
+Added Pin To Net: NetName=AIN0_IL Pin=R29-2
+Added Pin To Net: NetName=AIN0_IL Pin=U-1
+Added Pin To Net: NetName=AIN0_IL Pin=U5-4
+Added Net: Name=AIN0_IL
+Added Pin To Net: NetName=AIN1_IL Pin=R50-2
+Added Pin To Net: NetName=AIN1_IL Pin=U3-1
+Added Pin To Net: NetName=AIN1_IL Pin=U5-5
+Added Net: Name=AIN1_IL
+Add Net: Net with name "RCK7" already exists
+Add Net: Net with name "RCK8" already exists
+Add Net: Net with name "RCK9" already exists

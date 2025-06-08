@@ -1,0 +1,53 @@
+Added Pin To Net: NetName=AIN0_Ron Pin=M23-3
+Added Pin To Net: NetName=AIN0_Ron Pin=M25-3
+Added Pin To Net: NetName=AIN0_Ron Pin=M27-3
+Added Pin To Net: NetName=AIN0_Ron Pin=M29-3
+Added Pin To Net: NetName=AIN0_Ron Pin=M31-3
+Added Pin To Net: NetName=AIN0_Ron Pin=R127-2
+Added Pin To Net: NetName=AIN0_Ron Pin=R132-2
+Added Pin To Net: NetName=AIN0_Ron Pin=R136-2
+Added Pin To Net: NetName=AIN0_Ron Pin=R140-2
+Added Pin To Net: NetName=AIN0_Ron Pin=R147-2
+Added Pin To Net: NetName=AIN0_Ron Pin=U8-4
+Added Net: Name=AIN0_Ron
+Add Net: Net with name "AIN0" already exists
+Added Pin To Net: NetName=AIN1_Ron Pin=M33-3
+Added Pin To Net: NetName=AIN1_Ron Pin=M35-3
+Added Pin To Net: NetName=AIN1_Ron Pin=M37-3
+Added Pin To Net: NetName=AIN1_Ron Pin=M39-3
+Added Pin To Net: NetName=AIN1_Ron Pin=M41-3
+Added Pin To Net: NetName=AIN1_Ron Pin=R151-2
+Added Pin To Net: NetName=AIN1_Ron Pin=R156-2
+Added Pin To Net: NetName=AIN1_Ron Pin=R160-2
+Added Pin To Net: NetName=AIN1_Ron Pin=R165-2
+Added Pin To Net: NetName=AIN1_Ron Pin=R169-2
+Added Pin To Net: NetName=AIN1_Ron Pin=U8-5
+Added Net: Name=AIN1_Ron
+Add Net: Net with name "AIN1" already exists
+Added Pin To Net: NetName=AIN2_Ron Pin=M24-3
+Added Pin To Net: NetName=AIN2_Ron Pin=M26-3
+Added Pin To Net: NetName=AIN2_Ron Pin=M28-3
+Added Pin To Net: NetName=AIN2_Ron Pin=M30-3
+Added Pin To Net: NetName=AIN2_Ron Pin=M32-3
+Added Pin To Net: NetName=AIN2_Ron Pin=R128-2
+Added Pin To Net: NetName=AIN2_Ron Pin=R133-2
+Added Pin To Net: NetName=AIN2_Ron Pin=R137-2
+Added Pin To Net: NetName=AIN2_Ron Pin=R141-2
+Added Pin To Net: NetName=AIN2_Ron Pin=R148-2
+Added Pin To Net: NetName=AIN2_Ron Pin=U8-6
+Added Net: Name=AIN2_Ron
+Added Pin To Net: NetName=AIN3_Ron Pin=M34-3
+Added Pin To Net: NetName=AIN3_Ron Pin=M36-3
+Added Pin To Net: NetName=AIN3_Ron Pin=M38-3
+Added Pin To Net: NetName=AIN3_Ron Pin=M40-3
+Added Pin To Net: NetName=AIN3_Ron Pin=M42-3
+Added Pin To Net: NetName=AIN3_Ron Pin=R152-2
+Added Pin To Net: NetName=AIN3_Ron Pin=R157-2
+Added Pin To Net: NetName=AIN3_Ron Pin=R161-2
+Added Pin To Net: NetName=AIN3_Ron Pin=R166-2
+Added Pin To Net: NetName=AIN3_Ron Pin=R170-2
+Added Pin To Net: NetName=AIN3_Ron Pin=U8-7
+Added Net: Name=AIN3_Ron
+Add Net: Net with name "RCK7" already exists
+Add Net: Net with name "RCK8" already exists
+Add Net: Net with name "RCK9" already exists

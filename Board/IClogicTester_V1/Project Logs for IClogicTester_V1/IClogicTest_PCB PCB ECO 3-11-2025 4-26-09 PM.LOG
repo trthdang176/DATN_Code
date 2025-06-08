@@ -1,0 +1,391 @@
+Removed Pin From Net: NetName=3V Pin=M8-1
+Removed Pin From Net: NetName=STM_OUT1 Pin=M8-2
+Removed Pin From Net: NetName=DSA3 Pin=M8-3
+Removed Pin From Net: NetName=3V Pin=M9-1
+Removed Pin From Net: NetName=STM_OUT9 Pin=M9-2
+Removed Pin From Net: NetName=DSA1 Pin=M9-3
+Removed Pin From Net: NetName=3V Pin=M10-1
+Removed Pin From Net: NetName=STM_OUT2 Pin=M10-2
+Removed Pin From Net: NetName=DSB3 Pin=M10-3
+Removed Pin From Net: NetName=3V Pin=M11-1
+Removed Pin From Net: NetName=STM_OUT10 Pin=M11-2
+Removed Pin From Net: NetName=DSB1 Pin=M11-3
+Removed Pin From Net: NetName=3V Pin=M12-1
+Removed Pin From Net: NetName=STM_OUT3 Pin=M12-2
+Removed Pin From Net: NetName=CP3 Pin=M12-3
+Removed Pin From Net: NetName=3V Pin=M13-1
+Removed Pin From Net: NetName=STM_OUT11 Pin=M13-2
+Removed Pin From Net: NetName=CP1 Pin=M13-3
+Removed Pin From Net: NetName=3V Pin=M14-1
+Removed Pin From Net: NetName=STM_OUT4 Pin=M14-2
+Removed Pin From Net: NetName=MR3 Pin=M14-3
+Removed Pin From Net: NetName=3V Pin=M15-1
+Removed Pin From Net: NetName=STM_OUT12 Pin=M15-2
+Removed Pin From Net: NetName=MR1 Pin=M15-3
+Removed Pin From Net: NetName=3V Pin=M16-1
+Removed Pin From Net: NetName=STM_OUT5 Pin=M16-2
+Removed Pin From Net: NetName=DSA2 Pin=M16-3
+Removed Pin From Net: NetName=3V Pin=M17-1
+Removed Pin From Net: NetName=STM_OUT6 Pin=M17-2
+Removed Pin From Net: NetName=DSB2 Pin=M17-3
+Removed Pin From Net: NetName=3V Pin=M18-1
+Removed Pin From Net: NetName=STM_OUT7 Pin=M18-2
+Removed Pin From Net: NetName=CP2 Pin=M18-3
+Removed Pin From Net: NetName=3V Pin=M19-1
+Removed Pin From Net: NetName=STM_OUT8 Pin=M19-2
+Removed Pin From Net: NetName=MR2 Pin=M19-3
+Removed Pin From Net: NetName=3V Pin=M28-1
+Removed Pin From Net: NetName=STM_OUT13 Pin=M28-2
+Removed Pin From Net: NetName=D_IN0 Pin=M28-3
+Removed Pin From Net: NetName=3V Pin=M29-1
+Removed Pin From Net: NetName=STM32_IN0 Pin=M29-2
+Removed Pin From Net: NetName=OUT_Signal0 Pin=M29-3
+Removed Pin From Net: NetName=3V Pin=M30-1
+Removed Pin From Net: NetName=STM_OUT14 Pin=M30-2
+Removed Pin From Net: NetName=D_IN1 Pin=M30-3
+Removed Pin From Net: NetName=3V Pin=M31-1
+Removed Pin From Net: NetName=STM32_IN1 Pin=M31-2
+Removed Pin From Net: NetName=OUT_Signal1 Pin=M31-3
+Removed Pin From Net: NetName=3V Pin=M32-1
+Removed Pin From Net: NetName=STM_OUT15 Pin=M32-2
+Removed Pin From Net: NetName=D_IN2 Pin=M32-3
+Removed Pin From Net: NetName=3V Pin=M33-1
+Removed Pin From Net: NetName=STM32_IN2 Pin=M33-2
+Removed Pin From Net: NetName=OUT_Signal2 Pin=M33-3
+Removed Pin From Net: NetName=3V Pin=M34-1
+Removed Pin From Net: NetName=STM_OUT16 Pin=M34-2
+Removed Pin From Net: NetName=D_IN3 Pin=M34-3
+Removed Pin From Net: NetName=3V Pin=M35-1
+Removed Pin From Net: NetName=STM32_IN3 Pin=M35-2
+Removed Pin From Net: NetName=OUT_Signal3 Pin=M35-3
+Removed Pin From Net: NetName=3V Pin=M36-1
+Removed Pin From Net: NetName=STM_OUT17 Pin=M36-2
+Removed Pin From Net: NetName=D_IN4 Pin=M36-3
+Removed Pin From Net: NetName=3V Pin=M37-1
+Removed Pin From Net: NetName=STM32_IN4 Pin=M37-2
+Removed Pin From Net: NetName=OUT_Signal4 Pin=M37-3
+Removed Pin From Net: NetName=3V Pin=M38-1
+Removed Pin From Net: NetName=STM_OUT18 Pin=M38-2
+Removed Pin From Net: NetName=D_IN5 Pin=M38-3
+Removed Pin From Net: NetName=3V Pin=M39-1
+Removed Pin From Net: NetName=STM32_IN5 Pin=M39-2
+Removed Pin From Net: NetName=OUT_Signal5 Pin=M39-3
+Removed Pin From Net: NetName=3V Pin=M40-1
+Removed Pin From Net: NetName=STM_OUT19 Pin=M40-2
+Removed Pin From Net: NetName=D_IN6 Pin=M40-3
+Removed Pin From Net: NetName=3V Pin=M41-1
+Removed Pin From Net: NetName=STM32_IN6 Pin=M41-2
+Removed Pin From Net: NetName=OUT_Signal6 Pin=M41-3
+Removed Pin From Net: NetName=3V Pin=M42-1
+Removed Pin From Net: NetName=STM_OUT20 Pin=M42-2
+Removed Pin From Net: NetName=D_IN7 Pin=M42-3
+Removed Pin From Net: NetName=3V Pin=M43-1
+Removed Pin From Net: NetName=STM32_IN7 Pin=M43-2
+Removed Pin From Net: NetName=OUT_Signal7 Pin=M43-3
+Removed Pin From Net: NetName=STM_OUT4 Pin=R50-1
+Removed Pin From Net: NetName=STM_OUT3 Pin=R51-1
+Removed Pin From Net: NetName=STM_OUT2 Pin=R52-1
+Removed Pin From Net: NetName=STM_OUT1 Pin=R53-1
+Removed Pin From Net: NetName=DSA3 Pin=R54-1
+Removed Pin From Net: NetName=5V Pin=R54-2
+Removed Pin From Net: NetName=DSB3 Pin=R55-1
+Removed Pin From Net: NetName=5V Pin=R55-2
+Removed Pin From Net: NetName=CP3 Pin=R56-1
+Removed Pin From Net: NetName=5V Pin=R56-2
+Removed Pin From Net: NetName=MR3 Pin=R57-1
+Removed Pin From Net: NetName=5V Pin=R57-2
+Removed Pin From Net: NetName=STM_OUT12 Pin=R58-1
+Removed Pin From Net: NetName=3V Pin=R58-2
+Removed Pin From Net: NetName=STM_OUT11 Pin=R59-1
+Removed Pin From Net: NetName=3V Pin=R59-2
+Removed Pin From Net: NetName=STM_OUT10 Pin=R60-1
+Removed Pin From Net: NetName=3V Pin=R60-2
+Removed Pin From Net: NetName=STM_OUT9 Pin=R61-1
+Removed Pin From Net: NetName=3V Pin=R61-2
+Removed Pin From Net: NetName=DSA1 Pin=R62-1
+Removed Pin From Net: NetName=5V Pin=R62-2
+Removed Pin From Net: NetName=DSB1 Pin=R63-1
+Removed Pin From Net: NetName=5V Pin=R63-2
+Removed Pin From Net: NetName=CP1 Pin=R64-1
+Removed Pin From Net: NetName=5V Pin=R64-2
+Removed Pin From Net: NetName=MR1 Pin=R65-1
+Removed Pin From Net: NetName=5V Pin=R65-2
+Removed Pin From Net: NetName=STM_OUT8 Pin=R66-1
+Removed Pin From Net: NetName=3V Pin=R66-2
+Removed Pin From Net: NetName=STM_OUT7 Pin=R67-1
+Removed Pin From Net: NetName=3V Pin=R67-2
+Removed Pin From Net: NetName=STM_OUT6 Pin=R68-1
+Removed Pin From Net: NetName=3V Pin=R68-2
+Removed Pin From Net: NetName=STM_OUT5 Pin=R69-1
+Removed Pin From Net: NetName=3V Pin=R69-2
+Removed Pin From Net: NetName=DSA2 Pin=R70-1
+Removed Pin From Net: NetName=5V Pin=R70-2
+Removed Pin From Net: NetName=DSB2 Pin=R71-1
+Removed Pin From Net: NetName=5V Pin=R71-2
+Removed Pin From Net: NetName=CP2 Pin=R72-1
+Removed Pin From Net: NetName=5V Pin=R72-2
+Removed Pin From Net: NetName=MR2 Pin=R73-1
+Removed Pin From Net: NetName=5V Pin=R73-2
+Removed Pin From Net: NetName=STM_OUT16 Pin=R98-1
+Removed Pin From Net: NetName=3V Pin=R98-2
+Removed Pin From Net: NetName=STM_OUT15 Pin=R99-1
+Removed Pin From Net: NetName=3V Pin=R99-2
+Removed Pin From Net: NetName=STM_OUT14 Pin=R100-1
+Removed Pin From Net: NetName=3V Pin=R100-2
+Removed Pin From Net: NetName=STM_OUT13 Pin=R101-1
+Removed Pin From Net: NetName=3V Pin=R101-2
+Removed Pin From Net: NetName=D_IN0 Pin=R102-1
+Removed Pin From Net: NetName=5V Pin=R102-2
+Removed Pin From Net: NetName=D_IN1 Pin=R103-1
+Removed Pin From Net: NetName=5V Pin=R103-2
+Removed Pin From Net: NetName=D_IN2 Pin=R104-1
+Removed Pin From Net: NetName=5V Pin=R104-2
+Removed Pin From Net: NetName=D_IN3 Pin=R105-1
+Removed Pin From Net: NetName=5V Pin=R105-2
+Removed Pin From Net: NetName=STM32_IN3 Pin=R106-1
+Removed Pin From Net: NetName=3V Pin=R106-2
+Removed Pin From Net: NetName=STM32_IN2 Pin=R107-1
+Removed Pin From Net: NetName=3V Pin=R107-2
+Removed Pin From Net: NetName=STM32_IN1 Pin=R108-1
+Removed Pin From Net: NetName=3V Pin=R108-2
+Removed Pin From Net: NetName=STM32_IN0 Pin=R109-1
+Removed Pin From Net: NetName=3V Pin=R109-2
+Removed Pin From Net: NetName=OUT_Signal1 Pin=R110-1
+Removed Pin From Net: NetName=5V Pin=R110-2
+Removed Pin From Net: NetName=OUT_Signal2 Pin=R111-1
+Removed Pin From Net: NetName=5V Pin=R111-2
+Removed Pin From Net: NetName=OUT_Signal3 Pin=R112-1
+Removed Pin From Net: NetName=5V Pin=R112-2
+Removed Pin From Net: NetName=OUT_Signal0 Pin=R113-1
+Removed Pin From Net: NetName=5V Pin=R113-2
+Removed Pin From Net: NetName=STM_OUT20 Pin=R114-1
+Removed Pin From Net: NetName=3V Pin=R114-2
+Removed Pin From Net: NetName=STM_OUT19 Pin=R115-1
+Removed Pin From Net: NetName=3V Pin=R115-2
+Removed Pin From Net: NetName=STM_OUT18 Pin=R116-1
+Removed Pin From Net: NetName=3V Pin=R116-2
+Removed Pin From Net: NetName=STM_OUT17 Pin=R117-1
+Removed Pin From Net: NetName=3V Pin=R117-2
+Removed Pin From Net: NetName=D_IN4 Pin=R118-1
+Removed Pin From Net: NetName=5V Pin=R118-2
+Removed Pin From Net: NetName=D_IN5 Pin=R119-1
+Removed Pin From Net: NetName=5V Pin=R119-2
+Removed Pin From Net: NetName=D_IN6 Pin=R120-1
+Removed Pin From Net: NetName=5V Pin=R120-2
+Removed Pin From Net: NetName=D_IN7 Pin=R121-1
+Removed Pin From Net: NetName=5V Pin=R121-2
+Removed Pin From Net: NetName=STM32_IN7 Pin=R122-1
+Removed Pin From Net: NetName=3V Pin=R122-2
+Removed Pin From Net: NetName=STM32_IN6 Pin=R123-1
+Removed Pin From Net: NetName=3V Pin=R123-2
+Removed Pin From Net: NetName=STM32_IN5 Pin=R124-1
+Removed Pin From Net: NetName=3V Pin=R124-2
+Removed Pin From Net: NetName=STM32_IN4 Pin=R125-1
+Removed Pin From Net: NetName=3V Pin=R125-2
+Removed Pin From Net: NetName=OUT_Signal4 Pin=R126-1
+Removed Pin From Net: NetName=5V Pin=R126-2
+Removed Pin From Net: NetName=OUT_Signal5 Pin=R127-1
+Removed Pin From Net: NetName=5V Pin=R127-2
+Removed Pin From Net: NetName=OUT_Signal6 Pin=R128-1
+Removed Pin From Net: NetName=5V Pin=R128-2
+Removed Pin From Net: NetName=OUT_Signal7 Pin=R129-1
+Removed Pin From Net: NetName=5V Pin=R129-2
+Removed Member From Class: ClassName=DB Member=M8
+Removed Member From Class: ClassName=DB Member=M9
+Removed Member From Class: ClassName=DB Member=M10
+Removed Member From Class: ClassName=DB Member=M11
+Removed Member From Class: ClassName=DB Member=M12
+Removed Member From Class: ClassName=DB Member=M13
+Removed Member From Class: ClassName=DB Member=M14
+Removed Member From Class: ClassName=DB Member=M15
+Removed Member From Class: ClassName=DB Member=M16
+Removed Member From Class: ClassName=DB Member=M17
+Removed Member From Class: ClassName=DB Member=M18
+Removed Member From Class: ClassName=DB Member=M19
+Removed Member From Class: ClassName=DB Member=R52
+Removed Member From Class: ClassName=DB Member=R53
+Removed Member From Class: ClassName=DB Member=R54
+Removed Member From Class: ClassName=DB Member=R55
+Removed Member From Class: ClassName=DB Member=R56
+Removed Member From Class: ClassName=DB Member=R57
+Removed Member From Class: ClassName=DB Member=R58
+Removed Member From Class: ClassName=DB Member=R59
+Removed Member From Class: ClassName=DB Member=R60
+Removed Member From Class: ClassName=DB Member=R61
+Removed Member From Class: ClassName=DB Member=R62
+Removed Member From Class: ClassName=DB Member=R63
+Removed Member From Class: ClassName=DB Member=R64
+Removed Member From Class: ClassName=DB Member=R65
+Removed Member From Class: ClassName=DB Member=R66
+Removed Member From Class: ClassName=DB Member=R67
+Removed Member From Class: ClassName=DB Member=R68
+Removed Member From Class: ClassName=DB Member=R69
+Removed Member From Class: ClassName=DB Member=R70
+Removed Member From Class: ClassName=DB Member=R71
+Removed Member From Class: ClassName=DB Member=R72
+Removed Member From Class: ClassName=DB Member=R73
+Change Component Designator: OldDesignator=J? NewDesignator=J1
+Added Component: Designator=C49(C0603)
+Added Component: Designator=C50(C0603)
+Added Component: Designator=C51(C0603)
+Added Component: Designator=C52(C0603)
+Added Component: Designator=C53(C0603)
+Added Component: Designator=C54(C0603)
+Added Component: Designator=C55(C0603)
+Added Component: Designator=C56(C0603)
+Added Component: Designator=U11(SOP65P640X120-20N)
+Add component (AddParameter): Name = "Availability"; Value = "In Stock"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "TXS0108EPWRG4"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "TSSOP-20 Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Purchase-URL"; Value = "https://pricing.snapeda.com/search/part/TXS0108EPWRG4/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=U12(SOP65P640X120-20N)
+Add component (AddParameter): Name = "Availability"; Value = "In Stock"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "TXS0108EPWRG4"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "TSSOP-20 Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Purchase-URL"; Value = "https://pricing.snapeda.com/search/part/TXS0108EPWRG4/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=U13(SOP65P640X120-20N)
+Add component (AddParameter): Name = "Availability"; Value = "In Stock"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "TXS0108EPWRG4"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "TSSOP-20 Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Purchase-URL"; Value = "https://pricing.snapeda.com/search/part/TXS0108EPWRG4/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=U14(SOP65P640X120-20N)
+Add component (AddParameter): Name = "Availability"; Value = "In Stock"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "TXS0108EPWRG4"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "TSSOP-20 Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Price"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Purchase-URL"; Value = "https://pricing.snapeda.com/search/part/TXS0108EPWRG4/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/TXS0108EPWRG4/Texas+Instruments/view-part/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=C49-1
+Added Pin To Net: NetName=5V Pin=C49-2
+Added Pin To Net: NetName=GND Pin=C50-1
+Added Pin To Net: NetName=3V Pin=C50-2
+Added Pin To Net: NetName=GND Pin=C51-1
+Added Pin To Net: NetName=5V Pin=C51-2
+Added Pin To Net: NetName=GND Pin=C52-1
+Added Pin To Net: NetName=3V Pin=C52-2
+Added Pin To Net: NetName=GND Pin=C53-1
+Added Pin To Net: NetName=5V Pin=C53-2
+Added Pin To Net: NetName=GND Pin=C54-1
+Added Pin To Net: NetName=3V Pin=C54-2
+Added Pin To Net: NetName=GND Pin=C55-1
+Added Pin To Net: NetName=5V Pin=C55-2
+Added Pin To Net: NetName=GND Pin=C56-1
+Added Pin To Net: NetName=3V Pin=C56-2
+Added Pin To Net: NetName=STM_OUT1 Pin=U11-1
+Added Pin To Net: NetName=3V Pin=U11-2
+Added Pin To Net: NetName=STM_OUT2 Pin=U11-3
+Added Pin To Net: NetName=STM_OUT3 Pin=U11-4
+Added Pin To Net: NetName=STM_OUT4 Pin=U11-5
+Added Pin To Net: NetName=STM_OUT5 Pin=U11-6
+Added Pin To Net: NetName=STM_OUT6 Pin=U11-7
+Added Pin To Net: NetName=STM_OUT7 Pin=U11-8
+Added Pin To Net: NetName=STM_OUT8 Pin=U11-9
+Added Pin To Net: NetName=GND Pin=U11-11
+Added Pin To Net: NetName=MR2 Pin=U11-12
+Added Pin To Net: NetName=CP2 Pin=U11-13
+Added Pin To Net: NetName=DSB2 Pin=U11-14
+Added Pin To Net: NetName=DSA2 Pin=U11-15
+Added Pin To Net: NetName=MR1 Pin=U11-16
+Added Pin To Net: NetName=CP1 Pin=U11-17
+Added Pin To Net: NetName=DSB1 Pin=U11-18
+Added Pin To Net: NetName=5V Pin=U11-19
+Added Pin To Net: NetName=DSA1 Pin=U11-20
+Added Pin To Net: NetName=STM_OUT9 Pin=U12-1
+Added Pin To Net: NetName=3V Pin=U12-2
+Added Pin To Net: NetName=STM_OUT10 Pin=U12-3
+Added Pin To Net: NetName=STM_OUT11 Pin=U12-4
+Added Pin To Net: NetName=STM_OUT12 Pin=U12-5
+Added Pin To Net: NetName=GND Pin=U12-11
+Added Pin To Net: NetName=MR3 Pin=U12-16
+Added Pin To Net: NetName=CP3 Pin=U12-17
+Added Pin To Net: NetName=DSB3 Pin=U12-18
+Added Pin To Net: NetName=5V Pin=U12-19
+Added Pin To Net: NetName=DSA3 Pin=U12-20
+Added Pin To Net: NetName=STM32_IN0 Pin=U13-1
+Added Pin To Net: NetName=3V Pin=U13-2
+Added Pin To Net: NetName=STM32_IN1 Pin=U13-3
+Added Pin To Net: NetName=STM32_IN2 Pin=U13-4
+Added Pin To Net: NetName=STM32_IN3 Pin=U13-5
+Added Pin To Net: NetName=STM32_IN4 Pin=U13-6
+Added Pin To Net: NetName=STM32_IN5 Pin=U13-7
+Added Pin To Net: NetName=STM32_IN6 Pin=U13-8
+Added Pin To Net: NetName=STM32_IN7 Pin=U13-9
+Added Pin To Net: NetName=GND Pin=U13-11
+Added Pin To Net: NetName=OUT_Signal7 Pin=U13-12
+Added Pin To Net: NetName=OUT_Signal6 Pin=U13-13
+Added Pin To Net: NetName=OUT_Signal5 Pin=U13-14
+Added Pin To Net: NetName=OUT_Signal4 Pin=U13-15
+Added Pin To Net: NetName=OUT_Signal3 Pin=U13-16
+Added Pin To Net: NetName=OUT_Signal2 Pin=U13-17
+Added Pin To Net: NetName=OUT_Signal1 Pin=U13-18
+Added Pin To Net: NetName=5V Pin=U13-19
+Added Pin To Net: NetName=OUT_Signal0 Pin=U13-20
+Added Pin To Net: NetName=STM_OUT13 Pin=U14-1
+Added Pin To Net: NetName=3V Pin=U14-2
+Added Pin To Net: NetName=STM_OUT14 Pin=U14-3
+Added Pin To Net: NetName=STM_OUT15 Pin=U14-4
+Added Pin To Net: NetName=STM_OUT16 Pin=U14-5
+Added Pin To Net: NetName=STM_OUT17 Pin=U14-6
+Added Pin To Net: NetName=STM_OUT18 Pin=U14-7
+Added Pin To Net: NetName=STM_OUT19 Pin=U14-8
+Added Pin To Net: NetName=STM_OUT20 Pin=U14-9
+Added Pin To Net: NetName=GND Pin=U14-11
+Added Pin To Net: NetName=D_IN7 Pin=U14-12
+Added Pin To Net: NetName=D_IN6 Pin=U14-13
+Added Pin To Net: NetName=D_IN5 Pin=U14-14
+Added Pin To Net: NetName=D_IN4 Pin=U14-15
+Added Pin To Net: NetName=D_IN3 Pin=U14-16
+Added Pin To Net: NetName=D_IN2 Pin=U14-17
+Added Pin To Net: NetName=D_IN1 Pin=U14-18
+Added Pin To Net: NetName=5V Pin=U14-19
+Added Pin To Net: NetName=D_IN0 Pin=U14-20
+Added Pin To Net: NetName=NetR50_1 Pin=R50-1
+Added Pin To Net: NetName=NetR50_1 Pin=U11-10
+Added Net: Name=NetR50_1
+Added Pin To Net: NetName=NetR51_1 Pin=R51-1
+Added Pin To Net: NetName=NetR51_1 Pin=U12-10
+Added Net: Name=NetR51_1
+Added Pin To Net: NetName=NetR52_1 Pin=R52-1
+Added Pin To Net: NetName=NetR52_1 Pin=U13-10
+Added Net: Name=NetR52_1
+Added Pin To Net: NetName=NetR53_1 Pin=R53-1
+Added Pin To Net: NetName=NetR53_1 Pin=U14-10
+Added Net: Name=NetR53_1
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Add Class: Class already exists: BD
+Added Member To Class: ClassName=DB Member=Component C49 100nF
+Added Member To Class: ClassName=DB Member=Component C50 100nF
+Added Member To Class: ClassName=DB Member=Component C51 100nF
+Added Member To Class: ClassName=DB Member=Component C52 100nF
+Added Member To Class: ClassName=DB Member=Component U11 TXS0108EPWRG4
+Added Member To Class: ClassName=DB Member=Component U12 TXS0108EPWRG4
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=BD
+Added Room: Name=DB
