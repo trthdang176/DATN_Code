@@ -227,7 +227,7 @@ class LoginPage(tk.Frame):
         logo_frame.pack(pady=30)
         
         # List of logo files to look for
-        logo_files = ['logo1.png', 'logo2.png', 'logo3.png', 'logo.png']
+        logo_files = ['SPKT.png', 'LOGO_LAB.jpg']
         logos_loaded = 0
         
         for logo_file in logo_files:
