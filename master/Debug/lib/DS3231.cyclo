@@ -1,5 +1,5 @@
 ../lib/DS3231.c:6:15:DS3231_Init	2
-../lib/DS3231.c:16:15:DS3231_Read_time	2
-../lib/DS3231.c:32:15:DS3231_Write_time	2
-../lib/DS3231.c:49:16:decToBcd	1
-../lib/DS3231.c:54:12:bcdToDec	1
+../lib/DS3231.c:17:15:DS3231_Read_time	2
+../lib/DS3231.c:33:15:DS3231_Write_time	2
+../lib/DS3231.c:50:16:decToBcd	1
+../lib/DS3231.c:55:12:bcdToDec	1

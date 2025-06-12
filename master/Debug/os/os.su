@@ -8,6 +8,6 @@
 ../os/os.c:158:6:OS_TimeEvt_Stop	16	static,ignoring_inline_asm
 ../os/os.c:169:6:OS_TimeEvt_tick	16	static,ignoring_inline_asm
 ../os/os.c:196:6:OS_task_activate	32	static,ignoring_inline_asm
-../os/os.c:243:6:OS_priority_IRQ	16	static
-../os/os.c:255:6:OS_prio_setIRQ	16	static
-../os/os.c:261:6:OS_Test_setIRQ	16	static
+../os/os.c:244:6:OS_priority_IRQ	16	static
+../os/os.c:256:6:OS_prio_setIRQ	16	static
+../os/os.c:262:6:OS_Test_setIRQ	16	static

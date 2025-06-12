@@ -8,14 +8,15 @@ DS3231_Status DS3231_Init(DS3231_t *pDS3231, I2C_HandleTypeDef *i2c, uint16_t de
 
     pDS3231->dev_address = dev_address << 1;
     if (HAL_I2C_IsDeviceReady(pDS3231->i2c_port,pDS3231->dev_address,1,100) == HAL_OK) {
-        return DS3231_Init_OK;
+    	printf("Init DS3231 Success\n");
+      return DS3231_Init_OK;
     }
     return DS3231_Fail;
 }
 
 DS3231_Status DS3231_Read_time(DS3231_t *pDS3231, uint8_t *data_read) {
     uint8_t get_time[7];
-    if (HAL_I2C_Mem_Read(pDS3231->i2c_port, pDS3231->dev_address, 0x00, I2C_MEMADD_SIZE_8BIT, data_read, 7, 1000) != HAL_OK) {
+    if (HAL_I2C_Mem_Read(pDS3231->i2c_port, pDS3231->dev_address, 0x00, I2C_MEMADD_SIZE_8BIT, get_time, 7, 1000) != HAL_OK) {
       return DS3231_Fail;
     }
 	
@@ -29,13 +30,13 @@ DS3231_Status DS3231_Read_time(DS3231_t *pDS3231, uint8_t *data_read) {
   return DS3231_Write_OK;
 }
 
-DS3231_Status DS3231_Write_time(DS3231_t *pDS3231,uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year) {
+DS3231_Status DS3231_Write_time(DS3231_t *pDS3231,uint8_t sec, uint8_t min, uint8_t hour, uint8_t day, uint8_t month, uint8_t year) {
 	uint8_t set_time[7];
 	set_time[0] = decToBcd(sec);
 	set_time[1] = decToBcd(min);
 	set_time[2] = decToBcd(hour);
-	set_time[3] = decToBcd(dow);
-	set_time[4] = decToBcd(dom);
+	set_time[3] = decToBcd(7);
+	set_time[4] = decToBcd(day);
 	set_time[5] = decToBcd(month);
 	set_time[6] = decToBcd(year);
 

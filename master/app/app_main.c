@@ -14,6 +14,7 @@
 #include "../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h" /* CMSIS STM32F1xx Device Peripheral Access Layer Header File */
 
 void I2C1_ER_IRQHandler(void);
+void I2C2_EV_IRQHandler(void);
 void RTC_IRQHandler(void);
 
 void I2C1_ER_IRQHandler(void) { 
@@ -24,6 +25,10 @@ void RTC_IRQHandler(void) {
     OS_task_activate(1);  
 }
 
+void I2C2_EV_IRQHandler(void) {
+    OS_task_activate(2);
+}
+
 /* hardware-specific support code run on a specific hardware platform */
 void BSP_init(void) {
     /* init event pool */
@@ -31,12 +36,15 @@ void BSP_init(void) {
     
     /* Set IRQ number for priority used in OS */
     OS_prio_setIRQ(1,RTC_IRQn);
+    OS_prio_setIRQ(2,I2C2_EV_IRQn);
 
     OS_priority_IRQ(RTC_IRQn,1);
+    OS_priority_IRQ(I2C2_EV_IRQn,2);
+
     OS_Test_setIRQ(AO_BlinkyTest,RTC_IRQn);    
     OS_Test_setIRQ(AO_taskPost,RTC_IRQn);
     OS_Test_setIRQ(AO_task_eeprom,RTC_IRQn);
-    OS_Test_setIRQ(AO_task_uart_esp32,RTC_IRQn);
+    OS_Test_setIRQ(AO_task_uart_esp32,I2C2_EV_IRQn);
 }
 
 /* ============================= function using for initialization task ============================= */ 

@@ -44,7 +44,7 @@ static write_param_t *write_buf[MAX_WRITE_EEPROM_BUF]; /* buffer store the data 
 void eeprom_task_init(I2C_HandleTypeDef* i2c_port, uint8_t dev_address) {
 //    eeprom_ob.i2c_port = i2c_port;
 //    eeprom_ob.dev_address = dev_address;
-	char text_program_1[] = "0";
+	
     /* init eeprom */
     if (AT24Cxx_Init(&eeprom_ob,dev_address,i2c_port) == AT24Cxx_Init_OK) {
         /* init success */
@@ -57,16 +57,40 @@ void eeprom_task_init(I2C_HandleTypeDef* i2c_port, uint8_t dev_address) {
     // AT24Cxx_read_buffer(&eeprom_ob,MEM_ADDR_CHECK_UPDATA_DATA_TEST,&data_check,1);
     // if (data_check == 0) {
     // } 
-     AT24Cxx_write_buffer_bloking(&eeprom_ob,START_MEM_ADDR_DIREC_USED,(uint8_t *)&data_check,sizeof(data_check));
-     HAL_Delay(10);
-     write_data_test_ic("744051",data_744051,sizeof(data_744051));
-    //  write_data_test_ic("7400",data_7400,sizeof(data_7400));
-    //  write_data_test_ic("74139",data_74139,sizeof(data_74139));
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_MEM_ADDR_DIREC_USED,(uint8_t *)&data_check,sizeof(data_check));
+    HAL_Delay(10);
 
+    write_data_test_ic("744051",data_744051,sizeof(data_744051));
+    write_data_test_ic("740000",data_7400,sizeof(data_7400));
+    write_data_test_ic("74139",data_74139,sizeof(data_74139));
+    write_data_test_ic("74164",data_74164,sizeof(data_74164));
+    write_data_test_ic("7408",data_7408,sizeof(data_7408));
+    write_data_test_ic("74157",data_74157,sizeof(data_74157));
+    write_data_test_ic("40175",data_40175,sizeof(data_40175));
+    write_data_test_ic("40174",data_40174,sizeof(data_40174));
+    write_data_test_ic("4027",data_4027,sizeof(data_4027));
+    write_data_test_ic("74165",data_74165,sizeof(data_74165));
+
+
+    uint8_t num_direc;
+    AT24Cxx_read_buffer(&eeprom_ob,START_MEM_ADDR_DIREC_USED,&num_direc,1);
+    // uint8_t clear_buf[TOTAL_ALL_PROGRAM_TEST_LEN] = {0};
+    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)clear_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)data_program1,strlen(data_program1));
+    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(1),(uint8_t *)data_program2,strlen(data_program2));
+    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(2),(uint8_t *)data_program3,strlen(data_program3));
+    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(3),(uint8_t *)data_program4,strlen(data_program4));
+
+    uint8_t buffer[30];
+//    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),&buffer,strlen(data_program1));
+//    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(1),&buffer,strlen(data_program2));
+//    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(2),&buffer,strlen(data_program3));
+//    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(3),&buffer,strlen(data_program4));
+
+    char text_program_1[] = "0";
     AT24Cxx_write_buffer(&eeprom_ob,0x02,(uint8_t *)text_program_1,strlen(text_program_1));
 
 //        char *text_program = "Program test2,74hc560,20";
-//        AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)text_program,strlen(text_program));
     /* check write data test */
 
 
@@ -84,6 +108,7 @@ void eeprom_task_init(I2C_HandleTypeDef* i2c_port, uint8_t dev_address) {
     eeprom_instance.nUsed = 0;
 
     eeprom_ctor(&eeprom_instance);
+//    printf("Setting info eeprom success\n");
 }
 
 void eeprom_ctor(app_eeprom *pAO) {
@@ -126,13 +151,14 @@ void eeprom_dispatch(app_eeprom * const pOS_task, OS_event_t const * const pEven
             eeprom_instance.data_eeprom.data = malloc(data_read->data_len);
             AT24Cxx_read_buffer(&eeprom_ob,data_read->mem_addr,
                                 eeprom_instance.data_eeprom.data,eeprom_instance.data_eeprom.data_len);
-            printf("Data read eeprom : %s\n",eeprom_instance.data_eeprom.data);
+            // printf("Data read eeprom : %s\n",eeprom_instance.data_eeprom.data);
             free(eeprom_instance.data_eeprom.data);
             free(data_read);
             
         } break;
         case WRITE_EEPROM : {
-            data_eeprom_t *data_receive = (data_eeprom_t *)(get_data_dynamic_event(pEvent));
+            printf("Write eeprom\n");
+            data_eeprom_t *data_receive = (data_eeprom_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
             write_param_t *e_write = (write_param_t *)malloc(sizeof(write_param_t));
             // e_write->byte_first_page = AT24C256_PG_SIZE - data_receive->mem_addr % AT24C256_PG_SIZE;
             // e_write->page_write = (data_receive->data_len - e_write->byte_first_page) / AT24C256_PG_SIZE;
@@ -151,6 +177,9 @@ void eeprom_dispatch(app_eeprom * const pOS_task, OS_event_t const * const pEven
                 --pOS_task->head_index;
             }
             ++pOS_task->nUsed;
+            
+            if (data_receive->data != NULL) free(data_receive->data);
+            free(data_receive);
 
             if (pOS_task->b_is_writing == false) { /* if the eeprom is free, writing doesn't need to wait */
                 pOS_task->b_is_writing = true;
@@ -168,7 +197,7 @@ void eeprom_dispatch(app_eeprom * const pOS_task, OS_event_t const * const pEven
                 write_buffer_with_task(pOS_task->write_params_buf[pOS_task->tail_index]);
             } else {
                 /* finish write */
-                printf("Write data to eeprom finish\n");
+                // printf("Write data to eeprom finish\n");
                 if (pOS_task->write_params_buf[pOS_task->tail_index]->data != NULL) {
                     free(pOS_task->write_params_buf[pOS_task->tail_index]->data);
                 }
@@ -230,6 +259,7 @@ void write_data_test_ic(const char *icName, const char *Data, uint16_t len) {
         mem_pre = (uint16_t)((Directory_pre->addr[0] << 8) | Directory_pre->addr[1]);
         len_pre = (uint16_t)((Directory_pre->length[0] << 8) | Directory_pre->length[1]);
         data_addr = mem_pre + len_pre;
+        free(temp_buf);
     }
     /* write data */
 
@@ -245,7 +275,7 @@ void write_data_test_ic(const char *icName, const char *Data, uint16_t len) {
     direc.length[1] = ((len) & 0xFF);
     AT24Cxx_write_buffer_bloking(&eeprom_ob,dir_addr,(uint8_t *)&direc,sizeof(direc_EEPROM_t));
     ++num_direc;
-    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_MEM_ADDR_DIREC_USED,(uint8_t *)&num_direc,sizeof(num_direc));
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_MEM_ADDR_DIREC_USED,&num_direc,1);
 }
 
 

@@ -23,7 +23,7 @@ typedef struct {
 
 
 DS3231_Status DS3231_Init(DS3231_t *pDS3231, I2C_HandleTypeDef *i2c, uint16_t dev_address);
-DS3231_Status DS3231_Write_time(DS3231_t *pDS3231,uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year);
 DS3231_Status DS3231_Read_time(DS3231_t *pDS3231, uint8_t *data_read);
+DS3231_Status DS3231_Write_time(DS3231_t *pDS3231,uint8_t sec, uint8_t min, uint8_t hour, uint8_t day, uint8_t month, uint8_t year);
 
 #endif /* __DS3231_H__ */

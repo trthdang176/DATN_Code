@@ -37,6 +37,7 @@ app/app_eeprom.o: ../app/app_eeprom.c ../app/app_eeprom.h \
  ../app/../lib/DWIN_HMI.h ../app/../lib/../Core/Inc/main.h \
  ../app/app_main.h ../app/test_os.h ../app/app_post_test.h \
  ../app/app_uart_esp32.h ../app/app_can_bus.h ../app/app_screen.h \
+ ../app/app_rtc.h ../app/../lib/DS3231.h ../app/app_sd.h \
  ../app/../os/os_event.h ../app/../os/os.h ../app/app_eeprom_data.h
 ../app/app_eeprom.h:
 ../app/../os/os.h:
@@ -83,6 +84,9 @@ app/app_eeprom.o: ../app/app_eeprom.c ../app/app_eeprom.h \
 ../app/app_uart_esp32.h:
 ../app/app_can_bus.h:
 ../app/app_screen.h:
+../app/app_rtc.h:
+../app/../lib/DS3231.h:
+../app/app_sd.h:
 ../app/../os/os_event.h:
 ../app/../os/os.h:
 ../app/app_eeprom_data.h:

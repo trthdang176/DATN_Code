@@ -1,0 +1,144 @@
+#include "app_sd.h"
+
+#include "app_main.h"
+#include "../Core/Inc/main.h"
+
+/* sd lib */
+#include "../FatFs/App/fatfs.h"
+#include "../Core/Inc/fatfs_sd.h"
+
+FATFS fs;
+FIL fil;
+FRESULT fresult;
+char buffer[200];
+UINT bw, br;
+
+typedef struct {
+    OS_task task;
+
+
+} app_sd;
+
+
+static void init_data_logging(void);
+
+void sd_ctor(app_sd *pAO);
+static void sd_init(app_sd * const pOS_task, OS_event_t const * const pEvent);
+static void sd_dispatch(app_sd * const pOS_task, OS_event_t const * const pEvent);
+
+static app_sd sd_instance;
+OS_task * const AO_task_sd = &sd_instance.task;
+
+void sd_task_init(void) {
+    init_data_logging();
+
+    sd_ctor(&sd_instance);
+}
+
+void sd_ctor(app_sd *pAO) {
+    OS_task_init(AO_task_sd,(OS_handler)&sd_init,(OS_handler)&sd_dispatch);
+
+}
+
+static void sd_init(app_sd * const pOS_task, OS_event_t const * const pEvent) {
+    UNUSED(pOS_task);
+    UNUSED(pEvent);
+}
+
+static void sd_dispatch(app_sd * const pOS_task, OS_event_t const * const pEvent) {
+    switch (pEvent->sig) {
+        
+    }
+}
+
+
+static void init_data_logging(void) {
+
+    fresult = f_mount(&fs, "0:", 1);
+	if (fresult != FR_OK){
+        printf ("ERROR with code:%d!!! in mounting SD CARD...\n\n",fresult);
+	}
+	else{
+        printf("SD CARD mounted successfully...\n\n");
+    }
+
+	fresult = f_open(&fil, "data.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+    /* Writing text */
+    f_puts("Timestamp,Temperature,Humidity,Pressure", &fil);
+    // /* Close file */
+//    f_sync(&fil);
+    fresult = f_close(&fil);
+    if (fresult == FR_OK)printf("data_history.txt created and the data is written \n");
+
+    	fresult = f_open(&fil, "file2.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+    			/* Writing text */
+    	f_puts("This data is from the FILE1.txt. And it was written using ...f_puts... ", &fil);
+    	/* Close file */
+    	fresult = f_close(&fil);
+    	if (fresult == FR_OK)printf("File1.txt created and the data is written \n");
+
+//    if (f_size(&fil) == 0) {
+//        f_close(&fil);
+//        fresult = f_open(&fil, "data_history.txt", FA_WRITE);
+//        f_puts("Timestamp,Temperature,Humidity,Pressure\n", &fil);
+//        f_close(&fil);
+//        printf("Data file created\n");
+//    } else {
+//        f_close(&fil);
+//        printf("Data file exists\n");
+//    }
+
+}
+
+// Write data with index update
+// static void write_data_with_index(DataLogging_t *data) {
+//     // Step 1: Get current position in main file (before writing)
+//     fresult = f_open(&fil, "data_history.csv", FA_OPEN_EXISTING | FA_WRITE);
+//     if (fresult != FR_OK) {
+//         send_uart("Error opening data file\n");
+//         return;
+//     }
+    
+//     // Move to end and get position
+//     uint32_t data_position = f_size(&fil);
+//     f_lseek(&fil, data_position);
+    
+//     // Step 2: Write data to main file
+//     sprintf(buffer, "%lu,%.2f,%.2f,%.2f\n", 
+//             data->timestamp, data->temperature, data->humidity, data->pressure);
+    
+//     fresult = f_puts(buffer, &fil);
+//     f_close(&fil);
+    
+//     if (fresult < 0) {
+//         send_uart("Error writing data\n");
+//         return;
+//     }
+    
+//     // Step 3: Update index file
+//     IndexEntry index_entry;
+//     index_entry.timestamp = data->timestamp;
+//     index_entry.file_position = data_position;
+    
+//     fresult = f_open(&fil, "data_index.bin", FA_OPEN_ALWAYS | FA_WRITE);
+//     if (fresult != FR_OK) {
+//         send_uart("Error opening index file\n");
+//         return;
+//     }
+    
+//     // Move to end of index file
+//     f_lseek(&fil, f_size(&fil));
+    
+//     // Write index entry
+//     fresult = f_write(&fil, &index_entry, sizeof(IndexEntry), &bw);
+//     f_close(&fil);
+    
+//     if (fresult == FR_OK) {
+//         sprintf(buffer, "Data logged: T=%lu, Temp=%.2f\n", data->timestamp, data->temperature);
+//         send_uart(buffer);
+//     } else {
+//         send_uart("Error writing index\n");
+//     }
+// }
+
+

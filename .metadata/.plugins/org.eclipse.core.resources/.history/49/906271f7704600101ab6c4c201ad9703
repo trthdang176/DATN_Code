@@ -1,0 +1,64 @@
+/**
+ * @file app_main.c
+ * @author DANGTT
+ * @brief The file contain OS tasker 
+ * @version 0.1
+ * @date 2025-05-16
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
+
+#include "app_main.h"
+#include "test_os.h"
+#include "../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h" /* CMSIS STM32F1xx Device Peripheral Access Layer Header File */
+
+void I2C1_ER_IRQHandler(void);
+void I2C2_EV_IRQHandler(void);
+void RTC_IRQHandler(void);
+
+void I2C1_ER_IRQHandler(void) { 
+    // OS_task_activate(1);  
+    // HAL_NVIC_ClearPendingIRQ(I2C1_ER_IRQn); // clear NVIC pending bit
+}
+void RTC_IRQHandler(void) {
+    OS_task_activate(1);  
+}
+
+void I2C2_EV_IRQHandler(void) {
+    OS_task_activate(2);
+}
+
+/* hardware-specific support code run on a specific hardware platform */
+void BSP_init(void) {
+    /* init event pool */
+    dynamic_event_pool_init();
+    
+    /* Set IRQ number for priority used in OS */
+    OS_prio_setIRQ(1,RTC_IRQn);
+    OS_prio_setIRQ(2,I2C2_EV_IRQn);
+
+    OS_priority_IRQ(RTC_IRQn,1);
+    OS_priority_IRQ(I2C2_EV_IRQn,2);
+
+    OS_Test_setIRQ(AO_BlinkyTest,RTC_IRQn);    
+    OS_Test_setIRQ(AO_taskPost,RTC_IRQn);
+    OS_Test_setIRQ(AO_task_eeprom,RTC_IRQn);
+    OS_Test_setIRQ(AO_task_uart_esp32,RTC_IRQn);
+}
+
+/* ============================= function using for initialization task ============================= */ 
+
+/* the value using for app test os */
+OS_event_t const *TestOS_Work(void) {
+    static TestOS_Evt workTest_blinky ;
+    workTest_blinky.appEvt.sig = 0; /* unused */
+    workTest_blinky.ticks1 = 300; /* 500 ms */
+    workTest_blinky.ticks2 = 500;
+
+    /* return the OS_event_t type */
+    return &workTest_blinky.appEvt;
+}
+
+
+

@@ -141,29 +141,8 @@ void Control_IC_begin(void)
     // HAL_GPIO_WritePin(TXS_OE4_GPIO_Port,TXS_OE4_Pin,GPIO_PIN_SET);
 }
 
-void shift_out(uint8_t num, uint8_t *data)
-{
-    for(uint8_t i =0; i < 8; i++ )
-    {
-        HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_RESET);   // Clock LOW
-        delay_us(1);
-        // Data
-        HAL_GPIO_WritePin(PIN_SIx[num/3].Port_x,PIN_SIx[num/3].PIN_x, (data[i]));
-        HAL_GPIO_WritePin(PIN_SIx[num/3].Port_x,PIN_SIx[num/3].PIN_x, (data[i]));
-        delay_us(1);
-        HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_SET);   // Clock HIGH
-    }
-}
 
-void Write_data(uint8_t num, uint8_t *data) {
-    // Enable Latch
-    uint8_t data_array[8];
-    memcpy(data_array,data,sizeof(data_array));
-    HAL_GPIO_WritePin(PIN_RCKx[num].Port_x,PIN_RCKx[num].PIN_x,GPIO_PIN_RESET);
-    HAL_Delay(1);
-    shift_out(num,data_array);
-    HAL_GPIO_WritePin(PIN_RCKx[num].Port_x,PIN_RCKx[num].PIN_x,GPIO_PIN_SET);
-}
+
 
 /**
  * @brief Control 74HC164D , the output of 74HC164D is the OE and LE of 74HC164D
@@ -181,12 +160,18 @@ void Latch_IC_begin(void)
 	// 	HAL_GPIO_WritePin(PIN_OEx[i].Port_x,PIN_OEx[i].PIN_x,GPIO_PIN_SET);
 	// }
     // HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);   // Clock LOW
+    //HAL_GPIO_WritePin(GPIOB,GPIO_PIN_0,GPIO_PIN_RESET);   // Clock LOW
 
     HAL_GPIO_WritePin(PIN_TXS_OEx[0].Port_x,PIN_TXS_OEx[0].PIN_x,GPIO_PIN_RESET);
     HAL_GPIO_WritePin(PIN_TXS_OEx[1].Port_x,PIN_TXS_OEx[1].PIN_x,GPIO_PIN_RESET);
     HAL_GPIO_WritePin(PIN_TXS_OEx[2].Port_x,PIN_TXS_OEx[2].PIN_x,GPIO_PIN_RESET);
 
+}
+
+void reset_TXS(void) {
+    HAL_GPIO_WritePin(PIN_TXS_OEx[0].Port_x,PIN_TXS_OEx[0].PIN_x,GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PIN_TXS_OEx[1].Port_x,PIN_TXS_OEx[1].PIN_x,GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PIN_TXS_OEx[2].Port_x,PIN_TXS_OEx[2].PIN_x,GPIO_PIN_RESET);
 }
 
 void Control_Vcc_pin(uint8_t data)
@@ -238,6 +223,30 @@ void compute_outputLatchIC(uint8_t *dataIC_test, uint8_t (*data_out_latchIC)[num
     }
 }
 
+void shift_out(uint8_t num, uint8_t *data)
+{
+    for(uint8_t i =0; i < 8; i++ )
+    {
+        HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_RESET);   // Clock LOW
+        delay_us(1);
+        // Data
+        HAL_GPIO_WritePin(PIN_SIx[num/3].Port_x,PIN_SIx[num/3].PIN_x, (data[i]));
+        HAL_GPIO_WritePin(PIN_SIx[num/3].Port_x,PIN_SIx[num/3].PIN_x, (data[i]));
+        delay_us(1);
+        HAL_GPIO_WritePin(PIN_SCKx[num].Port_x,PIN_SCKx[num].PIN_x,GPIO_PIN_SET);   // Clock HIGH
+    }
+}
+
+
+void Write_data(uint8_t num, uint8_t *data) {
+    // Enable Latch
+    uint8_t data_array[8];
+    memcpy(data_array,data,sizeof(data_array));
+    HAL_GPIO_WritePin(PIN_RCKx[num].Port_x,PIN_RCKx[num].PIN_x,GPIO_PIN_RESET);
+    HAL_Delay(1);
+    shift_out(num,data_array);
+    HAL_GPIO_WritePin(PIN_RCKx[num].Port_x,PIN_RCKx[num].PIN_x,GPIO_PIN_SET);
+}
 
 // Control the pin IO TEST
 void WritePin_ICTest(uint8_t *dataPin) {
@@ -257,7 +266,7 @@ void WritePin_ICTest(uint8_t *dataPin) {
 
 void WritePin_float_ICTest(void) {
     uint8_t data_float[20];
-    memset(data_float,2,sizeof(data_float));
+    memset(data_float,2,sizeof(data_float)); 
     WritePin_ICTest(data_float);
 }
 
@@ -295,6 +304,7 @@ void TurnOff_short_circuit(void) {
 }
 
 void ReadPin_IC_test(uint8_t *dataPin,uint8_t num_pin) {
+	uint8_t temp_buf[20] = {0};
     for (uint8_t Pinx = 0; Pinx < NUM_PIN_IC_TEST; Pinx++) {
         switch (Pinx/8) {
             case 0 : {
@@ -315,17 +325,22 @@ void ReadPin_IC_test(uint8_t *dataPin,uint8_t num_pin) {
             default : break;
         }
         HAL_Delay(5);
-        dataPin[Pinx] = HAL_GPIO_ReadPin(PIN_SIGx[Pinx%8].Port_x,PIN_SIGx[Pinx%8].PIN_x);
+        temp_buf[Pinx] = HAL_GPIO_ReadPin(PIN_SIGx[Pinx%8].Port_x,PIN_SIGx[Pinx%8].PIN_x);
     }
     if (num_pin == 18) {
         for (uint8_t i = 9; i < num_pin; i++) {
-            dataPin[i] = dataPin[i + 2];
+        	temp_buf[i] = temp_buf[i + 2];
         }
     } else if (num_pin == 16) {
         for (uint8_t i = 8; i < num_pin; i++) {
-            dataPin[i] = dataPin[i + 4];
+        	temp_buf[i] = temp_buf[i + 4];
+        }
+    } else if (num_pin == 14) {
+        for (uint8_t i = 7; i < num_pin; i++) {
+        	temp_buf[i] = temp_buf[i + 6];
         }
     }
+    memcpy(dataPin,temp_buf,num_pin);
 }
 
 void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf) {
@@ -359,26 +374,7 @@ void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf) {
     data_buf[pin] = ADS1115_single_getdata(pADS1115,channel_adc);
 }
 
-uint8_t convert_character_input(char c_input) {
-    switch (c_input) {
-        case 'V' :
-        case '1' : {
-            return 1;
-        } break;
-        case 'G' :
-        case '0' : {
-            return 0;
-        } break;
-        case 'L' :
-        case 'H' : {
-            return 2;
-        } break;
 
-        default : {
-            return 2;
-        } break;
-    }
-}
 
 uint8_t convert_data_compare(char c_input) {
     switch (c_input) {
@@ -395,25 +391,161 @@ uint8_t convert_data_compare(char c_input) {
     }
 }
 
-void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control) {
-    data_control[8]  = 2;
-    data_control[9]  = 0;
-    data_control[10] = 0;
-    data_control[11] = 2;
-
-    for (uint8_t i = 0; i < 8; i++) {
-        data_control[i] = convert_character_input(data_test[i]);
+uint8_t convert_character_input(char c_input) {
+    switch (c_input) {
+        case 'V' :
+        case '1' : {
+            return 1;
+        } break;
+        case 'G' :
+        case '0' : {
+            return 0;
+        } break;
+        case 'L' :
+        case 'H' : {
+            return 2;
+        } break;
+        case 'U' : {
+            // mean low to high clock 
+        } break;
+        case 'D' : {
+            // mean high to low clock
+        } break;
+        default : {
+            return 2;
+        } break;
     }
+}
+
+void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control) {
+    memset(data_control,2,20);
 
     if (num_pin == 18) {
-        data_control[8] = convert_character_input(data_test[8]);
-        data_control[11] = convert_character_input(data_test[9]);
-        for (uint8_t i = 10; i < 18; i++) {
-            data_control[12 + (i - 10)] = convert_character_input(data_test[i]);
+        for (uint8_t i = 0; i < 9; i++) {
+            data_control[i] = convert_character_input(data_test[i]);
         }
-    } else { 
+        for (uint8_t i = 9; i < 18; i++) {
+            data_control[11 + (i - 9)] = convert_character_input(data_test[i]);
+        }
+    } else if (num_pin == 16) {
+        for (uint8_t i = 0; i < 8; i++) {
+            data_control[i] = convert_character_input(data_test[i]);
+        }
         for (uint8_t i = 8; i < 16; i++) {
             data_control[12 + (i - 8)] = convert_character_input(data_test[i]);
         }
+    } else if (num_pin == 14) {
+        for (uint8_t i = 0; i < 7; i++) {
+            data_control[i] = convert_character_input(data_test[i]);
+        }
+        for (uint8_t i = 7; i < 14; i++) {
+            data_control[13 + (i - 7)] = convert_character_input(data_test[i]);
+        }
     }
 }
+
+bool has_clock_transition(uint8_t num_pin, char *data_test) {
+    for (uint8_t i = 0; i < num_pin; i++) {
+        if (data_test[num_pin] == 'U' || data_test[num_pin] == 'D') {
+            return true;
+        }
+    }
+    return false;
+}
+
+void convert_data_test_first_state(uint8_t num_pin, char *data_test, uint8_t *data_control) {
+    memset(data_control,2,20);
+
+    if (num_pin == 16) {
+        for (uint8_t i = 0; i < 8; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[i] = 0;       
+            } else if (c == 'D') {
+                data_control[i] = 1;        
+            } else {
+                data_control[i] = convert_character_input(c);
+            }
+        }
+        for (uint8_t i = 8; i < 16; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[12 + (i - 8)] = 0;   
+            } else if (c == 'D') {
+                data_control[12 + (i - 8)] = 1;    
+            } else {
+                data_control[12 + (i - 8)] = convert_character_input(c);
+            }
+        }
+    } else if (num_pin == 14) {
+        for (uint8_t i = 0; i < 7; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[i] = 0;       
+            } else if (c == 'D') {
+                data_control[i] = 1;        
+            } else {
+                data_control[i] = convert_character_input(c);
+            }
+        }
+        for (uint8_t i = 7; i < 14; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[13 + (i - 7)] = 0;   
+            } else if (c == 'D') {
+                data_control[13 + (i - 7)] = 1;    
+            } else {
+                data_control[13 + (i - 7)] = convert_character_input(c);
+            }
+        }
+    }
+}
+
+void convert_data_test_second_state(uint8_t num_pin, char *data_test, uint8_t *data_control) {
+    memset(data_control, 2, 20);
+
+    if (num_pin == 16) {
+        for (uint8_t i = 0; i < 8; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[i] = 1;        // U: end with HIGH
+            } else if (c == 'D') {
+                data_control[i] = 0;        // D: end with LOW
+            } else {
+                data_control[i] = convert_character_input(c);
+            }
+        }
+        for (uint8_t i = 8; i < 16; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[12 + (i - 8)] = 1;    // U: end with HIGH
+            } else if (c == 'D') {
+                data_control[12 + (i - 8)] = 0;    // D: end with LOW
+            } else {
+                data_control[12 + (i - 8)] = convert_character_input(c);
+            }
+        }
+    } else if (num_pin == 14) {
+        for (uint8_t i = 0; i < 7; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[i] = 1;        // U: end with HIGH
+            } else if (c == 'D') {
+                data_control[i] = 0;        // D: end with LOW
+            } else {
+                data_control[i] = convert_character_input(c);
+            }
+        }
+        for (uint8_t i = 7; i < 14; i++) {
+            char c = data_test[i];
+            if (c == 'U') {
+                data_control[13 + (i - 7)] = 1;    // U: end with HIGH
+            } else if (c == 'D') {
+                data_control[13 + (i - 7)] = 0;    // D: end with LOW
+            } else {
+                data_control[13 + (i - 7)] = convert_character_input(c);
+            }
+        }
+    }
+}
+ 

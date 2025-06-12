@@ -23,7 +23,7 @@ OS_task * const AO_BlinkyTest = &Blinky_instance.task; /* AO task pointer */
 
 /* Test eeprom */
 static data_eeprom_t data_write;
-static uart_buf data_uart;
+// static uart_buf data_uart;
 char string_data[TOTAL_ONE_PROGRAM_TEST_LEN];
 char name_program[20] = "Program1";
 char name_ic[20] = "IC1";
@@ -42,7 +42,7 @@ void BlinkyTest_app_init(void) {
     data_write.mem_addr = START_ADDR_PROGRAM_TEST_X(1);
 
 
-    data_uart.data = malloc(50);
+    // data_uart.data = malloc(50);
     uart_num_test = 0;
 }
 
@@ -54,8 +54,8 @@ void BlinkyTest_ctor(Test_Blinky_OS * const pAO) {
     /* init time os if using */
     OS_TimeEvt_init(&pAO->te1,TIMEOUT1_SIG,&pAO->task);
     OS_TimeEvt_init(&pAO->te2,TIMEOUT2_SIG,&pAO->task);
-    OS_TimeEvt_init(&pAO->te_eeprom_write,WRITE_PROGRAM_TEST,&pAO->task);
-    OS_TimeEvt_init(&pAO->te_eeprom_read,READ_ONE_PROGRAM_TEST,&pAO->task);
+    // OS_TimeEvt_init(&pAO->te_eeprom_write,WRITE_PROGRAM_TEST,&pAO->task);
+    // OS_TimeEvt_init(&pAO->te_eeprom_read,READ_ONE_PROGRAM_TEST,&pAO->task);
     OS_TimeEvt_init(&pAO->te_send_data,TEST_SEND_DATA_ESP32,&pAO->task);
 }
 
@@ -71,15 +71,15 @@ void BlinkyTest_init(Test_Blinky_OS * const pOS_task, OS_event_t const * const p
     1U + (OS_EVT_DOWNCAST(TestOS_Evt,pEvent)->ticks2 / 4),
     OS_EVT_DOWNCAST(TestOS_Evt,pEvent)->ticks2);
 
-    OS_TimeEvt_Set(&pOS_task->te_eeprom_write,
-    5,
-    2000);
+    // OS_TimeEvt_Set(&pOS_task->te_eeprom_write,
+    // 5,
+    // 2000);
 
-    OS_TimeEvt_Set(&pOS_task->te_eeprom_read,
-    20,
-    2000);
+    // OS_TimeEvt_Set(&pOS_task->te_eeprom_read,
+    // 20,
+    // 2000);
 
-    OS_TimeEvt_Set(&pOS_task->te_send_data,50,500);
+    // OS_TimeEvt_Set(&pOS_task->te_send_data,50,500);
 
     /* if don't using this function */
     /*
@@ -93,49 +93,49 @@ void BlinkyTest_Dispatch(Test_Blinky_OS *const pOS_task, OS_event_t const * cons
         case TIMEOUT1_SIG : {
             /* Turn on led */
             HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_SET);
-            printf("Turn on led\n");
+            // printf("Turn on led\n");
         } break;
         case TIMEOUT2_SIG : {
             /* Turn off led */
         	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_RESET);
-            printf("Turn off led\n");
+            // printf("Turn off led\n");
         } break;
         case PRINT_POST_DATA : {
-            printf("Receive data post\n");
-            data_send_t *data_receive = (data_send_t *)(get_data_dynamic_event(pEvent));
-            uint32_t string_len = data_receive->string_len;
-            char print_string[string_len+1];
-            strcpy(print_string,(char *)data_receive->string_post);
-            printf("Data receive: %s %ld\n",print_string,data_receive->data_post);
+//            printf("Receive data post\n");
+            // data_send_t *data_receive = (data_send_t *)(get_data_dynamic_event(pEvent));
+            // uint32_t string_len = data_receive->string_len;
+            // char print_string[string_len+1];
+            // strcpy(print_string,(char *)data_receive->string_post);
+//            printf("Data receive: %s %ld\n",print_string,data_receive->data_post);
         } break;
         case READ_ALL_PROGRAM_TEST : {
-            printf("Get the value of all program test\n");
-            data_eeprom_t *data_eeprom_read = (data_eeprom_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
-            uint16_t len = data_eeprom_read->data_len;
-            uint8_t data_receive[len+1];
-            memcpy(data_receive,data_eeprom_read->data,len);
+//            printf("Get the value of all program test\n");
+            // data_eeprom_t *data_eeprom_read = (data_eeprom_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
+            // uint16_t len = data_eeprom_read->data_len;
+            // uint8_t data_receive[len+1];
+            // memcpy(data_receive,data_eeprom_read->data,len);
             
-            if (data_eeprom_read->data) {
-                free(data_eeprom_read->data);
-            }
+            // if (data_eeprom_read->data) {
+            //     free(data_eeprom_read->data);
+            // }
 
-            if (data_eeprom_read) {
-                free(data_eeprom_read);
-            }
+            // if (data_eeprom_read) {
+            //     free(data_eeprom_read);
+            // }
         } break;
         case WRITE_PROGRAM_TEST : {
-            printf("Write data program test\n");
-            if (++num_ic > 99) num_ic = 1;
-            snprintf(string_data,TOTAL_ONE_PROGRAM_TEST_LEN,"%s,%s,%d",name_program,name_ic,num_ic);
-            memcpy(data_write.data,string_data,TOTAL_ONE_PROGRAM_TEST_LEN);
-            OS_task_post_event(AO_task_eeprom,WRITE_EEPROM,(uint8_t *)&data_write,sizeof(data_eeprom_t));
+//            printf("Write data program test\n");
+            // if (++num_ic > 99) num_ic = 1;
+            // snprintf(string_data,TOTAL_ONE_PROGRAM_TEST_LEN,"%s,%s,%d",name_program,name_ic,num_ic);
+            // memcpy(data_write.data,string_data,TOTAL_ONE_PROGRAM_TEST_LEN);
+            // OS_task_post_event(AO_task_eeprom,WRITE_EEPROM,(uint8_t *)&data_write,sizeof(data_eeprom_t));
         } break;
         case READ_ONE_PROGRAM_TEST : {
-            printf("Read eeprom\n");
-            data_eeprom_t *data_read = (data_eeprom_t *)malloc(sizeof(data_eeprom_t));
-            data_read->data_len = TOTAL_ONE_PROGRAM_TEST_LEN;
-            data_read->mem_addr = START_ADDR_PROGRAM_TEST_X(1);
-            OS_task_post_event(AO_task_eeprom,READ_EEPROM,(uint8_t *)&data_read,sizeof(uint8_t *));
+//            printf("Read eeprom\n");
+            // data_eeprom_t *data_read = (data_eeprom_t *)malloc(sizeof(data_eeprom_t));
+            // data_read->data_len = TOTAL_ONE_PROGRAM_TEST_LEN;
+            // data_read->mem_addr = START_ADDR_PROGRAM_TEST_X(1);
+            // OS_task_post_event(AO_task_eeprom,READ_EEPROM,(uint8_t *)&data_read,sizeof(uint8_t *));
         } break;
         case TEST_SEND_DATA_ESP32 : {
             // printf("Test send data to esp32\n");

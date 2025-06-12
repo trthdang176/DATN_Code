@@ -73,34 +73,40 @@ IsoTpLink CAN_iso[3];
 static uint8_t can_iso_recv_buf[250];
 static uint8_t can_iso_send_buf[250];
 
+static uint8_t can_iso_recv_buf1[250];
+static uint8_t can_iso_send_buf1[250];
+
+static uint8_t can_iso_recv_buf2[250];
+static uint8_t can_iso_send_buf2[250];
+
 uint8_t dataRX[100];
 uint8_t data_output[20] ={0};
-char *data_test[] = {
-  "$4053"                // NAME
-  "Description"          // Description
-  "16"                   // Num pin
-  "16"                   // Num case
-  "11L1100G0001011V",
-  "11L1100G0011101V",
-  "11L1100G0101110V",
-  "11L1100G0110111V",
-  "01L1100G1001111V",
-  "11L1000G1011111V",
-  "10L1100G1101111V",
-  "11L0100G1111111V"
-};
-
-char data_send_test[] = {
-  "11L1100G0001011V"
-  "11L1100G0011101V"
-  "11L1100G0101110V"
-  "11L1100G0110111V"
-  "01L1100G1001111V"
-  "11L1000G1011111V"
-  "10L1100G1101111V"
-  "11L0100G1111111V"
-		"master"
-};
+//char *data_test[] = {
+//  "$4053"                // NAME
+//  "Description"          // Description
+//  "16"                   // Num pin
+//  "16"                   // Num case
+//  "11L1100G0001011V",
+//  "11L1100G0011101V",
+//  "11L1100G0101110V",
+//  "11L1100G0110111V",
+//  "01L1100G1001111V",
+//  "11L1000G1011111V",
+//  "10L1100G1101111V",
+//  "11L0100G1111111V"
+//};
+//
+//char data_send_test[] = {
+//  "11L1100G0001011V"
+//  "11L1100G0011101V"
+//  "11L1100G0101110V"
+//  "11L1100G0110111V"
+//  "01L1100G1001111V"
+//  "11L1000G1011111V"
+//  "10L1100G1101111V"
+//  "11L0100G1111111V"
+//		"master"
+//};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -118,24 +124,24 @@ static void MX_SPI1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-//FATFS fs;  // file system
-//FIL fil;   // file
-//FRESULT fresult;  // store the data
-//char buffer[1024];
-//
-//UINT br, bw;
-//
-///* capacity related variable */
+// FATFS fs;  // file system
+// FIL fil;   // file
+// FRESULT fresult;  // store the data
+// char buffer[150];
+
+// UINT br, bw;
+
+/* capacity related variable */
 //FATFS *pfs;
 //DWORD fre_clust;
 //uint32_t total, free_space;
-//
-//int buf_size(char *buf) {
-//	int i=0;
-//	while(*buf++ != '\0') i++;
-//	return i;
-//}
-//
+
+// int buf_size(char *buf) {
+// 	int i=0;
+// 	while(*buf++ != '\0') i++;
+// 	return i;
+// }
+
 //void buf_clear(void) {
 //	for (int i =0; i < 1024; i++) {
 //		buffer[i] = '\0';
@@ -180,7 +186,7 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
-//  	  fresult = f_mount(&fs, "0:", 1);
+//  fresult = f_mount(&fs, "0:", 1);
 //	if (fresult != FR_OK){
 //	  printf ("ERROR with code:%d!!! in mounting SD CARD...\n\n",fresult);
 //	}
@@ -194,7 +200,8 @@ int main(void)
 //	buf_clear();
 //	free_space = (uint32_t)(fre_clust * pfs->csize * 0.5);
 //	printf("SD CARD Free Space: \t%lu\n\n",free_space);
-//	buf_clear(); }
+//	buf_clear();
+//	}
 
 //	fresult = f_open(&fil, "file1.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 //			/* Writing text */
@@ -202,13 +209,13 @@ int main(void)
 //	/* Close file */
 //	fresult = f_close(&fil);
 //	if (fresult == FR_OK)printf("File1.txt created and the data is written \n");
-//	/* Open file to read */
+	/* Open file to read */
 //	fresult = f_open(&fil, "file1.txt", FA_READ);
 //	/* Read string from the file */
 //	f_gets(buffer, f_size(&fil), &fil);
 //	printf("File1.txt is opened and it contains the data as shown below\n");
 //	printf("%s\n",buffer);
-//	/* Close file */
+	/* Close file */
 //	f_sync(&fil);
 //	f_close(&fil);
 //	buf_clear();
@@ -225,11 +232,11 @@ int main(void)
   HAL_UARTEx_ReceiveToIdle_IT(&huart2, dataRX, sizeof(dataRX)); // Enable interrupt UART
 
   HAL_CAN_Start(&hcan);
-  HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY);
+  HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY | CAN_IT_BUSOFF );
 
-    for (uint8_t i = 0; i < 5; i++) {
-  	printf("SWO Debug!!!\n");
-    }
+//    for (uint8_t i = 0; i < 5; i++) {
+//  	printf("SWO Debug!!!\n");
+//    }
 
   BSP_init();
 
@@ -248,15 +255,15 @@ int main(void)
   q_eeprom_event,
   ARRAY_ELEMENT(q_eeprom_event),
   (OS_event_t *)0 );
-//
-//  uart_esp32_task_init(&huart1);
-//  static OS_event_t const *q_uart_esp32_event[10];
-//  OS_task_create(AO_task_uart_esp32,
-//  1,
-//  q_uart_esp32_event,
-//  ARRAY_ELEMENT(q_uart_esp32_event),
-//  (OS_event_t *)0);
-//
+
+  uart_esp32_task_init(&huart1);
+  static OS_event_t const *q_uart_esp32_event[10];
+  OS_task_create(AO_task_uart_esp32,
+  1,
+  q_uart_esp32_event,
+  ARRAY_ELEMENT(q_uart_esp32_event),
+  (OS_event_t *)0);
+
   BlinkyTest_app_init();
   static OS_event_t const *TestOS_blinky[10]; /* Event queue */
   OS_task_create(
@@ -276,39 +283,62 @@ int main(void)
   ARRAY_ELEMENT(q_screen),
   (OS_event_t *)0);
 
-  // app_can_bus_init(&hcan);
-  // static OS_event_t const *Can_app_event[10];
-  // OS_task_create( AO_task_can_bus,
-  // 1,
-  // Can_app_event,
-  // ARRAY_ELEMENT(Can_app_event),
-  // (OS_event_t *)0);
-    HAL_Delay(3000);
-    Screen_begin(&huart2);
+  ds3231_task_init(&hi2c1,ADDRESS_DS3231);
 
-  TxHeader.DLC = 5;
-  TxHeader.StdId = 0x103;
-  TxHeader.IDE = CAN_ID_STD;
-  TxHeader.RTR = CAN_RTR_DATA;
+  sd_task_init();
+  static OS_event_t const *q_sd[10];
+  OS_task_create(
+  AO_task_sd,
+  2,
+  q_sd,
+  ARRAY_ELEMENT(q_sd),
+  (OS_event_t *)0);
 
-  uint8_t data_tx[5] = {'H','E','L','L','O'};
+  can_bus_task_init(&hcan);
+  static OS_event_t const *Can_app_event[10];
+  OS_task_create( AO_task_can_bus,
+  1,
+  Can_app_event,
+  ARRAY_ELEMENT(Can_app_event),
+  (OS_event_t *)0);
+
+  HAL_Delay(5000);
+  Screen_begin(&huart2);
+
+//  TxHeader.DLC = 5;
+//  TxHeader.StdId = 0x103;
+//  TxHeader.IDE = CAN_ID_STD;
+//  TxHeader.RTR = CAN_RTR_DATA;
+//
+//  uint8_t data_tx[5] = {'H','E','L','L','O'};
 //  HAL_CAN_AddTxMessage(&hcan,&TxHeader, data_tx, &TxMailbox);
 
-  uint8_t data_time[7];
-  DS3231_t ds3231;
-  DS3231_Init(&ds3231,&hi2c1,ADDRESS_DS3231);
-//  DS3231_Write_time(&ds3231,00,18,18,7,31,6,25);
-  DS3231_Read_time(&ds3231, data_time);
+  // DS3231_t ds3231;
+  // DS3231_Init(&ds3231,&hi2c1,ADDRESS_DS3231);
+//  DS3231_Write_time(&ds3231,00,40,11,8,6,25);
+//  uint8_t data_time[7];
+//  DS3231_Read_time(&ds3231, data_time);
+//  char string[50];
+//  sprintf(string, "Time RTC: %d/%d/%d - %d:%d:%d\n",data_time[4],data_time[5],data_time[6],data_time[2],data_time[1],data_time[0]);
+//  printf("%s",string);
 
-  isotp_init_link(&CAN_iso[0], 0x131, can_iso_send_buf , sizeof(can_iso_send_buf)
-		  	  	  	  	  	  	  	, can_iso_recv_buf, sizeof(can_iso_recv_buf));
+//  isotp_init_link(&CAN_iso[0], 0x131, can_iso_send_buf , sizeof(can_iso_send_buf)
+//		  	  	  	  	  	  	  	, can_iso_recv_buf, sizeof(can_iso_recv_buf));
+     isotp_init_link(&CAN_iso[0], 0x131, can_iso_send_buf , sizeof(can_iso_send_buf)
+		   	  	  	  	  	  	  	, can_iso_recv_buf, sizeof(can_iso_recv_buf));
+
+  isotp_init_link(&CAN_iso[1], 0x132, can_iso_send_buf1 , sizeof(can_iso_send_buf1)
+		  	  	  	  	  	  	  	, can_iso_recv_buf1, sizeof(can_iso_recv_buf1));
+
+  isotp_init_link(&CAN_iso[2], 0x134, can_iso_send_buf2 , sizeof(can_iso_send_buf2)
+		  	  	  	  	  	  	  	, can_iso_recv_buf2, sizeof(can_iso_recv_buf2));
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t pre;
-  pre = 0;
+//  uint32_t pre;
+//  pre = 0;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -500,7 +530,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 460800;
+  huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -595,7 +625,6 @@ static void MX_GPIO_Init(void)
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 	if( huart->Instance == huart2.Instance ) {
-
 		// Call to callback function screen
 		Screen_RX_data(dataRX);
 
@@ -622,14 +651,51 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	uint8_t payload[500];
   uint16_t act_size = 0;
   HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData);
-  if (RxHeader.StdId == 0x471) {
-    isotp_on_can_message(&CAN_iso[0], RxData, RxHeader.DLC);
-    //printf("%x,%c,%c,%c,%c,%c,%c,%c\n",RxData[0],RxData[1],RxData[2],RxData[3],RxData[4],RxData[5],RxData[6],RxData[7]);
-    if (CAN_iso[0].receive_status == ISOTP_RECEIVE_STATUS_FULL) {
-      isotp_receive(&CAN_iso[0], payload, sizeof(payload), &act_size);
-      get_data_testing_finish(&_Screen,DEVICE_1,payload);
-    }
-  }
+//  if (RxHeader.StdId == 0x472) {
+//    isotp_on_can_message(&CAN_iso[1], RxData, RxHeader.DLC);
+//      if(RxData[0] == 0x30) {
+//        OS_task_post_event(AO_task_can_bus,TX_SUCCESS,(uint8_t *)0,0);
+//      }
+//    if (CAN_iso[1].receive_status == ISOTP_RECEIVE_STATUS_FULL) {
+//      isotp_receive(&CAN_iso[1], payload, sizeof(payload), &act_size);
+//      get_data_testing_finish(&_Screen,DEVICE_1,payload);
+//    }
+//  }
+   if (RxHeader.StdId == 0x471) {
+     isotp_on_can_message(&CAN_iso[0], RxData, RxHeader.DLC);
+       if(RxData[0] == 0x30) {
+         OS_task_post_event(AO_task_can_bus,TX_SUCCESS,(uint8_t *)0,0);
+       }
+     //printf("%x,%c,%c,%c,%c,%c,%c,%c\n",RxData[0],RxData[1],RxData[2],RxData[3],RxData[4],RxData[5],RxData[6],RxData[7]);
+     if (CAN_iso[0].receive_status == ISOTP_RECEIVE_STATUS_FULL) {
+       isotp_receive(&CAN_iso[0], payload, sizeof(payload), &act_size);
+       get_data_testing_finish(&_Screen,DEVICE_1,payload);
+     }
+   } else if (RxHeader.StdId == 0x472) {
+     isotp_on_can_message(&CAN_iso[1], RxData, RxHeader.DLC);
+     if(RxData[0] == 0x30) {
+       OS_task_post_event(AO_task_can_bus,TX_SUCCESS,(uint8_t *)0,0);
+     }
+     //printf("%x,%c,%c,%c,%c,%c,%c,%c\n",RxData[0],RxData[1],RxData[2],RxData[3],RxData[4],RxData[5],RxData[6],RxData[7]);
+     if (CAN_iso[1].receive_status == ISOTP_RECEIVE_STATUS_FULL) {
+       isotp_receive(&CAN_iso[1], payload, sizeof(payload), &act_size);
+       get_data_testing_finish(&_Screen,DEVICE_2,payload);
+     }
+   } else if (RxHeader.StdId == 0x473) {
+     isotp_on_can_message(&CAN_iso[2], RxData, RxHeader.DLC);
+     if(RxData[0] == 0x30) {
+       OS_task_post_event(AO_task_can_bus,TX_SUCCESS,(uint8_t *)0,0);
+     }
+     //printf("%x,%c,%c,%c,%c,%c,%c,%c\n",RxData[0],RxData[1],RxData[2],RxData[3],RxData[4],RxData[5],RxData[6],RxData[7]);
+     if (CAN_iso[2].receive_status == ISOTP_RECEIVE_STATUS_FULL) {
+       isotp_receive(&CAN_iso[2], payload, sizeof(payload), &act_size);
+       get_data_testing_finish(&_Screen,DEVICE_3,payload);
+     }
+   }
+}
+
+void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan) {
+	uint32_t lastError = HAL_CAN_GetError(hcan);
 }
 
 int _write(int file, char *ptr, int len) {

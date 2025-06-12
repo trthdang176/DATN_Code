@@ -54,7 +54,7 @@ AT24Cxx_Status AT24Cxx_write_buffer_bloking(AT24Cxx_t *pDev, uint16_t mem_addr, 
     if (page_remaining > 0x00 && (mem_addr + page_remaining) < AT24C256_MAX_ADDR) {
         while (HAL_I2C_Mem_Write(pDev->i2c_port,pDev->dev_address,mem_addr,I2C_MEMADD_SIZE_16BIT,data_buf,page_remaining,AT24C256_I2C_TIMOUT) != HAL_OK);
         if (HAL_I2C_IsDeviceReady(pDev->i2c_port, pDev->dev_address, 100,5) == HAL_OK) {
-            printf("transmit i2c success\n");
+            // printf("transmit i2c success\n");
         }
     }
 
@@ -67,7 +67,7 @@ AT24Cxx_Status AT24Cxx_write_buffer_bloking(AT24Cxx_t *pDev, uint16_t mem_addr, 
                     AT24C256_PG_SIZE,
                     AT24C256_I2C_TIMOUT) != HAL_OK);
             if (HAL_I2C_IsDeviceReady(pDev->i2c_port, pDev->dev_address, 100,5) == HAL_OK) {
-                printf("transmit i2c success\n");
+                // printf("transmit i2c success\n");
             }
         }
     }
@@ -83,7 +83,7 @@ AT24Cxx_Status AT24Cxx_write_buffer_bloking(AT24Cxx_t *pDev, uint16_t mem_addr, 
                     AT24C256_I2C_TIMOUT) == HAL_OK) {
                     } 
             if (HAL_I2C_IsDeviceReady(pDev->i2c_port, pDev->dev_address, 100,5) == HAL_OK) {
-                printf("transmit i2c success\n");
+                // printf("transmit i2c success\n");
             }
         }
     }

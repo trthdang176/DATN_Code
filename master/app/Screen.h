@@ -14,7 +14,7 @@
 
 #define MAX_PROGRAM_NAME_SIZE   20
 #define MAX_IC_NAME_SIZE        20     
-#define MAX_IC_NUM              2   
+#define MAX_IC_NUM_SIZE         2   
 
 #define MAX_NAME_WIFI_SIZE      30
 #define MAX_PASSWORD_WIFI_SIZE  30
@@ -26,15 +26,20 @@
 #define DWINPAGE_MAIN_FINISH            100
 #define DWINPAGE_MAIN_DETAIL            102
 #define DWINPAGE_MAIN_PULSE             103
-#define DWINPAGE_MAIN_GRAPH             111
 #define DWINPAGE_SETTING                116
 #define DWINPAGE_SETTING_PROGRAM        107   
 #define DWINPAGE_MODIFY_PROGRAM         108
 #define DWINPAGE_NUM_KEYBOARD           109
 #define DWINPAGE_PASSWORD               110
+#define DWINPAGE_INFORMATION            111
+#define DWINPAGE_LOGGING                112
 #define DWINPAGE_SETTING_WIFI           117
 #define DWINPAGE_SETTING_TIME           118
+#define DWINPAGE_WARNING                119
 #define DWINPAGE_FULL_KEYBOARD          120
+
+#define VP_Pulse_graph                  0x1000
+#define VP_vertical_line                0x2000 // 0x3C00
 
 #define VP_Navigation_button            0x5000
 #define VP_Selection_button             0x5100
@@ -44,7 +49,9 @@
 #define VP_Save_button                  0x5400
 #define VP_Enter_button                 0x5500
 #define VP_Keyboard                     0xFF00
-    
+
+#define SP_Current_Case                 0x8000 //f800
+
 #define VP_Hour                         0x9000
 #define VP_Minute                       0x9010
 #define VP_Day                          0x9020
@@ -53,10 +60,10 @@
 #define VP_Name_IC                      0x9100
 #define VP_Description_IC               0x9150
 #define VP_Num_IC_Test                  0x9200
-#define VP_Program_Name_1               0x9225
+#define VP_Program_Name_1               0x9228
 #define VP_Program_Name_2               0x9250
-#define VP_Program_Name_3               0x9275
-#define VP_Program_Name_4               0x9300
+#define VP_Program_Name_3               0x9278
+#define VP_Program_Name_4               0x92A0
 #define VP_Name_Tester                  0x9350
 #define VP_Show_CurrentCase             0x9380
 #define VP_Name_Pin                     0x9400 // -> 94F0
@@ -69,6 +76,12 @@
 #define VP_Password_Wifi                0x95D0 // 30
 #define VP_Text_Short_Circuit           0x9600
 #define VP_Text_Test_Function           0x9700 // 50
+#define VP_Text_Pin_Pulse               0x9750 //- > 0x9800
+#define VP_Time_Hour                    0x9800 
+#define VP_Time_Day                     0x9820 // 40
+#define VP_Data_Log                     0x9900 // -> 0x9B50
+#define VP_INFO                         0x9C00
+#define VP_Warining                     0x9F00
     
 #define VP_ShowString_Keyboard          0xF000
 #define VP_ShowUnit_Keyboard            0xF050
@@ -80,6 +93,9 @@
 #define VP_ICON_SELECT_PROGRAM          0x4100 
 #define VP_ICON_RESULT                  0x4150
 #define VP_ICON_CAPLOCK                 0x4200
+#define VP_ICON_WIFI                    0x4250
+#define VP_ICON_DIREC_PULSE             0x4300
+
 
 enum {
     SIG_NAVIGATION           = 0,
@@ -108,6 +124,9 @@ enum {
     NAVIGATION_LOGGING                 ,
     NAVIGATION_MODIFY_PROGRAM          ,
     NAVIGATION_DETAIL_MAINPAGE         ,
+    NAVIGATION_GRAPH_MAINPAGE          ,
+    NAVIGATION_CHANGE_CASE_PULSE       ,
+    NAVIGATION_FINISH_REVIEW           ,
     MAX_VALUE_SIG_NAVIGATE             
 };
 
@@ -236,9 +255,12 @@ typedef struct {
 
 typedef struct {
     char *Name_Program;   // Name program test
+    char *Name_Program_temp;
     char *Name_IC;        // Name IC test
-    char *Description_IC; // Descript ion IC test
+    char *Name_IC_temp;
     char *num_IC;         // The number IC per testing program
+    char *num_IC_temp;
+    char *Description_IC; // Descript ion IC test
     uint8_t num_case;     // The number test case
     uint8_t num_pin;      // The number pin IC
 
@@ -251,14 +273,19 @@ typedef struct {
 typedef struct {
     uint8_t curr_case;
     uint8_t curr_PageMain;          // The current main page
+    uint8_t curr_num_ic;
     uint8_t selected_Program_Index; // index selected program to show data in main page
     bool    state;                  /* Status of device */
     
-    char *NameIC_Tester;
+    char NameIC_Tester[15];
     char *config_pin;                   // Array control icon pin 
     char *data_result;                 // Array control icon result
+    char *icon_result;
     char *data_short_circuit;          // array data result test short circuit
+    char isShort;
     char *data_result_case;
+    char *data_clock;                   // data pulse 
+    char result_text[250];
     uint8_t array[MAX_PROGRAM_TEST];    // Array control icon selected program
 } Device_t;
 
@@ -313,5 +340,6 @@ void Navigation_home_page(Screen_t *const screen_obj, screen_event_t *const scre
 void get_data_testing_finish(Screen_t *const screen_obj,uint8_t device, uint8_t *result_array);
 void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_program);
 
+void warning_page(Screen_t *const screen_obj,uint32_t id_slave);
 
 #endif /* __SCREEN_H__ */   

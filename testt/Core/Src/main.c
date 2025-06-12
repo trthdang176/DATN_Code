@@ -40,7 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define DEVICE 2
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -173,7 +173,7 @@ int main(void)
   // Init custom code
 //  Control_IC_begin();
 
-// Latch_IC_begin();
+  Latch_IC_begin();
   
   //  uint8_t IC_test_data[20] = {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0};
     // uint8_t IC_test_data[20] = {2,2,2,2,2,2,2,2,2,1,0,2,2,2,2,2,2,2,2,2};
@@ -193,6 +193,8 @@ int main(void)
   //  uint8_t data_Current[20] = {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0};
 //  memset(data_Current,1,sizeof(data_Current));
   //  WritePin_CurrentLeakage(data_Current);
+//  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_7, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_8, GPIO_PIN_SET);
 
   ADS1115_t ADS1115;
   config_reg_t config_reg_ads;
@@ -223,10 +225,10 @@ int main(void)
 
 //  Screen_begin(&huart2);
 
-  uint8_t num_case = 8;
-  uint8_t num_pin  = 16;
+  // uint8_t num_case = 8;
+  // uint8_t num_pin  = 16;
   uint8_t num_pin_control = 20;
-  uint8_t (*data_control)[20] = malloc(num_case * sizeof(*data_control));
+  // uint8_t (*data_control)[20] = malloc(num_case * sizeof(*data_control));
 
   char * ptr_data_test ;
   uint8_t count_case = 0;
@@ -250,17 +252,24 @@ int main(void)
 //  Control_Program_IC_Test(data_test[1],16);
 
   // Active the notification
-  TxHeader.DLC = 6;
-  TxHeader.StdId = 0x103;
-  TxHeader.IDE = CAN_ID_STD;
-  TxHeader.RTR = CAN_RTR_DATA;
-
-  uint8_t data_tx[6] = {'H','E','L','L','O','3'};
+//  TxHeader.DLC = 6;
+//  TxHeader.StdId = 0x103;
+//  TxHeader.IDE = CAN_ID_STD;
+//  TxHeader.RTR = CAN_RTR_DATA;
+//
+//  uint8_t data_tx[6] = {'H','E','L','L','O','3'};
   // HAL_CAN_AddTxMessage(&hcan1, &TxHeader, data_tx, &TxMailbox);
 
+#if DEVICE == 1
   isotp_init_link(&CAN_iso, 0x471, can_iso_send_buf , sizeof(can_iso_send_buf)
-		  	  	  	  	  	  	  	, can_iso_recv_buf, sizeof(can_iso_recv_buf));
-
+                                , can_iso_recv_buf, sizeof(can_iso_recv_buf));
+#elif DEVICE == 2
+  isotp_init_link(&CAN_iso, 0x472, can_iso_send_buf , sizeof(can_iso_send_buf)
+                              , can_iso_recv_buf, sizeof(can_iso_recv_buf));
+#elif DEVICE == 3
+  isotp_init_link(&CAN_iso, 0x473, can_iso_send_buf , sizeof(can_iso_send_buf)
+                                , can_iso_recv_buf, sizeof(can_iso_recv_buf));
+#endif
 
   /* start the CAN */
   HAL_CAN_Start(&hcan1);
@@ -306,52 +315,113 @@ int main(void)
         case TEST_SHORT_CIRCUIT : {
           /* setup float pin IC test, enable PULLUP,PULLDOWN */
           Control_IC_test.data_control_testing = &Data_test_short_circuit;
+          Control_IC_test.isShort = 0;
+          reset_TXS();
+          // Control_IC_test.result_short_pin = malloc(num_pin_control);
+          memset(Control_IC_test.result_short_pin,1,num_pin_control);
           WritePin_ICTest(Control_IC_test.data_control_testing);
           TurnOn_short_circuit();
           Control_IC_test.result_short_circuit = malloc(20 * sizeof(float));
           /* read the adc pin */
           for (uint8_t i = 0; i < 20; i++) {
             Read_ADC_IC_test(&ADS1115,i,Control_IC_test.result_short_circuit);
+            if (Control_IC_test.result_short_circuit[i] < 2.0f || Control_IC_test.result_short_circuit[i] > 2.8f) {
+              Control_IC_test.result_short_pin[i] = 0;
+              Control_IC_test.isShort = 1;
+            }
+          }
+          memcpy(ADC_data,Control_IC_test.result_short_circuit,20*4);
+          if (Control_IC_test.num_pin == 18) {
+              for (uint8_t i = 9; i < Control_IC_test.num_pin; i++) {
+                Control_IC_test.result_short_pin[i] = Control_IC_test.result_short_pin[i + 2];
+              }
+          } else if (Control_IC_test.num_pin == 16) {
+              for (uint8_t i = 8; i < Control_IC_test.num_pin; i++) {
+                Control_IC_test.result_short_pin[i] = Control_IC_test.result_short_pin[i + 4];
+              }
+          } else if (Control_IC_test.num_pin == 14) {
+              for (uint8_t i = 7; i < Control_IC_test.num_pin; i++) {
+                Control_IC_test.result_short_pin[i] = Control_IC_test.result_short_pin[i + 6];
+              }
           }
           TurnOff_short_circuit();
-          memcpy(ADC_data,Control_IC_test.result_short_circuit,20*4);
-          Control_IC_test.cur_case = TEST_FUNCTION;
-        }
+
+          if (Control_IC_test.isShort) {
+            Control_IC_test.cur_case = FINISH_TEST;
+          } else {
+            Control_IC_test.cur_case = TEST_FUNCTION;
+          }
+        } break;
         case TEST_FUNCTION : {
+          uint8_t copy_buf[500] = {0};
+          bool is_clock_transition = false;
+
+          /* reset array */
+          memset(Control_IC_test.data_control_first_state,0,sizeof(Control_IC_test.data_control_first_state));
+          memset(Control_IC_test.data_control_second_state,0,sizeof(Control_IC_test.data_control_second_state));
+
           /* convert data test to data control IC test */
-          Control_IC_test.data_control_testing = malloc(num_case * num_pin_control);
+          Control_IC_test.data_control_testing = malloc(Control_IC_test.num_case * num_pin_control);
+          memset(Control_IC_test.data_control_testing,0,Control_IC_test.num_case * num_pin_control);
+
+          memcpy(copy_buf,Control_IC_test.data_test,Control_IC_test.data_test_len);
           count_case = 0;
-          ptr_data_test = strtok(data_test,"\n");
-          while (ptr_data_test != NULL) {
-            convert_data_test(num_pin,ptr_data_test,(Control_IC_test.data_control_testing + (num_pin_control * count_case)));
-            memcpy(buffer,Control_IC_test.data_control_testing + (num_pin_control * count_case),20);
+          ptr_data_test = strtok(copy_buf,"\n");
+          /* need check first case to know have clock transition or not */
+          is_clock_transition = has_clock_transition(Control_IC_test.num_pin,ptr_data_test);
+          /* convert and check data per case */
+          while (ptr_data_test != NULL) { 
+            if (is_clock_transition) {
+              convert_data_test_first_state(Control_IC_test.num_pin,ptr_data_test,&Control_IC_test.data_control_first_state[num_pin_control * count_case]);
+              convert_data_test_second_state(Control_IC_test.num_pin,ptr_data_test,&Control_IC_test.data_control_second_state[num_pin_control * count_case]);
+            } else {
+              convert_data_test(Control_IC_test.num_pin,ptr_data_test,&Control_IC_test.data_control_testing[num_pin_control * count_case]);
+              // memcpy(buffer,Control_IC_test.data_control_testing + (num_pin_control * count_case),20);
+            }
             count_case++;
             ptr_data_test = strtok(NULL,"\n"); /* go to next case test data */
           }
+
           /* control pin with data test */
           TurnOff_short_circuit();
-          Control_IC_test.result_test_function = malloc(num_case * num_pin);
+          Control_IC_test.result_test_function = malloc(Control_IC_test.num_case * Control_IC_test.num_pin);
+          memset(Control_IC_test.result_test_function,0,Control_IC_test.num_case * Control_IC_test.num_pin);
           count_case = 0;
-          while (count_case < num_case) {
-            WritePin_ICTest(Control_IC_test.data_control_testing + (num_pin_control * count_case));
-//            memcpy(buffer,Control_IC_test.data_control_testing + (num_pin_control * count_case),20);
-            HAL_Delay(10);
-            ReadPin_IC_test(Control_IC_test.result_test_function + (num_pin * count_case),num_pin);
-//              memcpy(buffer,Control_IC_test.result_test_function + (num_pin * count_case),num_pin);
+          while (count_case < Control_IC_test.num_case) {
+            reset_TXS();
+            if (is_clock_transition) {
+              WritePin_ICTest(Control_IC_test.data_control_first_state + (num_pin_control * count_case));
+              HAL_Delay(10);
+              WritePin_ICTest(Control_IC_test.data_control_second_state + (num_pin_control * count_case));
+              HAL_Delay(10);
+            } else {
+              WritePin_ICTest(Control_IC_test.data_control_testing + (num_pin_control * count_case));
+              memcpy(buffer,Control_IC_test.data_control_testing + (num_pin_control * count_case),20);
+              HAL_Delay(10);
+            }
+            
+            ReadPin_IC_test(Control_IC_test.result_test_function + (Control_IC_test.num_pin * count_case),Control_IC_test.num_pin);
+//              memcpy(buffer,Control_IC_test.result_test_function + (Control_IC_test.num_pin * count_case),Control_IC_test.num_pin);
             count_case++;
           }
-          memcpy(can_send_result_test,Control_IC_test.result_test_function,num_pin * num_case);
+
+          memcpy(can_send_result_test,Control_IC_test.result_test_function,Control_IC_test.num_pin * Control_IC_test.num_case);
           /* check result */
-          Control_IC_test.result_case = malloc(num_case * sizeof(uint8_t));
-          memset(Control_IC_test.result_case,1,num_case);
+          // Control_IC_test.result_case = malloc(Control_IC_test.num_case * sizeof(uint8_t));
+          memset(Control_IC_test.result_case,0,sizeof(Control_IC_test.result_case));
+          memset(Control_IC_test.result_case,1,Control_IC_test.num_case);
           count_case = 0;
-          uint8_t data_convert;
-          ptr_data_test = strtok(data_test,"\n");
+          memcpy(copy_buf,Control_IC_test.data_test,Control_IC_test.data_test_len);
+          ptr_data_test = strtok(copy_buf,"\n");
+
           while (ptr_data_test != NULL) {
-            // uint8_t *result_case = (uint8_t *)(Control_IC_test.result_test_function + (num_pin * count_case));
-            // memcpy(buffer,result_case,num_pin);
-            for (uint8_t pin = 0; pin < num_pin; pin++) {
-              if (convert_data_compare(ptr_data_test[pin]) != can_send_result_test[pin + (count_case * num_pin)]) {
+            // uint8_t *result_case = (uint8_t *)(Control_IC_test.result_test_function + (Control_IC_test.num_pin * count_case));
+            // memcpy(buffer,result_case,Control_IC_test.num_pin);
+            for (uint8_t pin = 0; pin < Control_IC_test.num_pin; pin++) {
+              if (ptr_data_test[pin] == 'U' || ptr_data_test[pin] == 'D') {
+                continue;
+              }
+              if (convert_data_compare(ptr_data_test[pin]) != can_send_result_test[pin + (count_case * Control_IC_test.num_pin)]) {
                 Control_IC_test.result_case[count_case] = 0;
                 break;
               }
@@ -359,21 +429,26 @@ int main(void)
             count_case++;
             ptr_data_test = strtok(NULL,"\n");
           }
-          memcpy(buffer,Control_IC_test.result_case,num_case);
+          memcpy(buffer,Control_IC_test.result_case,Control_IC_test.num_case);
           Control_IC_test.cur_case = FINISH_TEST;
         } break;
         case FINISH_TEST : {
           /* send data to master */
           uint8_t total_data_send_can[500];
-          memcpy(total_data_send_can,Control_IC_test.result_test_function,num_case*num_pin);
-          // total_data_send_can[num_case*num_pin] = '\n';
-          memcpy(&total_data_send_can[num_case*num_pin+1],Control_IC_test.result_case,num_case);
+          memset(total_data_send_can,0,sizeof(total_data_send_can));
+          total_data_send_can[0] = Control_IC_test.isShort;
+          memcpy(&total_data_send_can[2],&Control_IC_test.result_short_pin[0],Control_IC_test.num_pin);
+          memcpy(&total_data_send_can[Control_IC_test.num_pin+3],Control_IC_test.result_test_function,Control_IC_test.num_case*Control_IC_test.num_pin);
+          memcpy(&total_data_send_can[Control_IC_test.num_pin+5+Control_IC_test.num_case*Control_IC_test.num_pin],Control_IC_test.result_case,Control_IC_test.num_case);
           /* convert data to char type */
-          for (uint16_t i = 0; i < ((num_case * num_pin) + num_case + 1); i++) {
+          for (uint16_t i = 0; i < (Control_IC_test.num_pin + 6 + Control_IC_test.num_case*Control_IC_test.num_pin + Control_IC_test.num_case); i++) {
             total_data_send_can[i] = '0' + total_data_send_can[i];
           }
-          total_data_send_can[num_case*num_pin] = '\0';
-          isotp_send(&CAN_iso,total_data_send_can,((num_case * num_pin) + num_case + 1));
+
+          total_data_send_can[1] = '\0';
+          total_data_send_can[Control_IC_test.num_pin+2] = '\0';
+          total_data_send_can[Control_IC_test.num_pin+4+Control_IC_test.num_case*Control_IC_test.num_pin] = '\0';
+          isotp_send(&CAN_iso,total_data_send_can,(Control_IC_test.num_pin + 4 + Control_IC_test.num_case*Control_IC_test.num_pin + Control_IC_test.num_case));
           flag_run_test = false;
         } break;
         default : break;
@@ -464,16 +539,40 @@ static void MX_CAN1_Init(void)
   /* USER CODE BEGIN CAN1_Init 2 */
   CAN_FilterTypeDef canfilterconfig;
 
+#if DEVIVE == 1
+ canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
+ canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
+ canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+ canfilterconfig.FilterIdHigh = 0x131<<5;
+ canfilterconfig.FilterIdLow = 0;
+ canfilterconfig.FilterMaskIdHigh = 0x131<<5;
+ canfilterconfig.FilterMaskIdLow = 0;
+ canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
+ canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
+ canfilterconfig.SlaveStartFilterBank = 20;
+#elif DEVICE == 2
   canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
   canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
   canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
-  canfilterconfig.FilterIdHigh = 0x131<<5;
+  canfilterconfig.FilterIdHigh = 0x132<<5;
   canfilterconfig.FilterIdLow = 0;
-  canfilterconfig.FilterMaskIdHigh = 0x131<<5;
+  canfilterconfig.FilterMaskIdHigh = 0x132<<5;
   canfilterconfig.FilterMaskIdLow = 0;
   canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
   canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
   canfilterconfig.SlaveStartFilterBank = 20;
+#elif DEVICE == 3 
+  canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
+  canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
+  canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+  canfilterconfig.FilterIdHigh = 0x134<<5;
+  canfilterconfig.FilterIdLow = 0;
+  canfilterconfig.FilterMaskIdHigh = 0x134<<5;
+  canfilterconfig.FilterMaskIdLow = 0;
+  canfilterconfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  canfilterconfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  canfilterconfig.SlaveStartFilterBank = 20;
+#endif  
 
   HAL_CAN_ConfigFilter(&hcan1, &canfilterconfig);
   /* USER CODE END CAN1_Init 2 */
@@ -748,14 +847,18 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, RxData);
-	uint8_t payload[200];
+	uint8_t payload[500];
 	uint16_t act_size = 0;
   isotp_on_can_message(&CAN_iso, RxData, RxHeader.DLC);
   isotp_poll(&CAN_iso);
   if (CAN_iso.receive_status == ISOTP_RECEIVE_STATUS_FULL) {
 	  isotp_receive(&CAN_iso, payload, sizeof(payload), &act_size);
     /* Receive full data test */
-    memcpy(data_test,payload,act_size);
+    memset(Control_IC_test.data_test,0,sizeof(Control_IC_test.data_test));
+    Control_IC_test.num_pin = payload[0];
+    Control_IC_test.num_case = payload[2];
+    memcpy(Control_IC_test.data_test,&payload[4],act_size - 4);
+    Control_IC_test.data_test_len = act_size - 4;
     Control_IC_test.cur_case = TEST_SHORT_CIRCUIT;
     flag_run_test = true;
   }

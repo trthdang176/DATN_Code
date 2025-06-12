@@ -17,6 +17,8 @@
 #include "app_uart_esp32.h"
 #include "app_can_bus.h"
 #include "app_screen.h"
+#include "app_rtc.h"
+#include "app_sd.h"
 
 #include "../os/os.h"
 #include "../os/os_event.h"
@@ -63,6 +65,10 @@ enum {
 enum {
     SEND_DATA_CAN_BUS  = 0,
     RECEIVE_DATA_CAN_BUS  ,
+    START_TIMEOUT_TX      ,
+    TX_SUCCESS            ,
+    TX_FAILED             ,
+    TX_TIMEOUT            ,
 
     MAX_SIG_CAN_BUS
 };
@@ -70,10 +76,17 @@ enum {
 /* screen signal */
 enum {
     DEIVCE_TEST_FINISH  = 0,
-
+    UPDATE_RTC             ,
     MAX_SIG_SCREEN
 };
 
+/* sd signal */
+enum {
+    STORE_DATA_TEST   = 0,
+    GET_DATA_TEST        ,
+
+    MAX_SIG_SD
+};
 
 void BSP_init(void);
 

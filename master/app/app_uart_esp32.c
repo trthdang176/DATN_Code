@@ -11,11 +11,11 @@ typedef struct {
     OS_task task;
 
     UART_HandleTypeDef *pUart;
-    uart_buf **uart_esp32_buf;
-    uint8_t head_index;
-    uint8_t tail_index;
-    uint8_t nUsed;
-    uint8_t end;
+    // uart_esp32_t **uart_esp32_buf;
+    // uint8_t head_index;
+    // uint8_t tail_index;
+    // uint8_t nUsed;
+    // uint8_t end;
 
 } app_uart_esp32;
 
@@ -47,12 +47,15 @@ static void uart_esp32_init(app_uart_esp32 * const pOS_task, OS_event_t const * 
 static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t const * const pEvent) {
     switch (pEvent->sig) {
         case SEND_DATA_ESP32 : {
-            printf("Send data to esp32");
-            uart_buf *data_send = (uart_buf *)get_data_dynamic_event(pEvent);
-            HAL_UART_Transmit(pOS_task->pUart,data_send->data,data_send->len,100);
+            printf("Send data to esp32\n");
+            uart_esp32_t *data_send_esp32 = (uart_esp32_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
+            HAL_UART_Transmit(pOS_task->pUart,data_send_esp32->data,data_send_esp32->len,1000);
+
+            if (data_send_esp32->data != NULL) free(data_send_esp32->data);
+            free(data_send_esp32);
         } break;
         case RECEIVE_DATA_ESP32 : {
-
+            
         } break;
 
         default: break;

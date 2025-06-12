@@ -1,88 +1,10 @@
-15:34:35 **** Incremental Build of configuration Debug for project master ****
+23:46:47 **** Incremental Build of configuration Debug for project master ****
 make -j12 all 
-arm-none-eabi-gcc "../app/Screen.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"app/Screen.d" -MT"app/Screen.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "app/Screen.o"
-../app/Screen.c: In function 'Navigation_Change_CaseTest':
-../app/Screen.c:274:107: warning: passing argument 3 of 'DWIN_SetArray_Icon' makes pointer from integer without a cast [-Wint-conversion]
-  274 |     DWIN_SetArray_Icon((Dwin_t *)screen_obj,VP_ICON_RESULT,_Screen.IC_Testerx[selectedProgram].data_result[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case],num_pin);
-      |                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                                                                                                           |
-      |                                                                                                           char
-In file included from ../app/Screen.h:8,
-                 from ../app/Screen.c:1:
-../app/../lib/DWIN_HMI.h:32:76: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'char'
-   32 | void DWIN_SetArray_Icon(Dwin_t *pDwin, uint16_t VP_address_begin, uint8_t *data_array, uint8_t data_length );
-      |                                                                   ~~~~~~~~~^~~~~~~~~~
-../app/Screen.c: In function 'Screen_GetIcon_Result':
-../app/Screen.c:610:122: warning: array subscript has type 'char' [-Wchar-subscripts]
-  610 |                 screen_obj->IC_Testerx[screen_obj->curr_device].data_result[Pin_x +(num_pin * Case_x)] = map_array[result[Pin_x +(num_pin * Case_x)]];
-      |                                                                                                                    ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-../app/Screen.c: In function 'Screen_SetInfo_Pin':
-../app/Screen.c:716:167: warning: passing argument 1 of 'strlen' makes pointer from integer without a cast [-Wint-conversion]
-  716 |         DWIN_SetText((Dwin_t *)screen_obj,Address_VP,screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x],strlen(screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x]));
-      |                                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      |                                                                                                                                                                       |
-      |                                                                                                                                                                       char
-In file included from ../app/../Core/Inc/../../lib/ISO_TP/isotp.h:5,
-                 from ../app/../Core/Inc/main.h:34,
-                 from ../app/Screen.h:7:
-C:\ST\STM32CubeIDE_1.16.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/include/string.h:41:18: note: expected 'const char *' but argument is of type 'char'
-   41 | size_t   strlen (const char *);
-      |                  ^~~~~~~~~~~~
-../app/Screen.c:716:103: warning: passing argument 3 of 'DWIN_SetText' makes pointer from integer without a cast [-Wint-conversion]
-  716 |         DWIN_SetText((Dwin_t *)screen_obj,Address_VP,screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x],strlen(screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x]));
-      |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      |                                                                                                       |
-      |                                                                                                       char
-../app/../lib/DWIN_HMI.h:28:61: note: expected 'char *' but argument is of type 'char'
-   28 | void DWIN_SetText(Dwin_t *pDwin, uint16_t VP_address, char *textData, uint16_t datalen);
-      |                                                       ~~~~~~^~~~~~~~
-../app/Screen.c: In function 'get_data_testing_ic':
-../app/Screen.c:763:28: warning: pointer targets in passing argument 2 of 'strncpy' differ in signedness [-Wpointer-sign]
-  763 |     strncpy(pin_count_str, temp_buf, pin_count_len);
-      |                            ^~~~~~~~
-      |                            |
-      |                            uint8_t * {aka unsigned char *}
-C:\ST\STM32CubeIDE_1.16.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/include/string.h:44:37: note: expected 'const char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
-   44 | char    *strncpy (char *__restrict, const char *__restrict, size_t);
-      |                                     ^
-../app/Screen.c:776:40: warning: pointer targets in passing argument 2 of 'strncpy' differ in signedness [-Wpointer-sign]
-  776 |     strncpy(test_count_str, first_pipe + 1, test_count_len);
-      |                             ~~~~~~~~~~~^~~
-      |                                        |
-      |                                        uint8_t * {aka unsigned char *}
-C:\ST\STM32CubeIDE_1.16.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/include/string.h:44:37: note: expected 'const char * restrict' but argument is of type 'uint8_t *' {aka 'unsigned char *'}
-   44 | char    *strncpy (char *__restrict, const char *__restrict, size_t);
-      |                                     ^
-../app/Screen.c: In function 'show_main_page':
-../app/Screen.c:818:13: warning: implicit declaration of function 'show_text_short_circuit'; did you mean 'VP_Text_Short_Circuit'? [-Wimplicit-function-declaration]
-  818 |             show_text_short_circuit((Dwin_t *)screen_obj);
-      |             ^~~~~~~~~~~~~~~~~~~~~~~
-      |             VP_Text_Short_Circuit
-../app/Screen.c: At top level:
-../app/Screen.c:867:6: warning: conflicting types for 'show_text_short_circuit'; have 'void(Screen_t * const)'
-  867 | void show_text_short_circuit(Screen_t *const screen_obj) {
-      |      ^~~~~~~~~~~~~~~~~~~~~~~
-../app/Screen.c:818:13: note: previous implicit declaration of 'show_text_short_circuit' with type 'void(Screen_t * const)'
-  818 |             show_text_short_circuit((Dwin_t *)screen_obj);
-      |             ^~~~~~~~~~~~~~~~~~~~~~~
-../app/Screen.c: In function 'show_text_short_circuit':
-../app/Screen.c:874:13: warning: variable 'shortPin' set but not used [-Wunused-but-set-variable]
-  874 |     uint8_t shortPin[num_pin]; /* array store pin short */
-      |             ^~~~~~~~
-../app/Screen.c:870:13: warning: unused variable 'num_case' [-Wunused-variable]
-  870 |     uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
-      |             ^~~~~~~~
-arm-none-eabi-gcc -o "master.elf" @"objects.list"   -mcpu=cortex-m3 -T"F:\UTE\DATN\Code\master\STM32F103CBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="master.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: master.elf
- 
 arm-none-eabi-size  master.elf 
-arm-none-eabi-objdump -h -S master.elf  > "master.list"
    text	   data	    bss	    dec	    hex	filename
-  71276	    592	   5888	  77756	  12fbc	master.elf
+ 104432	    592	   9608	 114632	  1bfc8	master.elf
 Finished building: default.size.stdout
  
-Finished building: master.list
- 
 
-15:34:37 Build Finished. 0 errors, 10 warnings. (took 1s.575ms)
+23:46:48 Build Finished. 0 errors, 0 warnings. (took 778ms)
 

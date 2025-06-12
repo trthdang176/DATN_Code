@@ -34,7 +34,7 @@ void DWIN_SetArray_Icon(Dwin_t *pDwin, uint16_t VP_address_begin, uint8_t *data_
 
 void DWIN_Create_Basic_line(Dwin_t *pDwin, uint16_t VP_address, uint16_t x_base, uint16_t y_base, uint8_t *array_data, uint8_t size);
 void DWIN_SetWidth_Basic_line(Dwin_t *pDwin, uint16_t SP_Address, uint8_t width);
-
+void DWIN_Create_Single_line(Dwin_t *pDwin, uint16_t VP_address, uint16_t x_1, uint16_t y_1, uint16_t x_2, uint16_t y_2, uint16_t color);
 
 uint8_t DWIN_GetPage(Dwin_t *pDwin);
 void DWIN_SetCallback(Dwin_t *pDwin, pListenDWIN dwin_callback);

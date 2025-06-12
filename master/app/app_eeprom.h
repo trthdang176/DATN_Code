@@ -14,15 +14,17 @@
 
 #define MEM_ADDR_CHECK_UPDATA_DATA_TEST 0x10
 
-#define START_MEM_ADDR_PROGRAM_TEST     AT24C256_ADDR_PAGE(1)
-#define TOTAL_ONE_PROGRAM_TEST_LEN      (MAX_PROGRAM_NAME_SIZE + MAX_IC_NAME_SIZE + MAX_IC_NUM)
+#define START_MEM_ADDR_PROGRAM_TEST     AT24C256_ADDR_PAGE(1) // -> 4
+#define TOTAL_ONE_PROGRAM_TEST_LEN      (MAX_PROGRAM_NAME_SIZE + MAX_IC_NAME_SIZE + MAX_IC_NUM_SIZE)
 #define TOTAL_ALL_PROGRAM_TEST_LEN      (TOTAL_ONE_PROGRAM_TEST_LEN * MAX_PROGRAM_TEST)
 #define START_ADDR_PROGRAM_TEST_X(i)    (START_MEM_ADDR_PROGRAM_TEST + (TOTAL_ONE_PROGRAM_TEST_LEN * i) + 3)
 
+#define START_ADDR_WIFI_INFO            AT24C256_ADDR_PAGE(6) // -> 7
+
 #define MAX_DIRECTORY_USED              20  /* THE MAX TESTING IC */
 #define DATA_LEN_DIREC_EEPROM           (sizeof(direc_EEPROM_t))
-#define START_MEM_ADDR_DIREC_USED       AT24C256_ADDR_PAGE(5)     /* Number of directories used */  
-#define START_MEM_ADDR_DATA_DIREC       (AT24C256_ADDR_PAGE(5) + 3) /* List of all directory data */
+#define START_MEM_ADDR_DIREC_USED       (AT24C256_ADDR_PAGE(8))     /* Number of directories used */
+#define START_MEM_ADDR_DATA_DIREC       (AT24C256_ADDR_PAGE(8) + 2) /* List of all directory data */
 #define START_MEM_ADDR_DATA_TEST        (START_MEM_ADDR_DATA_DIREC + (DATA_LEN_DIREC_EEPROM * 20) + 1) /* Start data for testing */
 
 typedef struct {

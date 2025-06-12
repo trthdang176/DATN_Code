@@ -1,6 +1,6 @@
 ../app/app_eeprom.c:44:6:eeprom_task_init	2
-../app/app_eeprom.c:89:6:eeprom_ctor	1
-../app/app_eeprom.c:98:13:eeprom_init	1
-../app/app_eeprom.c:122:6:eeprom_dispatch	14
-../app/app_eeprom.c:202:13:write_buffer_with_task	2
-../app/app_eeprom.c:217:6:write_data_test_ic	2
+../app/app_eeprom.c:114:6:eeprom_ctor	1
+../app/app_eeprom.c:123:13:eeprom_init	1
+../app/app_eeprom.c:147:6:eeprom_dispatch	15
+../app/app_eeprom.c:231:13:write_buffer_with_task	2
+../app/app_eeprom.c:246:6:write_data_test_ic	2

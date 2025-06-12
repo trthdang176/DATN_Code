@@ -3,26 +3,33 @@
 #include "../../app/app_main.h"
 #include "../lib/Common.h"
 #include "../lib/AT24Cxx.h"
+#include "../lib/DS3231.h"
 
 #define SIZE_LOOKUP_VP_SIG (sizeof(lookup_VP_SIG)/sizeof(VP_item))
 #define SIZE_LOOKUP_VP_STRING (sizeof(lookup_VP_STRING)/sizeof(VP_String))
 
-Screen_t _Screen;  // screen object
+Screen_t  _Screen;  // screen object
 
 /* Private prototype function */
 void Screen_init_handler_table(Screen_t *const obj_screen);
 void Screen_excute_RX_function(Screen_t *const obj_screen,screen_event_t *const screen_e);
 
-void Screen_Init_Variable(Screen_t *const obj_screen);
-void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_program);
-void Screen_SetInfo_Pin(Screen_t *const screen_obj);
+static void Screen_Init_Variable(Screen_t *const obj_screen);
+static void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_program);
+static void Screen_SetInfo_Pin(Screen_t *const screen_obj);
 
-void Screen_GetIcon_Pin(Screen_t *const screen_obj, char *data_pin);
-void Screen_GetIcon_Result(Screen_t *const screen_obj, char *result);
+static void Screen_GetIcon_Pin(Screen_t *const screen_obj, char *data_pin);
+static void Screen_GetIcon_Result(Screen_t *const screen_obj, char *result);
 
 Return_Status Screen_CheckInput_Keyboard(Screen_t *const obj_screen);
 
 static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test);
+static void show_text_short_circuit(Screen_t *screen_obj);
+static void show_text_function_test(Screen_t *const screen_obj);
+static void get_text_result(Screen_t *const screen_obj, char *result_line, uint8_t cur_num_ic);
+static void compelte_testing(Screen_t *const screen_obj);
+static void off_testing(Screen_t *screen_obj);
+static void show_pulse(Screen_t *screen_obj, uint8_t curr_case);
 
 /* Array store the VP address signal */
 /* Note: The VP address must be increased to find the index */
@@ -72,77 +79,24 @@ void Screen_begin(UART_HandleTypeDef * UART_Screen) {
     _Screen.Screen_keyboard.Index_String = 0;
     _Screen.Screen_keyboard.Caplock = 0;
     
-    DWIN_SetPage((Dwin_t *)&_Screen,DWINPAGE_MAIN);  // Go to first page when start
-
     _Screen.pre_page = 106;
     _Screen.Ishome = true;
 
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST1].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST1]));
+    get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST2].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST2]));
+    get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST3].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST3]));
+    get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST4].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST4]));
 
-//    char* data_pin[] = {
-//    "VEE\n""INH\n" "Z\n" "Y\n" "X\n" "VSS\n" "B\n" "C\n"
-//        "A\n" "VCC\n" "X0\n" "X1\n" "Y0\n" "Y1\n" "Z0\n" "Z1\n"
-//    };
+    DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x11D0,2);
+    DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x13D0,2);
+    DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x15D0,2);
+    DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x17D0,2);
+    DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x19D0,2);
+    DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x1BD0,2);
+    DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x1DD0,2);
 
-//    Screen_SetInfo_Pin(&_Screen,data_pin);
-
-//    char *data_test[] = {
-//        "11L1100G0001011V\n"
-//        "11L1100G0011101V\n"
-//        "11L1100G0101110V\n"
-//        "11L1100G0110111V\n"
-//        "01L1100G1001111V\n"
-//        "11L1000G1011111V\n"
-//        "10L1100G1101111V\n"
-//        "11L0100G1111111V\n"
-//    };
-
-//    Screen_GetIcon_Pin(&_Screen,data_test);
-//    DWIN_SetArray_Icon(&_Screen,VP_ICON_DIRECTION_PIN,_Screen.IC_Testerx[PROGRAM_TEST1].config_pin,16);
-//    Screen_GetIcon_Result(&_Screen,data_test);
-//    DWIN_SetArray_Icon(&_Screen,VP_ICON_RESULT,_Screen.IC_Testerx[PROGRAM_TEST1].data_result[0],16);
-    // DWIN_SetVariable_Icon(&_Screen,0x4150,1);
-    // DWIN_SetVariable_Icon(&_Screen,0x4151,1);
-    // DWIN_SetVariable_Icon(&_Screen,0x4152,1);
-
-
-    // uint8_t data_clock[] = {1,1,0,1,0,1};
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1800,25,200,data_clock,sizeof(data_clock));
-    // HAL_Delay(200);
-    // uint8_t data_clock2[] = {1,0,1,0,1,0,1,0,1,0};
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1800,25,200,data_clock2,sizeof(data_clock2));
-    // HAL_Delay(200);
-    // uint8_t data_clock3[] = {0,1,0,1,0,1,0,1,0,1,1,1};
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1800,25,200,data_clock3,sizeof(data_clock3));
-    // uint8_t data[15] = {1,1,0,0,1,0,0,1,1,0,0,0,1,1,0};
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1000,14,140,data,15);
-    // DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x11D0,2);
-    // uint8_t data_2[15] = {1,1,0,0,1,0,0,1,1,0,0,0,1,1,0};
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1200,14,190,data,15);
-    // DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x13D0,2);
-    // uint8_t data_2[15] = {1,1,0,0,1,0,0,1,1,0,0,0,1,1,0};
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1400,14,240,data,15);
-    // DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x15D0,2);
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1600,14,290,data,15);
-    // DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x17D0,2);
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1800,14,340,data,15);
-    // DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x19D0,2);
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1A00,14,390,data,15);
-    // DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x1BD0,2);
-    // DWIN_Create_Basic_line((Dwin_t *)&_Screen,0x1C00,14,440,data,15);
-    // DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x1DD0,2);
-
-    // uint8_t current = 0;
-
-    // for(uint8_t i = 0; i < 8; i++) {
-    //     uint16_t Address_show = 0x1000;
-    //     uint16_t X_Coordinate = 14;
-    //     uint16_t Y_Coordinate = 142;
-    //     DWIN_Create_Basic_line((Dwin_t *)&_Screen,Address_show,X_Coordinate,Y_Coordinate,data,15);
-    //     Address_show = Address_show + 0x200;
-    //     Y_Coordinate = Y_Coordinate + 30;
-    //     HAL_Delay(500);
-    // }
+    DWIN_SetPage((Dwin_t *)&_Screen,DWINPAGE_MAIN);  // Go to first page when start
+    printf("Init screen done\n");
 }
 
 // USED IN RX UART CALLBACK FUNCTION WHEN RECEIVE DATA
@@ -179,8 +133,19 @@ void Navigation_home_page(Screen_t *const screen_obj, screen_event_t *const scre
 
     // Switch page
     screen_obj->Ishome = true;
-    DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain);
+    show_main_page(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain,PROGRAM_TEST1);
+    // DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain);
 }   
+
+void Navigation_return(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    if (screen_obj->Ishome) {
+        screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN;
+        off_testing(screen_obj);
+        // show_main_page(screen_obj,DWINPAGE_MAIN,screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index);
+    } else {
+
+    }
+}
 
 void Navigation_setting_program(Screen_t *const screen_obj, screen_event_t *const screen_event) {
 
@@ -216,6 +181,22 @@ void Navigation_modify_program(Screen_t *const screen_obj, screen_event_t *const
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
 }
 
+void Navigation_detail_mainpage(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].isShort == '0') {
+        /* change main page */
+        screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN_DETAIL;
+        // Switch page
+        show_main_page(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain,(uint8_t)0);
+    }
+}
+
+void Navigation_graph_mainpage(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    /* change main page */
+    screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN_PULSE;
+    // Switch page
+    show_main_page(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain,(uint8_t)0);
+}
+
 void Navigation_Change_MainPage(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     // Change current device
     if (screen_event->data == DATA_NEXT_MAINPAGE) {
@@ -230,33 +211,15 @@ void Navigation_Change_MainPage(Screen_t *const screen_obj, screen_event_t *cons
         }
     }
     uint8_t curr_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
-    /* Show data with correspond device index */
-    // switch (screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain) {
-    //     case DWINPAGE_MAIN : {
-    //         /* Show info */
-    //         DWIN_SetText((Dwin_t *)screen_obj,VP_Name_Tester,screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester,strlen(screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester));
-    //         DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
-    //         Screen_ShowData_Mainpage(screen_obj,curr_program);
-    //     } break;
-    //     case DWINPAGE_MAIN_FINISH: {
 
-    //     } break;
-    //     case DWINPAGE_MAIN_DETAIL: {
-
-    //     } break;
-    //     case DWINPAGE_MAIN_GRAPH: {
-
-    //     } break;
-    // }
     show_main_page(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain,curr_program);
-
 }
 
 void Navigation_Change_CaseTest(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     uint8_t num_case = screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_case;
     uint8_t selectedProgram = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
     uint8_t num_pin = screen_obj->Program_Testx[selectedProgram].num_pin;
-    char ShowCase_String[30];
+    
     // Change current case
     if (screen_event->data == DATA_PREV_CASE) {
         if (screen_obj->IC_Testerx[screen_obj->curr_device].curr_case > 0) {
@@ -269,9 +232,95 @@ void Navigation_Change_CaseTest(Screen_t *const screen_obj, screen_event_t *cons
     }
 
     /* Show data */
+    char ShowCase_String[30];
     snprintf(ShowCase_String,sizeof(ShowCase_String),"%d OF %d",screen_obj->IC_Testerx[screen_obj->curr_device].curr_case + 1,num_case);
     DWIN_SetText((Dwin_t *)screen_obj,VP_Show_CurrentCase,ShowCase_String,strlen(ShowCase_String));
-    DWIN_SetArray_Icon((Dwin_t *)screen_obj,VP_ICON_RESULT,_Screen.IC_Testerx[selectedProgram].data_result[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case],num_pin);
+    // DWIN_SetArray_Icon((Dwin_t *)screen_obj,VP_ICON_RESULT,_Screen.IC_Testerx[selectedProgram].data_result[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case],num_pin);
+    DWIN_SetArray_Icon(screen_obj,VP_ICON_RESULT,&(screen_obj->IC_Testerx[screen_obj->curr_device].icon_result[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case * num_pin]),num_pin);
+}
+
+void Navigation_Change_CasePulse(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    if (screen_event->data == DATA_PREV_CASE) {
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].curr_case > 0) {
+            screen_obj->IC_Testerx[screen_obj->curr_device].curr_case--;
+        }
+    } else if (screen_event->data == DATA_NEXT_CASE) {
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].curr_case < 1) {
+            screen_obj->IC_Testerx[screen_obj->curr_device].curr_case++;
+        }
+    }
+
+    show_pulse(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_case);
+}
+
+void Navigation_Finish_Review(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    uint8_t curr_num_ic = ++screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic;
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t num_ic = atoi(screen_obj->Program_Testx[index_program].num_IC);
+    screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN;
+    /* show number of testing ic */
+    char ShowCase_String[30];
+    snprintf(ShowCase_String,sizeof(ShowCase_String),"%d / %d",curr_num_ic,num_ic);
+    DWIN_SetText((Dwin_t *)screen_obj,VP_Num_IC_Test,ShowCase_String,strlen(ShowCase_String));
+    if (curr_num_ic < num_ic) {
+        /* switch page */
+        show_main_page(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain,index_program); // check 
+
+        /* free array using in have new data test */
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].data_clock != NULL) {
+            free(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock);
+        }
+
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].config_pin != NULL) {
+            free(screen_obj->IC_Testerx[screen_obj->curr_device].config_pin);
+        }
+        
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].icon_result != NULL) {
+            free(screen_obj->IC_Testerx[screen_obj->curr_device].icon_result) ;
+        }
+
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit != NULL) {
+            free(screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit);
+        }
+
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case != NULL) {
+            free(screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case);
+        }
+
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result != NULL) {
+            free(screen_obj->IC_Testerx[screen_obj->curr_device].data_result);
+        }
+
+        /* check error */
+        managerTX_CAN_t *check_TX_CAN = malloc(sizeof(managerTX_CAN_t));
+        check_TX_CAN->ID = CAN_iso[screen_obj->curr_device].send_arbitration_id;
+        check_TX_CAN->TX_Done = false;
+        OS_task_post_event(AO_task_can_bus,START_TIMEOUT_TX,(uint8_t *)&check_TX_CAN,sizeof(managerTX_CAN_t));
+
+        /* send data to tester */
+        uint8_t can_send_buf[500];
+        can_send_buf[0] = screen_obj->Program_Testx[index_program].num_pin;
+        can_send_buf[1] = '\0';
+        can_send_buf[2] = screen_obj->Program_Testx[index_program].num_case;
+        can_send_buf[3] = '\0';
+        memcpy(&can_send_buf[4],screen_obj->Program_Testx[index_program].data_test,screen_obj->Program_Testx[index_program].data_test_len);
+        isotp_send(&CAN_iso[screen_obj->curr_device],can_send_buf,screen_obj->Program_Testx[index_program].data_test_len + 4);
+    } else { /* testing enough number */ 
+        off_testing(screen_obj);
+
+    }   
+}
+
+void Navigation_Information(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+
+    /* Switch page */
+    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_INFORMATION);
+}
+
+void Navigation_Logging(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    /* show data */
+    
+    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_LOGGING);
 }
 
 void Navigation_Next_PrevPage(Screen_t *const screen_obj, screen_event_t *const screen_event) {
@@ -280,18 +329,50 @@ void Navigation_Next_PrevPage(Screen_t *const screen_obj, screen_event_t *const 
 
 void ON_OFF_Button(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     // do sth
-    screen_obj->IC_Testerx[screen_obj->curr_device].state = !screen_obj->IC_Testerx[screen_obj->curr_device].state;
-    // change icon
-    // DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ON_OFF_Icon_1,ON_ICON);
-    //    HAL_Delay(1000);
-    DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].state == false) { // dang off -> bat dau 
+        screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic = 0;
+        screen_obj->IC_Testerx[screen_obj->curr_device].state = true;
+        DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
     
-    //OS_task_post_event(AO_task_can_bus,SEND_DATA_CAN_BUS,(uint8_t *)0,0);
+        /* Send data to esp32 status device */
+        uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+        data_send_esp32->data = (char *)malloc(50);
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
+            sprintf(data_send_esp32->data,"d%d,running,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+            screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+        } else {
+            sprintf(data_send_esp32->data,"stop,%s,%s",screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+            screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+        }
+        data_send_esp32->len = strlen(data_send_esp32->data);
+        OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+    } else { // dang on -> off
+        /* luu vao sd, gui cho esp32 len app */
+        screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN;
+        off_testing(screen_obj);
+    }
+    
     /* Send data test */
-    uint8_t can_send_buf[200];
-    uint8_t index_program = _Screen.IC_Testerx[screen_obj->curr_device].selected_Program_Index;
-    memcpy(can_send_buf,_Screen.Program_Testx[index_program].data_test,_Screen.Program_Testx[index_program].data_test_len);
-    isotp_send(&CAN_iso[0],can_send_buf,_Screen.Program_Testx[index_program].data_test_len);
+    // screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic = 0;
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
+        uint8_t can_send_buf[500];
+        uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+        // uint8_t num_test_ic = screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic;
+        // memcpy(can_send_buf,&num_test_ic,1);
+        can_send_buf[0] = screen_obj->Program_Testx[index_program].num_pin;
+        can_send_buf[1] = '\0';
+        can_send_buf[2] = screen_obj->Program_Testx[index_program].num_case;
+        can_send_buf[3] = '\0';
+        memcpy(&can_send_buf[4],screen_obj->Program_Testx[index_program].data_test,screen_obj->Program_Testx[index_program].data_test_len);
+        isotp_send(&CAN_iso[screen_obj->curr_device],can_send_buf,screen_obj->Program_Testx[index_program].data_test_len + 4);
+
+        /* check error */
+        managerTX_CAN_t *check_TX_CAN = malloc(sizeof(managerTX_CAN_t));
+        check_TX_CAN->ID = (uint32_t)(0x471 + screen_obj->curr_device);
+        check_TX_CAN->TX_Done = false;
+        OS_task_post_event(AO_task_can_bus,START_TIMEOUT_TX,(uint8_t *)&check_TX_CAN,sizeof(managerTX_CAN_t));
+    }
+    
 }
 
 void select_running_program(Screen_t *const screen_obj, screen_event_t *const screen_event) {
@@ -313,20 +394,19 @@ void select_modify_program(Screen_t *const screen_obj, screen_event_t *const scr
     char *Text_Num_IC = malloc(size_Num_IC + 1);
 
     strcpy(Text_Name_IC,"IC Name: ");
-    strcat(Text_Name_IC,(char *)screen_obj->Program_Testx[index_program].Name_IC);
+    strncat(Text_Name_IC,screen_obj->Program_Testx[index_program].Name_IC,size_Name_IC - strlen("IC Name: "));
     strcpy(Text_Num_IC,"Number of ICs: ");
-    strcat(Text_Num_IC,(char *)screen_obj->Program_Testx[index_program].num_IC);
+    strncat(Text_Num_IC,(char *)screen_obj->Program_Testx[index_program].num_IC,size_Num_IC - strlen("Number of ICs: "));
 
     // Show data in screen
     DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Name,Text_Name_IC,size_Name_IC);
     DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Num,Text_Num_IC,size_Num_IC);
+
+    free(Text_Name_IC);
+    free(Text_Num_IC);
 }
 
 void Navigation_num_keyboard(Screen_t *const screen_obj, screen_event_t *const screen_event) {
-    //char TypeData_String[20] = {0};
-    //char UnitData_String[20] = {0};
-    // Switch screen keyboard will excute in screen
-
     // get the datavalue -> the VP will show string input
     screen_obj->Screen_keyboard.VP_Text = screen_event->keyvalue;
 
@@ -356,7 +436,93 @@ void Navigation_full_keyboard(Screen_t *const screen_obj, screen_event_t *const 
 }
 
 void Save_Information(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    /* update value */
+    if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp != NULL) {
+        if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program != NULL) {
+            free(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program);
+        }
+        screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program = (char *)malloc(strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp));
+        memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program
+        ,screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp
+        ,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp)+1);
+        free(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp);
+    }
 
+    if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp != NULL) {
+        if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC != NULL) {
+            free(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC);
+            screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC = NULL;
+        }
+        screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC = (char *)malloc(strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp));
+        memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC
+        ,screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp
+        ,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp)+1);
+
+        free(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp);
+        screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp = NULL;
+    }
+
+    if (screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp != NULL) {
+        if (screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC != NULL) {
+            free(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC);
+            screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC = NULL;
+        } 
+        screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC = (char *)malloc(strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp));
+        memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC
+        ,screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp
+        ,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp)+1);
+
+        free(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp);
+        screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = NULL;
+    }
+
+    /* send to esp32 */
+    char buffer_send[200];
+    memset(buffer_send,0,200);
+    sprintf(buffer_send,"%d,%s,%s,%s",screen_obj->modify_program_index + 1,screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program
+        ,screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC,screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC);
+    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+    data_send_esp32->data = (char *)malloc(strlen(buffer_send));
+    memcpy(data_send_esp32->data,"p",screen_obj->modify_program_index + 1);
+    memcpy(data_send_esp32->data+1,buffer_send,strlen(buffer_send));
+    data_send_esp32->len = strlen(buffer_send) + 1;
+    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+
+    /* store data to eeprom */
+    char string_data[TOTAL_ONE_PROGRAM_TEST_LEN] = {0};
+    data_eeprom_t *data_write = malloc(sizeof(data_eeprom_t));
+    snprintf(string_data,TOTAL_ONE_PROGRAM_TEST_LEN,"%s,%s,%s",screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program
+    ,screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC
+    ,screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC);
+    data_write->data = malloc(TOTAL_ONE_PROGRAM_TEST_LEN);
+    memcpy(data_write->data,string_data,TOTAL_ONE_PROGRAM_TEST_LEN);
+    data_write->data_len = TOTAL_ONE_PROGRAM_TEST_LEN;
+    data_write->mem_addr = START_ADDR_PROGRAM_TEST_X(screen_obj->modify_program_index);
+    OS_task_post_event(AO_task_eeprom,WRITE_EEPROM,(uint8_t *)&data_write,sizeof(data_eeprom_t));
+
+    // Show data in screen
+    uint8_t size_Name_IC = strlen("IC Name: ") + strlen((char *)screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC);
+    uint8_t size_Num_IC = strlen("Number of ICs: ") + strlen((char *)screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC);
+
+    char *Text_Name_IC = malloc(size_Name_IC + 1); // Null 
+    char *Text_Num_IC = malloc(size_Num_IC + 1);
+
+    strcpy(Text_Name_IC,"IC Name: ");
+    strcat(Text_Name_IC,(char *)screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC);
+    strcpy(Text_Num_IC,"Number of ICs: ");
+    strcat(Text_Num_IC,(char *)screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC);
+
+    // Show data in screen
+    DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Name,Text_Name_IC,size_Name_IC);
+    DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Num,Text_Num_IC,size_Num_IC);
+    DWIN_SetText((Dwin_t *)screen_obj,VP_Program_Name_1 + (0x28 *screen_obj->modify_program_index),screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program
+        ,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program));
+
+    free(Text_Name_IC);
+    free(Text_Num_IC);
+    
+    // Switch page
+    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING_PROGRAM);
 }
 
 void Enter_password(Screen_t *const screen_obj, screen_event_t *const screen_event) {
@@ -366,6 +532,33 @@ void Enter_password(Screen_t *const screen_obj, screen_event_t *const screen_eve
     strcpy(input_pass,screen_obj->Screen_keyboard.String);
     /* Check password */
     if (strcmp(input_pass,MACHINE_PASSWORD) == 0) { /* Correct password */
+        /* show data page */
+        switch (screen_obj->page_setting) {
+            case DWINPAGE_SETTING_PROGRAM : {
+                // Show data in screen
+                uint8_t size_Name_IC = strlen("IC Name: ") + strlen((char *)screen_obj->Program_Testx[PROGRAM_TEST1].Name_IC);
+                uint8_t size_Num_IC = strlen("Number of ICs: ") + strlen((char *)screen_obj->Program_Testx[PROGRAM_TEST1].num_IC);
+
+                char *Text_Name_IC = malloc(size_Name_IC + 1); // Null 
+                char *Text_Num_IC = malloc(size_Num_IC + 1);
+
+                strcpy(Text_Name_IC,"IC Name: ");
+                strcat(Text_Name_IC,(char *)screen_obj->Program_Testx[PROGRAM_TEST1].Name_IC);
+                strcpy(Text_Num_IC,"Number of ICs: ");
+                strcat(Text_Num_IC,(char *)screen_obj->Program_Testx[PROGRAM_TEST1].num_IC);
+
+                // Show data in screen
+                DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Name,Text_Name_IC,size_Name_IC);
+                DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Num,Text_Num_IC,size_Num_IC);
+
+                free(Text_Name_IC);
+                free(Text_Num_IC);
+                // Switch page
+                DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING_PROGRAM);
+            } break;
+
+            default : break;
+        }
         /* Goto setting page */
         DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->page_setting);
     } else {
@@ -386,9 +579,22 @@ void Enter_num_keyboard(Screen_t *const screen_obj, screen_event_t *const screen
             DWIN_ClearText((Dwin_t *)screen_obj,VP_Warning_Password); /* Clear warning text if any */
             DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_PASSWORD);
         } break;
-        case VP_Modify_Program_Name : 
-        case VP_Modify_IC_Name      : 
-        case VP_Modify_IC_Num       :{
+        case VP_Modify_Program_Name : {
+            screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
+            memset(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
+            memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
+            DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
+        } break;
+        case VP_Modify_IC_Name : {
+            screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
+            memset(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
+            memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
+            DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
+        } break;
+        case VP_Modify_IC_Num :{
+            screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
+            memset(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
+            memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
             DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
         } break;
         case VP_Name_Wifi :
@@ -478,14 +684,21 @@ void Screen_init_handler_table(Screen_t *const obj_screen) {
                                                                 a_handler_enter_sig };
 
     // Assign the callback function to handler table
-    handler_function_table[SIG_NAVIGATION][NAVIGATION_SETTING_PAGE]         = Navigation_setting_page ;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_SETTING_PAGE]         = Navigation_setting_page;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_RETURN]               = Navigation_return;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_HOME]                 = Navigation_home_page;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_SETTING_PROGRAM]      = Navigation_setting_program;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_SETTING_TIME]         = Navigation_setting_time;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_SETTING_WIFI]         = Navigation_setting_wifi;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_MODIFY_PROGRAM]       = Navigation_modify_program;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_DETAIL_MAINPAGE]      = Navigation_detail_mainpage;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_GRAPH_MAINPAGE]       = Navigation_graph_mainpage;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_CHANGE_MAINPAGE]      = Navigation_Change_MainPage;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_CHANGE_CASEDATA]      = Navigation_Change_CaseTest;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_CHANGE_CASE_PULSE]    = Navigation_Change_CasePulse;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_FINISH_REVIEW]        = Navigation_Finish_Review;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_INFORMATION]          = Navigation_Information;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_LOGGING]              = Navigation_Logging;
 
     handler_function_table[SIG_SELECTION][ON_OFF_DEV]                       = ON_OFF_Button;
     handler_function_table[SIG_SELECTION][SELECT_PROGRAM]                   = select_running_program;
@@ -507,8 +720,6 @@ void Screen_init_handler_table(Screen_t *const obj_screen) {
 
 void Screen_excute_RX_function(Screen_t *const obj_screen,screen_event_t *const screen_e) {
     // do sth ...
-
-
 	handler_func **handler_function_table = (handler_func **) obj_screen->p_handler_table;
     // excute the callback function
     if (screen_e->event == SIG_KEYBOARD) {  // ENVENT KEYBOARD
@@ -556,13 +767,13 @@ Return_Status Screen_CheckInput_Keyboard(Screen_t *const obj_screen) {
  * @param obj_screen : object screen
  * @param data_pin : array 2d data test
  */
-void Screen_GetIcon_Pin(Screen_t *const screen_obj, char *data_pin) {
+static void Screen_GetIcon_Pin(Screen_t *const screen_obj, char *data_pin) {
     uint8_t num_pin = screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_pin;
     
     uint8_t map_array[128] = {0};
     map_array['G'] = ICON_GND;
     map_array['V'] = ICON_VCC;
-    /* Create the array icon data pin */
+
     screen_obj->IC_Testerx[screen_obj->curr_device].config_pin = malloc(num_pin * sizeof(uint8_t));
 
     /* Convert data to icon pin config */
@@ -582,11 +793,7 @@ void Screen_GetIcon_Pin(Screen_t *const screen_obj, char *data_pin) {
     }
 }
 
-void Screen_SetIcon_Pin(Screen_t *const obj_screen) {
-
-}
-
-void Screen_GetIcon_Result(Screen_t *const screen_obj, char *result) {
+static void Screen_GetIcon_Result(Screen_t *const screen_obj, char *result) {
     uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
     uint8_t num_pin = screen_obj->Program_Testx[index_program].num_pin;
     uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
@@ -598,47 +805,67 @@ void Screen_GetIcon_Result(Screen_t *const screen_obj, char *result) {
     map_array['V'] = ICON_LOGIC_NONE;
     map_array['G'] = ICON_LOGIC_NONE;
     /* Create the array icon data pin */
-    screen_obj->IC_Testerx[screen_obj->curr_device].data_result = malloc(num_case * num_pin);
-    // for (uint8_t Case_x = 0; Case_x < num_case; Case_x++) {
-    //     screen_obj->IC_Testerx[screen_obj->curr_device].data_result[Case_x] = malloc(num_pin * sizeof(char));
-    // }
+    screen_obj->IC_Testerx[screen_obj->curr_device].icon_result = malloc(num_case * num_pin);
 
-
-    /* Convert data to icon pin config */
-    for (uint8_t Case_x = 0; Case_x < num_case; Case_x++) {
-        for (uint8_t Pin_x = 0; Pin_x < num_pin; Pin_x++) {
-        	screen_obj->IC_Testerx[screen_obj->curr_device].data_result[Pin_x +(num_pin * Case_x)] = map_array[result[Pin_x +(num_pin * Case_x)]];
-        }
+    /* Convert data to icon result */
+    for (uint8_t i = 0; i < num_case * num_pin; i++) {
+        screen_obj->IC_Testerx[screen_obj->curr_device].icon_result[i] = map_array[(uint8_t)result[i]];
     }
 }
 
-void Screen_Init_Variable(Screen_t *const obj_screen) {
+static void Screen_Init_Variable(Screen_t *const obj_screen) {
     obj_screen->curr_device = DEVICE_1;
 
-    obj_screen->Program_Testx[PROGRAM_TEST1].Name_IC = "744051";
-    obj_screen->Program_Testx[PROGRAM_TEST1].Description_IC = "Description IC 74HC4051";
-    obj_screen->Program_Testx[PROGRAM_TEST1].num_IC = "5";
+//    memcpy(obj_screen->Program_Testx[PROGRAM_TEST1].Description_IC,"Description IC 74HC4051",strlen("Description IC 74HC4051"));
+//    memcpy(obj_screen->Program_Testx[PROGRAM_TEST2].Description_IC,"Description IC 74HC4051",strlen("Description IC 74HC4051"));
+//    memcpy(obj_screen->Program_Testx[PROGRAM_TEST3].Description_IC,"Description IC 74HC4051",strlen("Description IC 74HC4051"));
+//    memcpy(obj_screen->Program_Testx[PROGRAM_TEST4].Description_IC,"Description IC 74HC4051",strlen("Description IC 74HC4051"));
 
-    obj_screen->Program_Testx[PROGRAM_TEST2].Name_IC = "744051";
-    obj_screen->Program_Testx[PROGRAM_TEST2].Description_IC = "Description IC 74HC4052";
-    obj_screen->Program_Testx[PROGRAM_TEST2].num_IC = "10";
+     obj_screen->Program_Testx[PROGRAM_TEST1].Description_IC = "Description IC 74HC4051";
+     obj_screen->Program_Testx[PROGRAM_TEST2].Description_IC = "Description IC 74HC4052";
+     obj_screen->Program_Testx[PROGRAM_TEST3].Description_IC = "Description IC 74HC4053";
+     obj_screen->Program_Testx[PROGRAM_TEST4].Description_IC = "Description IC 74HC4054";
 
-    obj_screen->Program_Testx[PROGRAM_TEST3].Name_IC = "744051";
-    obj_screen->Program_Testx[PROGRAM_TEST3].Description_IC = "Description IC 74HC4053";
-    obj_screen->Program_Testx[PROGRAM_TEST3].num_IC = "15";
+    obj_screen->Program_Testx[PROGRAM_TEST1].Name_Program = (char *)malloc(MAX_PROGRAM_NAME_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST2].Name_Program = (char *)malloc(MAX_PROGRAM_NAME_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST3].Name_Program = (char *)malloc(MAX_PROGRAM_NAME_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST4].Name_Program = (char *)malloc(MAX_PROGRAM_NAME_SIZE);
 
-    obj_screen->Program_Testx[PROGRAM_TEST4].Name_IC = "744051";
-    obj_screen->Program_Testx[PROGRAM_TEST4].Description_IC = "Description IC 74HC4054";
-    obj_screen->Program_Testx[PROGRAM_TEST4].num_IC = "20";
+    obj_screen->Program_Testx[PROGRAM_TEST1].Name_IC = (char *)malloc(MAX_IC_NAME_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST2].Name_IC = (char *)malloc(MAX_IC_NAME_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST3].Name_IC = (char *)malloc(MAX_IC_NAME_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST4].Name_IC = (char *)malloc(MAX_IC_NAME_SIZE);
 
-    obj_screen->Program_Testx[PROGRAM_TEST1].Name_Program = "Program 1";
-    obj_screen->Program_Testx[PROGRAM_TEST2].Name_Program = "Program 2";
-    obj_screen->Program_Testx[PROGRAM_TEST3].Name_Program = "Program 3";
-    obj_screen->Program_Testx[PROGRAM_TEST4].Name_Program = "Program 4";
+    obj_screen->Program_Testx[PROGRAM_TEST1].num_IC = (char *)malloc(MAX_IC_NUM_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST2].num_IC = (char *)malloc(MAX_IC_NUM_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST3].num_IC = (char *)malloc(MAX_IC_NUM_SIZE);
+    obj_screen->Program_Testx[PROGRAM_TEST4].num_IC = (char *)malloc(MAX_IC_NUM_SIZE);
 
-    obj_screen->IC_Testerx[DEVICE_1].NameIC_Tester = "IC TESTER 1";
-    obj_screen->IC_Testerx[DEVICE_2].NameIC_Tester = "IC TESTER 2";
-    obj_screen->IC_Testerx[DEVICE_3].NameIC_Tester = "IC TESTER 3";
+    uint8_t buffer[TOTAL_ONE_PROGRAM_TEST_LEN];
+    for (uint8_t i = 0; i < 4; i++) {
+        AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(i),&buffer[0],TOTAL_ONE_PROGRAM_TEST_LEN);
+        sscanf((char *)buffer, "%[^,],%[^,],%[^,\n]",
+        obj_screen->Program_Testx[i].Name_Program,
+        obj_screen->Program_Testx[i].Name_IC,
+        obj_screen->Program_Testx[i].num_IC);
+
+        // char buffer_send[200];
+        // memset(buffer_send,0,200);
+        // sprintf(buffer_send,"%d,%s,%s,%s",1,obj_screen->Program_Testx[DEVICE_1].Name_Program
+        //     ,obj_screen->Program_Testx[DEVICE_1].Name_IC,obj_screen->Program_Testx[DEVICE_1].num_IC);
+        // uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+        // data_send_esp32->data = (char *)malloc(strlen(buffer_send));
+        // memcpy(data_send_esp32->data,"p",1);
+        // memcpy(data_send_esp32->data+1,buffer_send,strlen(buffer_send));
+        // data_send_esp32->len = strlen(buffer_send) + 1;
+        // OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+
+        HAL_Delay(100);
+    }
+
+    memcpy(obj_screen->IC_Testerx[DEVICE_1].NameIC_Tester,"IC TESTER 1",strlen("IC TESTER 1"));
+    memcpy(obj_screen->IC_Testerx[DEVICE_2].NameIC_Tester,"IC TESTER 2",strlen("IC TESTER 2"));
+    memcpy(obj_screen->IC_Testerx[DEVICE_3].NameIC_Tester,"IC TESTER 3",strlen("IC TESTER 3"));
 
     memcpy(obj_screen->Wifi_setting.Name_Wifi,"Wifi TEST 1",strlen("Wifi TEST 1"));
     memcpy(obj_screen->Wifi_setting.Password_Wifi,"PASSword 1234",strlen("PASSword 1234"));
@@ -651,6 +878,8 @@ void Screen_Init_Variable(Screen_t *const obj_screen) {
     obj_screen->IC_Testerx[DEVICE_2].state = false;
     obj_screen->IC_Testerx[DEVICE_3].state = false;
 
+    obj_screen->IC_Testerx[DEVICE_1].curr_num_ic = 0;
+
     DWIN_SetText((Dwin_t *)obj_screen,VP_Program_Name_1,obj_screen->Program_Testx[PROGRAM_TEST1].Name_Program,strlen(obj_screen->Program_Testx[PROGRAM_TEST1].Name_Program));
     DWIN_SetText((Dwin_t *)obj_screen,VP_Program_Name_2,obj_screen->Program_Testx[PROGRAM_TEST2].Name_Program,strlen(obj_screen->Program_Testx[PROGRAM_TEST2].Name_Program));
     DWIN_SetText((Dwin_t *)obj_screen,VP_Program_Name_3,obj_screen->Program_Testx[PROGRAM_TEST3].Name_Program,strlen(obj_screen->Program_Testx[PROGRAM_TEST3].Name_Program));
@@ -658,33 +887,42 @@ void Screen_Init_Variable(Screen_t *const obj_screen) {
 
     DWIN_SetText((Dwin_t *)obj_screen,VP_Name_Tester,obj_screen->IC_Testerx[DEVICE_1].NameIC_Tester,strlen(obj_screen->IC_Testerx[DEVICE_1].NameIC_Tester));
 
-    obj_screen->Program_Testx[PROGRAM_TEST1].num_pin = 16;
-    obj_screen->Program_Testx[PROGRAM_TEST1].num_case = 8;
+    // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x000,100,110,100,415,0x01ED);
+    // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x200,150,110,150,415,0xF800);
+    // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x400,200,110,200,415,0x01ED);
+    // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x600,250,110,250,415,0xF800);
+    // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x800,300,110,300,415,0x01ED);
+    // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0xA00,350,110,350,415,0xF800);
+
+    // obj_screen->Program_Testx[PROGRAM_TEST1].num_pin = 16;
+    // obj_screen->Program_Testx[PROGRAM_TEST1].num_case = 8;
 
     /* Screen */
     obj_screen->Screen_keyboard.Caplock = false;
     obj_screen->Screen_keyboard.Index_String = 0;
 
-    Screen_ShowData_Mainpage(obj_screen,0);
+    Screen_ShowData_Mainpage(obj_screen,PROGRAM_TEST1);
     DWIN_SetVariable_Icon((Dwin_t *)obj_screen,VP_ICON_ON_OFF,obj_screen->IC_Testerx[obj_screen->curr_device].state);
 }
 
-void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_program) {
+static void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_program) {
     uint8_t a_select_program[MAX_PROGRAM_TEST];
+    // uint8_t index_program = screen_obj.IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t num_ic = atoi(screen_obj->Program_Testx[index_program].num_IC);
     uint8_t size_Name_IC = strlen("IC Name: ") + strlen((char *)screen_obj->Program_Testx[index_program].Name_IC);
     uint8_t size_Description_IC = strlen("IC Description: ") + strlen((char *)screen_obj->Program_Testx[index_program].Description_IC);
-    uint8_t size_Num_IC = strlen("Number of ICs: ") + strlen((char *)screen_obj->Program_Testx[index_program].num_IC);
+    // uint8_t size_Num_IC = strlen("Number of ICs: ") + strlen((char *)screen_obj->Program_Testx[index_program].num_IC);
 
     char *Text_Name_IC = malloc(size_Name_IC + 1); // Null 
     char *Text_Description_IC = malloc(size_Description_IC + 1);
-    char *Text_Num_IC = malloc(size_Num_IC + 1);
+    // char *Text_Num_IC = malloc(size_Num_IC + 1);
 
     strcpy(Text_Name_IC,"IC Name: ");
     strcat(Text_Name_IC,(char *)screen_obj->Program_Testx[index_program].Name_IC);
     strcpy(Text_Description_IC,"IC Description: ");
     strcat(Text_Description_IC,(char *)screen_obj->Program_Testx[index_program].Description_IC);
-    strcpy(Text_Num_IC,"Number of ICs: ");
-    strcat(Text_Num_IC,(char *)screen_obj->Program_Testx[index_program].num_IC);
+    // strcpy(Text_Num_IC,"Number of ICs: ");
+    // strcat(Text_Num_IC,(char *)screen_obj->Program_Testx[index_program].num_IC);
 
     memset(a_select_program,1,MAX_PROGRAM_TEST);
     // Get the program selected
@@ -695,27 +933,31 @@ void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_program)
     DWIN_SetArray_Icon((Dwin_t *)screen_obj,VP_ICON_SELECT_PROGRAM,a_select_program,MAX_PROGRAM_TEST);
     DWIN_SetText((Dwin_t *)screen_obj,VP_Name_IC,Text_Name_IC,size_Name_IC);
     DWIN_SetText((Dwin_t *)screen_obj,VP_Description_IC,Text_Description_IC,size_Description_IC);
-    DWIN_SetText((Dwin_t *)screen_obj,VP_Num_IC_Test,Text_Num_IC,size_Num_IC);
-    
+
+    char ShowCase_String[30];
+    snprintf(ShowCase_String,sizeof(ShowCase_String),"Number of ICs: %d / %d",screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic,num_ic);
+//    uint8_t len = strlen(ShowCase_String);
+    DWIN_SetText((Dwin_t *)screen_obj,VP_Num_IC_Test,ShowCase_String,strlen(ShowCase_String));
+
     /* free malloc */
-    if (Text_Name_IC != NULL) {
-        free(Text_Name_IC);
-    }
-    if (Text_Description_IC != NULL) {
-        free(Text_Description_IC);
-    }
-    if (Text_Num_IC != NULL) {
-        free(Text_Num_IC);
-    }
+    free(Text_Name_IC);
+    free(Text_Description_IC);
+
 }
 
-void Screen_SetInfo_Pin(Screen_t *const screen_obj) {
+static void Screen_SetInfo_Pin(Screen_t *const screen_obj) {
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
     uint16_t Address_VP = VP_Name_Pin;
-    for (uint8_t pin_x = 0; pin_x < screen_obj->Program_Testx[PROGRAM_TEST1].num_pin; pin_x++) {
-//        screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x] = strdup(array_data[pin_x]);
-        DWIN_SetText((Dwin_t *)screen_obj,Address_VP,screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x],strlen(screen_obj->Program_Testx[PROGRAM_TEST1].data_pin[pin_x]));
+    char *data_copy = malloc(screen_obj->Program_Testx[index_program].data_pin_len + 1);
+    memcpy(data_copy,screen_obj->Program_Testx[index_program].data_pin,screen_obj->Program_Testx[index_program].data_pin_len);
+    char *temp_buf = strtok(data_copy,"\n");
+    while (temp_buf != NULL) {
+        DWIN_SetText((Dwin_t *)screen_obj,Address_VP,temp_buf,strlen(temp_buf));
+        // sprintf(text_show,"%d",temp_buf);
+        temp_buf = strtok(NULL,"\n");
         Address_VP = Address_VP + 0x10;
     }
+    free(data_copy);
 }
 
 #pragma endregion FUNCTION SCREEN
@@ -723,14 +965,14 @@ void Screen_SetInfo_Pin(Screen_t *const screen_obj) {
 
 static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     uint8_t num_direc_used = 0;
-    uint8_t *temp_buf;
+    uint8_t *temp_buf = (uint8_t *)malloc(MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
+    memset(temp_buf,0,MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
     direc_EEPROM_t direc_array[MAX_DIRECTORY_USED]; /* array store directory */
     direc_EEPROM_t *pDirectory = NULL;
     uint16_t mem_addr;
     uint16_t buf_length;
     /* get num directory used */
-    temp_buf = (uint8_t *)malloc(MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
-    AT24Cxx_read_buffer(&eeprom_ob,START_MEM_ADDR_DIREC_USED,temp_buf,1);
+    AT24Cxx_read_buffer(&eeprom_ob,START_MEM_ADDR_DIREC_USED,&temp_buf[0],1);
     num_direc_used = temp_buf[0];
     /* read directory info */
     AT24Cxx_read_buffer(&eeprom_ob,START_MEM_ADDR_DATA_DIREC,temp_buf,num_direc_used * sizeof(direc_EEPROM_t));
@@ -796,13 +1038,301 @@ static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     memcpy(pdata_test->data_test, test_start, test_data_len);
     pdata_test->data_test_len = test_data_len;
 
+    free(temp_buf);
 //    uint8_t array_buf[200];
 //    memcpy(array_buf,pdata_test->data_pin,pin_data_len);
 //    uint8_t array_buf2[200];
 //    memcpy(array_buf2,pdata_test->data_test,test_data_len);
 }
 
+static void show_text_short_circuit(Screen_t *screen_obj) {
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t num_pin = screen_obj->Program_Testx[index_program].num_pin;
+//    uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
+    char short_text[150] = "Pin Short to GND/VDD: ";
+    uint8_t buffer[50];
+    memcpy(buffer,screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit,num_pin);
+    // uint8_t test_short[20] = {'1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'};
+    uint8_t shortPin[num_pin]; /* array store pin short */
+    uint8_t shortCount = 0;
+    for (uint8_t i = 0; i < num_pin; i++) {
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit[i] == '0') {
+            shortPin[shortCount] = i + 1;
+            shortCount++;
+        }
+    }
+
+    if (shortCount == 0) {
+        strcat(short_text,"None");
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Text_Short_Circuit,short_text,strlen(short_text));
+    } else {
+        char tempStr[50];
+        for (int i = 0; i < shortCount; i++) {
+            sprintf(tempStr, "Pin %d", shortPin[i]);
+            strcat(short_text, tempStr);
+            if (i < shortCount - 1) {
+                strcat(short_text, ", ");
+            }
+        }
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Text_Short_Circuit,short_text,strlen(short_text));
+    }
+}
+
+static void show_text_function_test(Screen_t *const screen_obj) {
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t num_pin = screen_obj->Program_Testx[index_program].num_pin;
+    uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
+
+    char case_text[300] = "Self-test result: ";  
+    
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].isShort == '0') {
+        uint8_t failedCase[num_case]; 
+        uint8_t failedCount = 0;
+        
+        for (uint8_t i = 0; i < num_case; i++) {
+            if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case[i] == '0') {
+                if (failedCount < num_case) { // Bounds check!
+                    failedCase[failedCount] = i + 1;
+                    failedCount++;
+                }
+            }
+        }
+
+        if (failedCount == 0) {
+            strncat(case_text, "Pass", sizeof(case_text) - strlen(case_text) - 1);
+        } else {
+            strncat(case_text, "Failed in ", sizeof(case_text) - strlen(case_text) - 1);
+            
+            for (int i = 0; i < failedCount; i++) {
+                char tempStr[20];
+                snprintf(tempStr, sizeof(tempStr), "Case %d", failedCase[i]);
+                
+                // Check if we have enough space before concatenating
+                if (strlen(case_text) + strlen(tempStr) + 3 < sizeof(case_text)) {
+                    strncat(case_text, tempStr, sizeof(case_text) - strlen(case_text) - 1);
+                    if (i < failedCount - 1) {
+                        strncat(case_text, ", ", sizeof(case_text) - strlen(case_text) - 1);
+                    }
+                } else {
+                    /* out of space */
+                    printf("over flow in show_text_function_test\n");
+                }
+            }
+        }
+    } else {
+        strncat(case_text, "N/A", sizeof(case_text) - strlen(case_text) - 1);
+    }
+    
+    DWIN_SetText((Dwin_t *)screen_obj, VP_Text_Test_Function, case_text, strlen(case_text));
+}
+
+/* create the string text result */
+static void get_text_result(Screen_t *const screen_obj, char *result_line, uint8_t cur_num_ic) {
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t num_pin = screen_obj->Program_Testx[index_program].num_pin;
+    uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
+    
+    uint8_t has_errors = 0;
+
+    for (uint8_t i = 0; i < num_pin; i++) {
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit[i] != '1') {
+            has_errors = 1;
+            break; // Found error, no need to check more
+        }
+    }
+
+    if (!has_errors) {
+        for (uint8_t i = 0; i < num_case; i++) {
+            if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case[i] == '0') {
+                has_errors = 1;
+                break; // Found error, no need to check more
+            }
+        }
+    }
+
+    if (has_errors) {
+        sprintf((char *)result_line, "IC%d: Self-test result: failed", cur_num_ic + 1);
+    } else {
+        sprintf((char *)result_line, "IC%d: Self-test result: pass", cur_num_ic + 1);
+    }    
+}
+
+/* using to store data when testing complete */
+static void compelte_testing(Screen_t *const screen_obj) {
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t data_time[7];
+    DS3231_Read_time(&ds3231,data_time);
+
+    /* Store data to sd card */
+    char buffer[300] = {0};
+    // memset(buffer,0,300);
+    int written = snprintf(buffer,sizeof(buffer),"%d/%d/%d;%d:%d:%d;%s;%s;%s;%s",data_time[4],data_time[5],data_time[6],data_time[2],data_time[1],data_time[0]
+        ,screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester,screen_obj->Program_Testx[index_program].Name_IC,screen_obj->Program_Testx[index_program].num_IC,
+        screen_obj->IC_Testerx[screen_obj->curr_device].result_text);
+    DataLogging_t *data_store = (DataLogging_t *)malloc(sizeof(DataLogging_t));
+    data_store->String_logging = malloc(strlen(buffer)+1);
+    memset(data_store->String_logging,0,strlen(buffer)+1);
+    memcpy(data_store->String_logging,buffer,strlen(buffer));
+    memset(screen_obj->IC_Testerx[screen_obj->curr_device].result_text,0,sizeof(screen_obj->IC_Testerx[screen_obj->curr_device].result_text));
+    OS_task_post_event(AO_task_sd, STORE_DATA_TEST, (uint8_t *)&data_store, sizeof(DataLogging_t));
+
+    if (written >= sizeof(buffer)) {
+        printf("ERROR: Buffer overflow in compelte_testing!\n");
+        return;
+    }
+
+    /* Send data to esp32 */
+    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+    data_send_esp32->data = (char *)malloc(strlen(buffer));
+    memcpy(data_send_esp32->data,"h",1);
+    memcpy(data_send_esp32->data+1,buffer,strlen(buffer));
+    data_send_esp32->len = strlen(buffer);
+    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+
+    screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic = 0;
+    screen_obj->IC_Testerx[screen_obj->curr_device].state = false;
+    DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
+    /* switch page */
+    show_main_page(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain,index_program); // check 
+
+    /* free the array don't using */
+
+}
+
+static void off_testing(Screen_t *screen_obj) {
+    compelte_testing(screen_obj);
+
+    /* free array using in have new data test */
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].data_clock != NULL) {
+        free(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock);
+    }
+
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].config_pin != NULL) {
+        free(screen_obj->IC_Testerx[screen_obj->curr_device].config_pin);
+    }
+    
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].icon_result != NULL) {
+        free(screen_obj->IC_Testerx[screen_obj->curr_device].icon_result) ;
+    }
+
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit != NULL) {
+        free(screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit);
+    }
+
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case != NULL) {
+        free(screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case);
+    }
+
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result != NULL) {
+        free(screen_obj->IC_Testerx[screen_obj->curr_device].data_result);
+    }
+
+    /* Send data to esp32 status device */
+    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+    data_send_esp32->data = (char *)malloc(50);
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
+        sprintf(data_send_esp32->data,"d%d,running,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+        screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+    } else {
+        sprintf(data_send_esp32->data,"stop,%s,%s",screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+        screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+    }
+    data_send_esp32->len = strlen(data_send_esp32->data);
+    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+}
+
+static void show_pulse(Screen_t *screen_obj, uint8_t curr_case) {
+    uint8_t num_case = screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_case;
+    uint8_t selectedProgram = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t num_pin = screen_obj->Program_Testx[selectedProgram].num_pin;
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    
+    char ShowCase_String[30];
+    uint8_t index_data;
+    uint16_t vp_pulse = 0x1000;
+    uint8_t pins_to_show = num_pin - 2; 
+    uint8_t skip_index1 = (num_pin / 2) - 1; // First skip index
+    uint8_t skip_index2 = num_pin - 1;       // Second skip index
+    uint16_t Address_VP = VP_Text_Pin_Pulse;
+    uint16_t vp_vertical = VP_vertical_line;
+
+    char *data_copy = malloc(screen_obj->Program_Testx[index_program].data_pin_len + 1);
+    memcpy(data_copy, screen_obj->Program_Testx[index_program].data_pin, screen_obj->Program_Testx[index_program].data_pin_len);
+    data_copy[screen_obj->Program_Testx[index_program].data_pin_len] = '\0'; // Null terminate
+
+    // First, collect all pin names into an array
+    char pin_names[32][32]; // Adjust size as needed
+    uint8_t total_pins = 0;
+    char *temp_buf = strtok(data_copy, "\n");
+
+    while (temp_buf != NULL && total_pins < 32) {
+        strcpy(pin_names[total_pins], temp_buf);
+        total_pins++;
+        temp_buf = strtok(NULL, "\n");
+    }
+
+    snprintf(ShowCase_String, sizeof(ShowCase_String), "%d OF %d", 
+            screen_obj->IC_Testerx[screen_obj->curr_device].curr_case + 1, 
+            (pins_to_show + 6) / 7); // Calculate total cases needed
+
+    DWIN_SetText((Dwin_t *)screen_obj, VP_Show_CurrentCase, ShowCase_String, strlen(ShowCase_String));
+
+    for (uint8_t i = 0; i < 7; i++) {
+        uint8_t display_pin = (screen_obj->IC_Testerx[screen_obj->curr_device].curr_case * 7) + i;
+        
+        if (display_pin < pins_to_show) {
+            uint8_t actual_pin_index = display_pin;
+            
+            // Adjust for skipped indices
+            if (actual_pin_index >= skip_index1) {
+                actual_pin_index++; // Skip VCC
+            }
+            if (actual_pin_index >= skip_index2) {
+                actual_pin_index++; // Skip GND
+            }
+            
+            // Calculate data index
+            index_data = num_case * actual_pin_index;
+            
+            // Create the line with actual data
+
+            DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 100, 144 + (45 * i), // base x 114
+                                &(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data]), 
+                                num_case);
+
+            if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case) {
+                DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,100 + (50 * i),110,100 + (50 * i),415,0x01ED);
+            } else {
+                DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,100 + (50 * i),110,100 + (50 * i),415,0xF800);
+            }
+            
+            // Set pin name
+            DWIN_SetText((Dwin_t *)screen_obj, Address_VP, pin_names[actual_pin_index], 
+                        strlen(pin_names[actual_pin_index]));
+            
+        } else { /* don't using this */
+            uint8_t low_buf[12 - num_case];
+            memset(low_buf,0,sizeof(low_buf));
+            DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 100, 144 + (45 * i), // base x 114
+                                low_buf, 
+                                sizeof(low_buf));
+            DWIN_SetText((Dwin_t *)screen_obj, Address_VP, " ", 1);
+            DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,0,0,0,0,0xF800);
+        }
+        
+        vp_pulse += 0x200;
+        vp_vertical += 0x200;
+        Address_VP += 0x10;
+    }
+
+    free(data_copy);
+}
+
 void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_program) {
+    
+    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    uint8_t num_pin = screen_obj->Program_Testx[index_program].num_pin;
+    uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
     switch (PageMain) {
         case DWINPAGE_MAIN : {
             /* Show info */
@@ -815,7 +1345,8 @@ void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_p
         case DWINPAGE_MAIN_FINISH: {
             /* Show data */
             DWIN_SetText((Dwin_t *)screen_obj,VP_Name_Tester,screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester,strlen(screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester));
-            show_text_short_circuit((Dwin_t *)screen_obj);
+            show_text_short_circuit(screen_obj);
+            show_text_function_test(screen_obj);
             /* change page if home page */
             if (screen_obj->Ishome) {
             	DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
@@ -823,10 +1354,57 @@ void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_p
             }
         } break;
         case DWINPAGE_MAIN_DETAIL: {
-
+            /* get data and show */
+            screen_obj->IC_Testerx[screen_obj->curr_device].curr_case = 0;
+            uint8_t case_show = screen_obj->IC_Testerx[screen_obj->curr_device].curr_case;
+            char ShowCase_String[30];
+            Screen_SetInfo_Pin(screen_obj);
+            Screen_GetIcon_Pin(screen_obj,screen_obj->Program_Testx[index_program].data_test);
+            DWIN_SetArray_Icon(screen_obj,VP_ICON_DIRECTION_PIN,(uint8_t *)(_Screen.IC_Testerx[screen_obj->curr_device].config_pin),num_pin);
+            Screen_GetIcon_Result(screen_obj,screen_obj->IC_Testerx[screen_obj->curr_device].data_result);
+            uint8_t buffer[500];
+            memcpy(buffer,screen_obj->IC_Testerx[screen_obj->curr_device].data_result,num_case*num_pin);
+            DWIN_SetArray_Icon(screen_obj,VP_ICON_RESULT,&(screen_obj->IC_Testerx[screen_obj->curr_device].icon_result[case_show * num_pin]),num_pin);
+            snprintf(ShowCase_String,sizeof(ShowCase_String),"%d OF %d",case_show + 1,num_case);
+            DWIN_SetText((Dwin_t *)screen_obj,VP_Show_CurrentCase,ShowCase_String,strlen(ShowCase_String));
+            /* change page if home page */
+            if (screen_obj->Ishome) {
+            	DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
+                DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MAIN_DETAIL);
+            }
         } break;
-        case DWINPAGE_MAIN_GRAPH: {
+        case DWINPAGE_MAIN_PULSE: {
+            /* show data */
+            screen_obj->IC_Testerx[screen_obj->curr_device].curr_case = 0;
+            uint8_t case_show = screen_obj->IC_Testerx[screen_obj->curr_device].curr_case;
+            char ShowCase_String[30];
+            snprintf(ShowCase_String,sizeof(ShowCase_String),"%d OF %d",case_show + 1,2);
 
+            screen_obj->IC_Testerx[screen_obj->curr_device].data_clock = malloc(num_case * num_pin);
+            transposeArray(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock,screen_obj->IC_Testerx[screen_obj->curr_device].data_result,num_pin,num_case);
+            uint8_t buffer[500];
+            memcpy(buffer,screen_obj->IC_Testerx[screen_obj->curr_device].data_clock,num_case * num_pin);
+            for (uint8_t i = 0; i < num_case * num_pin; i++) {
+                screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[i] = screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[i] - '0';
+            }
+
+            /* show fist case in pusle page */
+            show_pulse(screen_obj,0);
+
+            // uint16_t vp_pulse = 0x1000;
+            // for (uint8_t i = 0; i < 8; i++ ) {
+            //     if (i != 7 ) {
+            //         DWIN_Create_Basic_line((Dwin_t *)screen_obj,vp_pulse,114,144 + (45 * i),&(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[num_case*i]),num_case);
+            //         vp_pulse += 0x200;
+            //     }
+            // }
+            
+            // /* change page if home page */
+            if (screen_obj->Ishome) {
+            	DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
+                DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MAIN_PULSE);
+                DWIN_SetText((Dwin_t *)screen_obj,VP_Show_CurrentCase,ShowCase_String,strlen(ShowCase_String));
+            }
         } break;
     }
 }
@@ -836,62 +1414,39 @@ void get_data_testing_finish(Screen_t *const screen_obj,uint8_t device, uint8_t 
     uint8_t num_pin = screen_obj->Program_Testx[index_program].num_pin;
     uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
     /* get data test */
-    if (screen_obj->IC_Testerx[device].data_result != NULL) {
-        free(screen_obj->IC_Testerx[device].data_result);
-    }
-    screen_obj->IC_Testerx[device].data_result = malloc(num_case * num_pin);
-    memcpy(screen_obj->IC_Testerx[device].data_result,result_array,(num_case * num_pin));
-    
-    if (screen_obj->IC_Testerx[device].data_result_case != NULL) {
-        free(screen_obj->IC_Testerx[device].data_result_case);
-    }
-    screen_obj->IC_Testerx[device].data_result_case = malloc(num_case);
-    memcpy(screen_obj->IC_Testerx[device].data_result_case,result_array + (num_case * num_pin + 1) ,num_case);
+    uint8_t buffer[200];
+    screen_obj->IC_Testerx[device].isShort = result_array[0];
+    screen_obj->IC_Testerx[device].data_short_circuit = (char *)malloc(num_pin);
+    strncpy(screen_obj->IC_Testerx[device].data_short_circuit,(char *)result_array + 2,num_pin);
+    // memcpy(buffer,screen_obj->IC_Testerx[device].data_short_circuit,num_pin);
+    screen_obj->IC_Testerx[device].data_result = (char *)malloc(num_case * num_pin);
+    strncpy(screen_obj->IC_Testerx[device].data_result,(char *)result_array + (num_pin +3),num_case * num_pin);
+    // memcpy(buffer,screen_obj->IC_Testerx[device].data_result,num_case * num_pin);
+    screen_obj->IC_Testerx[device].data_result_case = (char *)malloc(num_case);
+    strncpy(screen_obj->IC_Testerx[device].data_result_case,(char *)result_array + (num_pin + 5 + num_case * num_pin),num_case);
+    // memcpy(buffer,screen_obj->IC_Testerx[device].data_result_case,num_case);
 
     screen_obj->IC_Testerx[device].curr_PageMain = DWINPAGE_MAIN_FINISH;
     uint8_t *device_finish = malloc(sizeof(uint8_t));
     memcpy(device_finish,&device,sizeof(uint8_t));
+    
+    /* get text result to store  */
+    uint8_t result_buffer[60];
+    memset(result_buffer,0,60);
+    get_text_result(screen_obj,result_buffer,screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic);
+    if (strlen(screen_obj->IC_Testerx[screen_obj->curr_device].result_text) > 1) {
+        strcat(screen_obj->IC_Testerx[screen_obj->curr_device].result_text," | ");
+    }
+    strncat(screen_obj->IC_Testerx[screen_obj->curr_device].result_text,result_buffer,strlen(result_buffer));
 
     OS_task_post_event(AO_task_screen,DEIVCE_TEST_FINISH,(uint8_t *)&device_finish,sizeof(uint8_t *));
-
-
-    // show_main_page(screen_obj,screen_obj->IC_Testerx[device].curr_PageMain,index_program);
-
-//    uint8_t buffer[500];
-//    memcpy(buffer,screen_obj->IC_Testerx[device].data_result,num_case * num_pin);
-//    memcpy(buffer,screen_obj->IC_Testerx[device].data_result_case,num_case);
-
-    
 }
 
-void show_text_short_circuit(Screen_t *const screen_obj) {
-    uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
-    uint8_t num_pin = screen_obj->Program_Testx[index_program].num_pin;
-    uint8_t num_case = screen_obj->Program_Testx[index_program].num_case;
-    char short_text[30] = "Pin Short to GND/VDD: ";
-    
-    uint8_t test_short[20] = {'1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'};
-    uint8_t shortPin[num_pin]; /* array store pin short */
-    uint8_t shortCount = 0;
-    for (uint8_t i = 0; i < num_pin; i++) {
-        if (test_short[i] == '0') {
-            shortPin[shortCount] = i + 1;
-            shortCount++;
-        }
-    }
+void warning_page(Screen_t *const screen_obj,uint32_t id_slave) {
+    char buffer[90]  = {0};
+    snprintf(buffer,sizeof(buffer),"IC Tester %d is not connected to the system. Please check the connection",(id_slave - 0x470));
 
-    if (shortCount == 0) {
-        strcat(short_text,"None");
-        DWIN_SetText((Dwin_t *)screen_obj,VP_Text_Short_Circuit,short_text,strlen(short_text));
-    } else {
-        char tempStr[50];
-        for (int i = 0; i < shortCount; i++) {
-            sprintf(tempStr, "Pin %d", (test_short[i] - '0') + 1);
-            strcat(short_text, tempStr);
-            if (i < shortCount - 1) {
-                strcat(short_text, ", ");
-            }
-        }
-        DWIN_SetText((Dwin_t *)screen_obj,VP_Text_Short_Circuit,short_text,strlen(short_text));
-    }
+    DWIN_SetText((Dwin_t *)screen_obj,VP_Warining,buffer,strlen(buffer));
+    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_WARNING);
+
 }

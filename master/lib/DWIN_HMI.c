@@ -73,12 +73,12 @@ void DWIN_Create_Basic_line(Dwin_t *pDwin, uint16_t VP_address, uint16_t x_base,
     // Create the send Buffer 
     for (uint8_t i = 0; i < size; i++) {
         y1 = y2 = y3 = y4 = y_base;
-        x1 = x_base + (30 * index);
+        x1 = x_base + (25 * index);
         ++index; 
-        x2 = x_base + (30 * index);
+        x2 = x_base + (25 * index);
         ++index;
         x3 = x2;
-        x4 = x_base + (30 * index);
+        x4 = x_base + (25 * index);
         if (array_data[i]) { // HIGH CLOCK
             y1 = y2 = y3 = y4 = y_base - 30;  
         }
@@ -105,6 +105,16 @@ void DWIN_SetWidth_Basic_line(Dwin_t *pDwin, uint16_t SP_Address, uint8_t width)
     (uint8_t)((SP_Address >> 8) & 0xFF), (uint8_t)(SP_Address & 0xFF),
     (uint8_t)(0x00), (uint8_t)(width & 0xFF) };
     HAL_UART_Transmit(pDwin->pUart,sendBuffer,sizeof(sendBuffer),500);
+}
+
+void DWIN_Create_Single_line(Dwin_t *pDwin, uint16_t VP_address, uint16_t x_1, uint16_t y_1, uint16_t x_2, uint16_t y_2, uint16_t color) {
+    uint8_t sendBuffer[255] = { CMD_HEAD1, CMD_HEAD2, 0x13, CMD_WRITE,
+                            (uint8_t)((VP_address >> 8) & 0xFF), (uint8_t)(VP_address & 0xFF), 0x00, 0x02,
+                            (uint8_t)((0x0001 >> 8) & 0xFF), (uint8_t)(0x0001 & 0xFF),
+                            (uint8_t)((color >> 8) & 0xFF), (uint8_t)(color & 0xFF),
+                            (x_1 >> 8) & 0xFF, (x_1 & 0xFF), (y_1 >> 8) & 0xFF, (y_1 & 0xFF),
+                            (x_2 >> 8) & 0xFF, (x_2 & 0xFF), (y_2 >> 8) & 0xFF, (y_2 & 0xFF), 0xFF, 0x00 };
+    HAL_UART_Transmit(pDwin->pUart,sendBuffer,sizeof(sendBuffer),1000);
 }
 
 uint8_t DWIN_GetPage(Dwin_t *pDwin)

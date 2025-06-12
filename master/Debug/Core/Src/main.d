@@ -46,11 +46,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Src/../../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
  ../Core/Src/../../app/Screen.h ../Core/Src/../../app/app_uart_esp32.h \
  ../Core/Src/../../app/app_can_bus.h ../Core/Src/../../app/app_screen.h \
- ../Core/Src/../../app/../os/os_event.h ../Core/Src/../../app/../os/os.h \
- ../Core/Src/../../lib/AT24Cxx.h ../Core/Src/../../lib/DS3231.h \
- ../Core/Src/../../lib/../Core/Inc/main.h \
- ../Core/Src/../../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
- ../Core/Src/../../os/os.h ../Core/Src/../../app/app_main.h
+ ../Core/Src/../../app/app_rtc.h ../Core/Src/../../app/../lib/DS3231.h \
+ ../Core/Src/../../app/app_sd.h ../Core/Src/../../app/../os/os_event.h \
+ ../Core/Src/../../app/../os/os.h ../Core/Src/../../lib/AT24Cxx.h \
+ ../Core/Src/../../lib/DS3231.h ../Core/Src/../../os/os.h \
+ ../Core/Src/../../app/app_main.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -107,11 +107,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Src/../../app/app_uart_esp32.h:
 ../Core/Src/../../app/app_can_bus.h:
 ../Core/Src/../../app/app_screen.h:
+../Core/Src/../../app/app_rtc.h:
+../Core/Src/../../app/../lib/DS3231.h:
+../Core/Src/../../app/app_sd.h:
 ../Core/Src/../../app/../os/os_event.h:
 ../Core/Src/../../app/../os/os.h:
 ../Core/Src/../../lib/AT24Cxx.h:
 ../Core/Src/../../lib/DS3231.h:
-../Core/Src/../../lib/../Core/Inc/main.h:
-../Core/Src/../../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Src/../../os/os.h:
 ../Core/Src/../../app/app_main.h:

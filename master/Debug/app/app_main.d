@@ -36,6 +36,7 @@ app/app_main.o: ../app/app_main.c ../app/app_main.h ../app/test_os.h \
  ../app/../Core/Inc/../../lib/ISO_TP/isotp_user.h \
  ../app/../lib/DWIN_HMI.h ../app/../lib/../Core/Inc/main.h \
  ../app/app_uart_esp32.h ../app/app_can_bus.h ../app/app_screen.h \
+ ../app/app_rtc.h ../app/../lib/DS3231.h ../app/app_sd.h \
  ../app/../os/os_event.h ../app/../os/os.h \
  ../app/../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h
 ../app/app_main.h:
@@ -83,6 +84,9 @@ app/app_main.o: ../app/app_main.c ../app/app_main.h ../app/test_os.h \
 ../app/app_uart_esp32.h:
 ../app/app_can_bus.h:
 ../app/app_screen.h:
+../app/app_rtc.h:
+../app/../lib/DS3231.h:
+../app/app_sd.h:
 ../app/../os/os_event.h:
 ../app/../os/os.h:
 ../app/../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h:

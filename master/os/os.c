@@ -223,8 +223,9 @@ void OS_task_activate(uint8_t prio_task) {
         --pOS_task->tail;
     }
     OS_PORT_CRIT_ENTRY();
+    // --pOS_task->nUsed;
     if (--pOS_task->nUsed > 0) { /* check have any event in queue */
-    	 HAL_NVIC_SetPendingIRQ(pQueue->nvic_irq);
+        HAL_NVIC_SetPendingIRQ(pQueue->nvic_irq);
     }
     OS_PORT_CRIT_EXIT();
 

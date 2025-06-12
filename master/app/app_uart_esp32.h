@@ -9,9 +9,9 @@
 #include "../os/os.h"
 
 typedef struct {
-    uint8_t *data; /* data */
+    char *data; /* data */
     uint32_t len;
-} uart_buf;
+} uart_esp32_t;
 
 extern OS_task * const AO_task_uart_esp32;
 

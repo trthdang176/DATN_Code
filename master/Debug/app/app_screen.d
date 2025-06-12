@@ -35,7 +35,8 @@ app/app_screen.o: ../app/app_screen.c ../app/app_screen.h \
  ../app/app_main.h ../app/test_os.h ../app/app_post_test.h \
  ../app/app_eeprom.h ../app/../lib/AT24Cxx.h \
  ../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h \
- ../app/app_uart_esp32.h ../app/app_can_bus.h ../app/../os/os_event.h \
+ ../app/app_uart_esp32.h ../app/app_can_bus.h ../app/app_rtc.h \
+ ../app/../lib/DS3231.h ../app/app_sd.h ../app/../os/os_event.h \
  ../app/../os/os.h
 ../app/app_screen.h:
 ../app/../os/os.h:
@@ -82,5 +83,8 @@ app/app_screen.o: ../app/app_screen.c ../app/app_screen.h \
 ../app/../lib/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../app/app_uart_esp32.h:
 ../app/app_can_bus.h:
+../app/app_rtc.h:
+../app/../lib/DS3231.h:
+../app/app_sd.h:
 ../app/../os/os_event.h:
 ../app/../os/os.h:

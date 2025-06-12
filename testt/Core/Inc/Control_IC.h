@@ -10,6 +10,7 @@
 
 #include "main.h"
 #include <string.h>
+#include <stdbool.h>
 #include "../../lib/ADS1115.h"
 
 #define DSA1  GPIO_PIN_15
@@ -92,12 +93,25 @@ typedef enum {
 } Test_State_t;
 
 typedef struct {
+    bool isShort;
+
     Test_State_t cur_state;
     uint8_t cur_case;
+
     uint8_t *data_control_testing;
+    uint8_t data_control_first_state[300];
+    uint8_t data_control_second_state[300];
     float *result_short_circuit;
     uint8_t *result_test_function;
-    uint8_t *result_case;
+
+    uint8_t result_case[20];
+    uint8_t result_short_pin[20];
+
+    uint8_t data_test[500];
+    uint16_t data_test_len;
+
+    uint8_t num_case;
+    uint8_t num_pin;
 } Control_IC_Test_t;
 
 void Control_IC_begin(void);
@@ -117,7 +131,13 @@ void Read_ADC_IC_test(ADS1115_t *pADS1115, uint8_t pin,float *data_buf);
 void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control);
 uint8_t convert_data_compare(char c_input);
 
+bool has_clock_transition(uint8_t num_pin, char *data_test);
+void convert_data_test_first_state(uint8_t num_pin, char *data_test, uint8_t *data_control);
+void convert_data_test_second_state(uint8_t num_pin, char *data_test, uint8_t *data_control);
+
 void TurnOn_short_circuit(void);
 void TurnOff_short_circuit(void);
+
+void reset_TXS(void);
 
 #endif /* INC_CONTROL_IC_H_ */
