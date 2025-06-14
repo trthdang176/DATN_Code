@@ -2,4 +2,3 @@
 ../app/app_main.c:24:6:RTC_IRQHandler	1
 ../app/app_main.c:28:6:I2C2_EV_IRQHandler	1
 ../app/app_main.c:33:6:BSP_init	1
-../app/app_main.c:53:19:TestOS_Work	1

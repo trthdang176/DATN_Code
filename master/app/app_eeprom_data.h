@@ -6,7 +6,7 @@ const char data_program2[] = "Program 2,744051,2";
 const char data_program3[] = "Program 3,744051,3";
 const char data_program4[] = "Program 4,744051,5";
 
-const char wifi_info[] = "";
+const char wifi_info[] = "dang123,12345678";
 
 const char data_744051[] = 
     "16|8|"

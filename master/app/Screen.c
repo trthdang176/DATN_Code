@@ -21,15 +21,17 @@ static void Screen_SetInfo_Pin(Screen_t *const screen_obj);
 static void Screen_GetIcon_Pin(Screen_t *const screen_obj, char *data_pin);
 static void Screen_GetIcon_Result(Screen_t *const screen_obj, char *result);
 
-Return_Status Screen_CheckInput_Keyboard(Screen_t *const obj_screen);
+Return_Status Screen_CheckInput_Keyboard(Screen_t *const screen_obj);
 
-static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test);
+static bool get_data_testing_ic(char *searchName,Program_Test_t *pdata_test);
 static void show_text_short_circuit(Screen_t *screen_obj);
 static void show_text_function_test(Screen_t *const screen_obj);
 static void get_text_result(Screen_t *const screen_obj, char *result_line, uint8_t cur_num_ic);
 static void compelte_testing(Screen_t *const screen_obj);
 static void off_testing(Screen_t *screen_obj);
 static void show_pulse(Screen_t *screen_obj, uint8_t curr_case);
+void get_input_keyboard(Screen_t *const screen_obj,uint16_t VP_input);
+
 
 /* Array store the VP address signal */
 /* Note: The VP address must be increased to find the index */
@@ -44,16 +46,12 @@ VP_item lookup_VP_SIG[] = {
 };
 
 /* The array store the VP address to check data input */
-VP_item lookup_VP_check_datakeyboard[] = {
+VP_item lookup_VP_condition[] = {
+    {VP_Hour,CONDITION_HOUR},
+    {VP_Minute,CONDITION_MINUTE},
     {VP_Day,CONDITION_DAY},
     {VP_Month,CONDITION_MONTH},
-    {VP_Year,CONDITION_YEAR},
-    {VP_Minute,CONDITION_MINUTE},
-    {VP_Hour,CONDITION_HOUR}
-};
-
-VP_String lookup_VP_STRING[] = {
-    {VP_Num_IC_Test,"NUMBER OF IC","PSC"}
+    {VP_Year,CONDITION_YEAR}
 };
 
 Screen_condition_t condition_array[MAX_CONDITION] = {
@@ -62,6 +60,14 @@ Screen_condition_t condition_array[MAX_CONDITION] = {
     [CONDITION_YEAR]     = {.max_value = 99, .min_value = 1},
     [CONDITION_HOUR]     = {.max_value = 23, .min_value = 0},
     [CONDITION_MINUTE]   = {.max_value = 59, .min_value = 0}
+};
+
+VP_String text_numkeyboard[] = {
+    [CONDITION_DAY]      = {.String_Name = "DAY", .String_Unit = "d"},
+    [CONDITION_MONTH]    = {.String_Name = "MONTH", .String_Unit = "mth"},
+    [CONDITION_YEAR]     = {.String_Name = "YEAR", .String_Unit = "yr"},
+    [CONDITION_HOUR]     = {.String_Name = "HOUR", .String_Unit = "h"},
+    [CONDITION_MINUTE]   = {.String_Name = "MINUTE", .String_Unit = "min"}
 };
 
 void Screen_begin(UART_HandleTypeDef * UART_Screen) {
@@ -123,6 +129,9 @@ void Screen_RX_Callback(uint16_t Vpaddress, uint8_t lowByte, uint8_t highByte) {
 
 void Navigation_setting_page(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING);
+    
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard);
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Warning_Password);
     screen_obj->Ishome = false;
 }
 
@@ -143,7 +152,7 @@ void Navigation_return(Screen_t *const screen_obj, screen_event_t *const screen_
         off_testing(screen_obj);
         // show_main_page(screen_obj,DWINPAGE_MAIN,screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index);
     } else {
-
+        DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->pre_page);
     }
 }
 
@@ -155,16 +164,31 @@ void Navigation_setting_program(Screen_t *const screen_obj, screen_event_t *cons
     screen_obj->page_setting = DWINPAGE_SETTING_PROGRAM;
     // Switch page password 
     DWIN_SetText((Dwin_t *)screen_obj,VP_Password,"",strlen(""));
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Warning_Password);
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_PASSWORD);
 }
 
 void Navigation_setting_time(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     
+    screen_obj->pre_page = DWINPAGE_SETTING_TIME;
+    /* clear text */
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Hour);
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Minute);
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Day);
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Month);
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Year);
+    memset(screen_obj->Time_setting.Day,0,3);
+    memset(screen_obj->Time_setting.Minute,0,3);
+    memset(screen_obj->Time_setting.Month,0,3);
+    memset(screen_obj->Time_setting.Year,0,3);
+    memset(screen_obj->Time_setting.Hour,0,3);
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Warning_setting_time);
     // Switch page
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING_TIME);
 }
 
 void Navigation_setting_wifi(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    screen_obj->pre_page = DWINPAGE_SETTING_WIFI;
     /* show data */
     DWIN_SetText((Dwin_t *)screen_obj,VP_Name_Wifi,screen_obj->Wifi_setting.Name_Wifi,strlen(screen_obj->Wifi_setting.Name_Wifi));
     DWIN_SetText((Dwin_t *)screen_obj,VP_Password_Wifi,screen_obj->Wifi_setting.Password_Wifi,strlen(screen_obj->Wifi_setting.Password_Wifi));
@@ -173,10 +197,13 @@ void Navigation_setting_wifi(Screen_t *const screen_obj, screen_event_t *const s
 }
 
 void Navigation_modify_program(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    screen_obj->pre_page = DWINPAGE_MODIFY_PROGRAM;
     // Show data in screen
     DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_Program_Name,screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program));
     DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Name,screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC));
     DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Num,screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC));
+    
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_Warning_modify_program);
     // Switch page
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
 }
@@ -235,6 +262,11 @@ void Navigation_Change_CaseTest(Screen_t *const screen_obj, screen_event_t *cons
     char ShowCase_String[30];
     snprintf(ShowCase_String,sizeof(ShowCase_String),"%d OF %d",screen_obj->IC_Testerx[screen_obj->curr_device].curr_case + 1,num_case);
     DWIN_SetText((Dwin_t *)screen_obj,VP_Show_CurrentCase,ShowCase_String,strlen(ShowCase_String));
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case] == '0') {
+        DWIN_SetColorText((Dwin_t *)screen_obj,SP_Current_Case,0xF800);
+    } else {
+        DWIN_SetColorText((Dwin_t *)screen_obj,SP_Current_Case,0x01ED);
+    }
     // DWIN_SetArray_Icon((Dwin_t *)screen_obj,VP_ICON_RESULT,_Screen.IC_Testerx[selectedProgram].data_result[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case],num_pin);
     DWIN_SetArray_Icon(screen_obj,VP_ICON_RESULT,&(screen_obj->IC_Testerx[screen_obj->curr_device].icon_result[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case * num_pin]),num_pin);
 }
@@ -269,26 +301,32 @@ void Navigation_Finish_Review(Screen_t *const screen_obj, screen_event_t *const 
         /* free array using in have new data test */
         if (screen_obj->IC_Testerx[screen_obj->curr_device].data_clock != NULL) {
             free(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock);
+            screen_obj->IC_Testerx[screen_obj->curr_device].data_clock = NULL;
         }
 
         if (screen_obj->IC_Testerx[screen_obj->curr_device].config_pin != NULL) {
             free(screen_obj->IC_Testerx[screen_obj->curr_device].config_pin);
+            screen_obj->IC_Testerx[screen_obj->curr_device].config_pin = NULL;
         }
         
         if (screen_obj->IC_Testerx[screen_obj->curr_device].icon_result != NULL) {
             free(screen_obj->IC_Testerx[screen_obj->curr_device].icon_result) ;
+            screen_obj->IC_Testerx[screen_obj->curr_device].icon_result = NULL;
         }
 
         if (screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit != NULL) {
             free(screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit);
+            screen_obj->IC_Testerx[screen_obj->curr_device].data_short_circuit = NULL;
         }
 
         if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case != NULL) {
             free(screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case);
+            screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case = NULL;
         }
 
         if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result != NULL) {
             free(screen_obj->IC_Testerx[screen_obj->curr_device].data_result);
+            screen_obj->IC_Testerx[screen_obj->curr_device].data_result = NULL;
         }
 
         /* check error */
@@ -409,14 +447,18 @@ void select_modify_program(Screen_t *const screen_obj, screen_event_t *const scr
 void Navigation_num_keyboard(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     // get the datavalue -> the VP will show string input
     screen_obj->Screen_keyboard.VP_Text = screen_event->keyvalue;
-
+    /* get index vp to show the info of keyboard */
+    uint8_t index_condition;
+    index_condition = Index_VP(screen_obj->Screen_keyboard.VP_Text,lookup_VP_condition,(sizeof(lookup_VP_condition)/ sizeof(lookup_VP_condition[0])));
     // Reset the string
     screen_obj->Screen_keyboard.Index_String = 0;
     memset(screen_obj->Screen_keyboard.String,0,sizeof(screen_obj->Screen_keyboard.String));
     /* Show text num keyboard */
     DWIN_SetText((Dwin_t *)screen_obj,VP_ShowString_Keyboard,screen_obj->Screen_keyboard.String,sizeof(screen_obj->Screen_keyboard.String));
-    // DWIN_SetText((Dwin_t *)screen_obj,VP_ShowType_Keyboard)
-
+    DWIN_SetText((Dwin_t *)screen_obj,VP_ShowType_Keyboard,text_numkeyboard[index_condition].String_Name,strlen(text_numkeyboard[index_condition].String_Name));
+    DWIN_SetText((Dwin_t *)screen_obj,VP_ShowUnit_Keyboard,text_numkeyboard[index_condition].String_Unit,strlen(text_numkeyboard[index_condition].String_Unit));
+    /* clear text */
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard);
     /* Switch page */
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_NUM_KEYBOARD);
 }
@@ -430,7 +472,8 @@ void Navigation_full_keyboard(Screen_t *const screen_obj, screen_event_t *const 
     memset(screen_obj->Screen_keyboard.String,0,sizeof(screen_obj->Screen_keyboard.String));
     /* Show text num keyboard */
     DWIN_SetText((Dwin_t *)screen_obj,VP_ShowString_Keyboard,screen_obj->Screen_keyboard.String,sizeof(screen_obj->Screen_keyboard.String));
-
+    /* clear text */
+    DWIN_ClearText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard);
     /* Switch page */
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_FULL_KEYBOARD);
 }
@@ -440,6 +483,7 @@ void Save_Information(Screen_t *const screen_obj, screen_event_t *const screen_e
     if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp != NULL) {
         if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program != NULL) {
             free(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program);
+            screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program = NULL;
         }
         screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program = (char *)malloc(strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp));
         memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program
@@ -474,6 +518,11 @@ void Save_Information(Screen_t *const screen_obj, screen_event_t *const screen_e
 
         free(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp);
         screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = NULL;
+    }
+
+    /* get data for testing ic */
+    if (get_data_testing_ic(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC,&screen_obj->Program_Testx[screen_obj->modify_program_index]) == false) {
+        return;
     }
 
     /* send to esp32 */
@@ -580,18 +629,30 @@ void Enter_num_keyboard(Screen_t *const screen_obj, screen_event_t *const screen
             DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_PASSWORD);
         } break;
         case VP_Modify_Program_Name : {
+            if (screen_obj->Screen_keyboard.Index_String == 0) {
+                DWIN_SetText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard,"Please enter a value",strlen("Please enter a value"));
+                return;
+            }
             screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
             memset(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
             memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
             DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
         } break;
         case VP_Modify_IC_Name : {
+            if (screen_obj->Screen_keyboard.Index_String == 0) {
+                DWIN_SetText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard,"Please enter a value",strlen("Please enter a value"));
+                return;
+            }
             screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
             memset(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
             memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
             DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
         } break;
         case VP_Modify_IC_Num :{
+            if (screen_obj->Screen_keyboard.Index_String == 0) {
+                DWIN_SetText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard,"Please enter a value",strlen("Please enter a value"));
+                return;
+            }
             screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
             memset(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
             memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
@@ -601,8 +662,43 @@ void Enter_num_keyboard(Screen_t *const screen_obj, screen_event_t *const screen
         case VP_Password_Wifi : {
             DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING_WIFI);
         } break;
+        case VP_Hour : 
+        case VP_Minute :
+        case VP_Day :
+        case VP_Month : 
+        case VP_Year : {
+            if (Screen_CheckInput_Keyboard(screen_obj) == Status_SUCCESS) {
+                // get data
+                get_input_keyboard((Dwin_t *)screen_obj,screen_obj->Screen_keyboard.VP_Text);
+                // Show data input to VP 
+                DWIN_SetText((Dwin_t *)screen_obj,screen_obj->Screen_keyboard.VP_Text,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
+                DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->pre_page); // switch to previous page
+            } 
+        } break;
+        
         default: break;
     }
+}
+
+void Enter_setting_time(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    if (strlen(screen_obj->Time_setting.Day) == 0 ||
+    strlen(screen_obj->Time_setting.Month) == 0 || 
+    strlen(screen_obj->Time_setting.Year) == 0 || 
+    strlen(screen_obj->Time_setting.Hour) == 0 || 
+    strlen(screen_obj->Time_setting.Minute) == 0 ) {
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Warning_setting_time,"Enter all times before saving",strlen("Enter all times before saving"));
+        return;
+    } else {
+        DS3231_Write_time(&ds3231,00,atoi(screen_obj->Time_setting.Minute),
+        atoi(screen_obj->Time_setting.Hour),
+        atoi(screen_obj->Time_setting.Day),
+        atoi(screen_obj->Time_setting.Month),
+        atoi(screen_obj->Time_setting.Year));
+    }
+}
+
+void Enter_setting_wifi(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+
 }
 
 void Keyboard(Screen_t *const screen_obj, screen_event_t *const screen_event) {
@@ -610,6 +706,7 @@ void Keyboard(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     /* The other Functions button */
     if (screen_event->data == 0xF3) { // Delete button
         if (screen_obj->Screen_keyboard.Index_String != 0) {
+            screen_obj->Screen_keyboard.String[screen_obj->Screen_keyboard.Index_String - 1] = 0;
             --screen_obj->Screen_keyboard.Index_String;
         }
     } else if (screen_event->data == 0xF4) { // Caplock button
@@ -621,10 +718,12 @@ void Keyboard(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     } else if (screen_event->data == 0xF1) { // Enter button
         // Check if the data is valid
         if (Screen_CheckInput_Keyboard(screen_obj) == Status_SUCCESS) {
+            // get data
+            get_input_keyboard((Dwin_t *)screen_obj,screen_obj->Screen_keyboard.VP_Text);
             // Show data input to VP 
             DWIN_SetText((Dwin_t *)screen_obj,screen_obj->Screen_keyboard.VP_Text,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
             DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->pre_page); // switch to previous page
-        }
+        } 
     }
     /* the data value is the character input -> add to string */
     else if (screen_event->data >= 0x41 && screen_event->data <= 0x5A) { // letter need check Caplock
@@ -711,6 +810,8 @@ void Screen_init_handler_table(Screen_t *const obj_screen) {
 
     handler_function_table[SIG_ENTER][ENTER_PASSWORD]                       = Enter_password;
     handler_function_table[SIG_ENTER][ENTER_NUM_KEYBOARD]                   = Enter_num_keyboard;
+    handler_function_table[SIG_ENTER][ENTER_TIME]                           = Enter_setting_time;
+    handler_function_table[SIG_ENTER][ENTER_WIFI]                           = Enter_setting_wifi;
 
     handler_function_table[SIG_KEYBOARD][VALUE_KEBOARD]                     = Keyboard;
 
@@ -737,25 +838,29 @@ void Screen_excute_RX_function(Screen_t *const obj_screen,screen_event_t *const 
 
 #pragma region FUNCTION SCREEN 
 
-Return_Status Screen_CheckInput_Keyboard(Screen_t *const obj_screen) {
-    char string[obj_screen->Screen_keyboard.Index_String];
+Return_Status Screen_CheckInput_Keyboard(Screen_t *const screen_obj) {
+    char string[screen_obj->Screen_keyboard.Index_String];
     char warm_string[20] = {0};
     float data_compare;
+    uint8_t index_condition;
     // copy string
-    memcpy(string,obj_screen->Screen_keyboard.String,obj_screen->Screen_keyboard.Index_String);
+    memcpy(string,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
+    string[screen_obj->Screen_keyboard.Index_String] = '\0';
+    /* get index correspond with vp */
+    index_condition = Index_VP(screen_obj->Screen_keyboard.VP_Text,lookup_VP_condition,(sizeof(lookup_VP_condition)/ sizeof(lookup_VP_condition[0])));
     /* compare data with limit */
     data_compare = atof(string);
-    if (data_compare > obj_screen->Screen_condition->max_value) {
+    if (data_compare > screen_obj->Screen_condition[index_condition].max_value) {
         // Create warm string
-        snprintf(warm_string,sizeof(warm_string),"MAX: %.2f", obj_screen->Screen_condition->max_value);
+        snprintf(warm_string,sizeof(warm_string),"MAX: %.2f", screen_obj->Screen_condition[index_condition].max_value);
         // Display warning
-        DWIN_SetText((Dwin_t *)obj_screen,VP_ShowWarning_Keyboard,warm_string,sizeof(warm_string));
+        DWIN_SetText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard,warm_string,sizeof(warm_string));
         return Status_ERROR;
-    } else if (data_compare < obj_screen->Screen_condition->min_value) {
+    } else if (data_compare < screen_obj->Screen_condition[index_condition].min_value) {
         // Create warm string
-        snprintf(warm_string,sizeof(warm_string),"MIN: %.2f", obj_screen->Screen_condition->min_value);
+        snprintf(warm_string,sizeof(warm_string),"MIN: %.2f", screen_obj->Screen_condition[index_condition].min_value);
         // Display warning
-        DWIN_SetText((Dwin_t *)obj_screen,VP_ShowWarning_Keyboard,warm_string,sizeof(warm_string));
+        DWIN_SetText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard,warm_string,sizeof(warm_string));
         return Status_ERROR;
     } 
     return Status_SUCCESS; 
@@ -800,10 +905,8 @@ static void Screen_GetIcon_Result(Screen_t *const screen_obj, char *result) {
     uint8_t map_array[128] = {0};
     map_array['0'] = ICON_LOGIC_LOW;
     map_array['1'] = ICON_LOGIC_HIGH;
-    map_array['L'] = ICON_CLOCK_LOW;
-    map_array['H'] = ICON_CLOCK_HIGH;
-    map_array['V'] = ICON_LOGIC_NONE;
-    map_array['G'] = ICON_LOGIC_NONE;
+    map_array['3'] = ICON_CLOCK_HIGH;
+    map_array['4'] = ICON_CLOCK_LOW;
     /* Create the array icon data pin */
     screen_obj->IC_Testerx[screen_obj->curr_device].icon_result = malloc(num_case * num_pin);
 
@@ -867,8 +970,15 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
     memcpy(obj_screen->IC_Testerx[DEVICE_2].NameIC_Tester,"IC TESTER 2",strlen("IC TESTER 2"));
     memcpy(obj_screen->IC_Testerx[DEVICE_3].NameIC_Tester,"IC TESTER 3",strlen("IC TESTER 3"));
 
-    memcpy(obj_screen->Wifi_setting.Name_Wifi,"Wifi TEST 1",strlen("Wifi TEST 1"));
-    memcpy(obj_screen->Wifi_setting.Password_Wifi,"PASSword 1234",strlen("PASSword 1234"));
+    char wifi_info[60] = {0};
+    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_WIFI_INFO,&wifi_info[0],DATA_LEN_WIFI_INFO);
+    char *pdata = strtok(wifi_info,",");
+    memcpy(obj_screen->Wifi_setting.Name_Wifi,pdata,strlen(pdata));
+    pdata = strtok(NULL,",");
+    memcpy(obj_screen->Wifi_setting.Password_Wifi,pdata,strlen(pdata));
+    // memcpy(obj_screen->Wifi_setting.Name_Wifi,"Wifi TEST 1",strlen("Wifi TEST 1"));
+    // memcpy(obj_screen->Wifi_setting.Password_Wifi,"PASSword 1234",strlen("PASSword 1234"));
+
 
     obj_screen->IC_Testerx[DEVICE_1].curr_PageMain = DWINPAGE_MAIN;
     obj_screen->IC_Testerx[DEVICE_2].curr_PageMain = DWINPAGE_MAIN;
@@ -900,6 +1010,7 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
     /* Screen */
     obj_screen->Screen_keyboard.Caplock = false;
     obj_screen->Screen_keyboard.Index_String = 0;
+    obj_screen->Screen_condition = &condition_array[0];
 
     Screen_ShowData_Mainpage(obj_screen,PROGRAM_TEST1);
     DWIN_SetVariable_Icon((Dwin_t *)obj_screen,VP_ICON_ON_OFF,obj_screen->IC_Testerx[obj_screen->curr_device].state);
@@ -963,7 +1074,7 @@ static void Screen_SetInfo_Pin(Screen_t *const screen_obj) {
 #pragma endregion FUNCTION SCREEN
 
 
-static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
+static bool get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     uint8_t num_direc_used = 0;
     uint8_t *temp_buf = (uint8_t *)malloc(MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
     memset(temp_buf,0,MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
@@ -987,8 +1098,9 @@ static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     }
     /* NOT FOUND NAME IC IN EEPROM */ 
     if (pDirectory == NULL) {
-        printf("NOT FOUND NAME IC IN EEPROM\n");
-        return;
+        // printf("NOT FOUND NAME IC IN EEPROM\n");
+        DWIN_SetText((Dwin_t *)&_Screen,VP_Warning_modify_program,"No data found for this IC",strlen("No data found for this IC"));
+        return false;
     } 
     mem_addr = (uint16_t)((pDirectory->addr[0] << 8) | pDirectory->addr[1]);
     buf_length = (uint16_t)((pDirectory->length[0] << 8) | pDirectory->length[1]);
@@ -997,7 +1109,7 @@ static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     AT24Cxx_read_buffer(&eeprom_ob,mem_addr,temp_buf,buf_length);
     // Find the first pipe separator
     uint8_t *first_pipe = memchr(temp_buf, '|', buf_length);
-    if (!first_pipe) return;
+    if (!first_pipe) return false;
     
     // Extract pin count
     int pin_count_len = first_pipe - temp_buf;
@@ -1010,7 +1122,7 @@ static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     // Find the second pipe separator
     int remaining_len = buf_length - (first_pipe - temp_buf + 1);
     uint8_t *second_pipe = memchr(first_pipe + 1, '|', remaining_len);
-    if (!second_pipe) return;
+    if (!second_pipe) return false;
     
     // Extract test count
     int test_count_len = second_pipe - (first_pipe + 1);
@@ -1023,7 +1135,7 @@ static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     // Find the third pipe separator using memchr (searches through \0)
     remaining_len = buf_length - (second_pipe - temp_buf + 1);
     uint8_t *third_pipe = memchr(second_pipe + 1, '|', remaining_len);
-    if (!third_pipe) return;
+    if (!third_pipe) return false;
     
     // Extract pin data (between second and third pipe)
     int pin_data_len = third_pipe - (second_pipe + 1);
@@ -1039,6 +1151,7 @@ static void get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     pdata_test->data_test_len = test_data_len;
 
     free(temp_buf);
+    return true;
 //    uint8_t array_buf[200];
 //    memcpy(array_buf,pdata_test->data_pin,pin_data_len);
 //    uint8_t array_buf2[200];
@@ -1247,25 +1360,25 @@ static void show_pulse(Screen_t *screen_obj, uint8_t curr_case) {
     uint8_t num_pin = screen_obj->Program_Testx[selectedProgram].num_pin;
     uint8_t index_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
     
-    char ShowCase_String[30];
+    char ShowCase_String[15];
     uint8_t index_data;
-    uint16_t vp_pulse = 0x1000;
+    uint16_t vp_pulse = VP_Pulse_graph;
     uint8_t pins_to_show = num_pin - 2; 
-    uint8_t skip_index1 = (num_pin / 2) - 1; // First skip index
-    uint8_t skip_index2 = num_pin - 1;       // Second skip index
+    uint8_t skip_index1 = (num_pin / 2) - 1; // skip index
+    uint8_t skip_index2 = num_pin - 1;       // skip index
     uint16_t Address_VP = VP_Text_Pin_Pulse;
     uint16_t vp_vertical = VP_vertical_line;
+    uint16_t vp_icon_clock = VP_ICON_CLOCK;
 
     char *data_copy = malloc(screen_obj->Program_Testx[index_program].data_pin_len + 1);
     memcpy(data_copy, screen_obj->Program_Testx[index_program].data_pin, screen_obj->Program_Testx[index_program].data_pin_len);
-    data_copy[screen_obj->Program_Testx[index_program].data_pin_len] = '\0'; // Null terminate
+    data_copy[screen_obj->Program_Testx[index_program].data_pin_len] = '\0'; 
 
-    // First, collect all pin names into an array
-    char pin_names[32][32]; // Adjust size as needed
+    char pin_names[18][10];
     uint8_t total_pins = 0;
     char *temp_buf = strtok(data_copy, "\n");
 
-    while (temp_buf != NULL && total_pins < 32) {
+    while (temp_buf != NULL && total_pins < 18) {
         strcpy(pin_names[total_pins], temp_buf);
         total_pins++;
         temp_buf = strtok(NULL, "\n");
@@ -1276,6 +1389,11 @@ static void show_pulse(Screen_t *screen_obj, uint8_t curr_case) {
             (pins_to_show + 6) / 7); // Calculate total cases needed
 
     DWIN_SetText((Dwin_t *)screen_obj, VP_Show_CurrentCase, ShowCase_String, strlen(ShowCase_String));
+
+    /* TURN OFF ALL CLOCK ICON */
+    uint8_t clock_buf[49] = {0};
+    memset(clock_buf,ICON_CLOCK_NONE,sizeof(clock_buf));
+    DWIN_SetArray_Icon((Dwin_t *)screen_obj,vp_icon_clock,clock_buf,49);
 
     for (uint8_t i = 0; i < 7; i++) {
         uint8_t display_pin = (screen_obj->IC_Testerx[screen_obj->curr_device].curr_case * 7) + i;
@@ -1295,17 +1413,26 @@ static void show_pulse(Screen_t *screen_obj, uint8_t curr_case) {
             index_data = num_case * actual_pin_index;
             
             // Create the line with actual data
-
-            DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 100, 144 + (45 * i), // base x 114
+            if (screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data] == 3) { // UP CLOCK
+                /* don't show pulse graph */
+                uint8_t up_clock[7] = {0};
+                memset(up_clock,ICON_UP_CLOCK,sizeof(up_clock));
+                DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 0, 0, // base x 114
                                 &(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data]), 
                                 num_case);
-
-            if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case) {
-                DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,100 + (50 * i),110,100 + (50 * i),415,0x01ED);
+                DWIN_SetArray_Icon((Dwin_t *)screen_obj,vp_icon_clock,up_clock,sizeof(up_clock));
+            } else if (screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data] == 4) {
+                uint8_t down_clock[7] = {0};
+                memset(down_clock,ICON_DOWN_CLOCK,sizeof(down_clock));
+                DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 0, 0, // base x 114
+                                &(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data]), 
+                                num_case);
+                DWIN_SetArray_Icon((Dwin_t *)screen_obj,vp_icon_clock,down_clock,sizeof(down_clock));
             } else {
-                DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,100 + (50 * i),110,100 + (50 * i),415,0xF800);
-            }
-            
+                DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 100, 144 + (45 * i), // base x 114
+                                &(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data]), 
+                                num_case);
+            }            
             // Set pin name
             DWIN_SetText((Dwin_t *)screen_obj, Address_VP, pin_names[actual_pin_index], 
                         strlen(pin_names[actual_pin_index]));
@@ -1313,16 +1440,29 @@ static void show_pulse(Screen_t *screen_obj, uint8_t curr_case) {
         } else { /* don't using this */
             uint8_t low_buf[12 - num_case];
             memset(low_buf,0,sizeof(low_buf));
-            DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 100, 144 + (45 * i), // base x 114
+            DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 0, 0, // base x 114
                                 low_buf, 
                                 sizeof(low_buf));
             DWIN_SetText((Dwin_t *)screen_obj, Address_VP, " ", 1);
-            DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,0,0,0,0,0xF800);
         }
         
         vp_pulse += 0x200;
-        vp_vertical += 0x200;
+        
         Address_VP += 0x10;
+        vp_icon_clock += 0x07;
+    }
+
+    for (uint8_t i = 0; i < 14; i++) {
+        if (i < num_case) {
+            if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case[i] == '1') {
+                DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,100 + (50 * i),110,100 + (50 * i),415,0x01ED);
+            } else {
+                DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,100 + (50 * i),110,100 + (50 * i),415,0xF800);
+            }
+        } else {
+            DWIN_Create_Single_line((Dwin_t *)screen_obj,vp_vertical,0,0,0,0,0xF800);
+        }
+        vp_vertical += 0x200;
     }
 
     free(data_copy);
@@ -1365,12 +1505,22 @@ void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_p
             uint8_t buffer[500];
             memcpy(buffer,screen_obj->IC_Testerx[screen_obj->curr_device].data_result,num_case*num_pin);
             DWIN_SetArray_Icon(screen_obj,VP_ICON_RESULT,&(screen_obj->IC_Testerx[screen_obj->curr_device].icon_result[case_show * num_pin]),num_pin);
+
             snprintf(ShowCase_String,sizeof(ShowCase_String),"%d OF %d",case_show + 1,num_case);
             DWIN_SetText((Dwin_t *)screen_obj,VP_Show_CurrentCase,ShowCase_String,strlen(ShowCase_String));
+            if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result_case[screen_obj->IC_Testerx[screen_obj->curr_device].curr_case] == '0') {
+                DWIN_SetColorText((Dwin_t *)screen_obj,SP_Current_Case,0xF800);
+            } else {
+                DWIN_SetColorText((Dwin_t *)screen_obj,SP_Current_Case,0x01ED);
+            }
             /* change page if home page */
             if (screen_obj->Ishome) {
             	DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
-                DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MAIN_DETAIL);
+                if (screen_obj->Program_Testx[index_program].num_pin == 14) {
+                    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MAIN_DETAIL_14PIN);
+                } else {
+                    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MAIN_DETAIL);
+                }
             }
         } break;
         case DWINPAGE_MAIN_PULSE: {
@@ -1390,14 +1540,6 @@ void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_p
 
             /* show fist case in pusle page */
             show_pulse(screen_obj,0);
-
-            // uint16_t vp_pulse = 0x1000;
-            // for (uint8_t i = 0; i < 8; i++ ) {
-            //     if (i != 7 ) {
-            //         DWIN_Create_Basic_line((Dwin_t *)screen_obj,vp_pulse,114,144 + (45 * i),&(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[num_case*i]),num_case);
-            //         vp_pulse += 0x200;
-            //     }
-            // }
             
             // /* change page if home page */
             if (screen_obj->Ishome) {
@@ -1405,6 +1547,10 @@ void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_p
                 DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MAIN_PULSE);
                 DWIN_SetText((Dwin_t *)screen_obj,VP_Show_CurrentCase,ShowCase_String,strlen(ShowCase_String));
             }
+            // if (screen_obj->IC_Testerx[screen_obj->curr_device].data_clock != NULL) {
+            //     free(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock);
+            //     screen_obj->IC_Testerx[screen_obj->curr_device].data_clock = NULL;
+            // }
         } break;
     }
 }
@@ -1446,7 +1592,114 @@ void warning_page(Screen_t *const screen_obj,uint32_t id_slave) {
     char buffer[90]  = {0};
     snprintf(buffer,sizeof(buffer),"IC Tester %d is not connected to the system. Please check the connection",(id_slave - 0x470));
 
-    DWIN_SetText((Dwin_t *)screen_obj,VP_Warining,buffer,strlen(buffer));
+    DWIN_SetText((Dwin_t *)screen_obj,VP_Warning,buffer,strlen(buffer));
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_WARNING);
+
+}
+
+void get_input_keyboard(Screen_t *const screen_obj,uint16_t VP_input) {
+    switch (VP_input) {
+        case VP_Hour   : {
+            memset(screen_obj->Time_setting.Hour,0,3);
+            memcpy(screen_obj->Time_setting.Hour,screen_obj->Screen_keyboard.String,2);
+        } break;
+        case VP_Minute : {
+            memset(screen_obj->Time_setting.Minute,0,3);
+            memcpy(screen_obj->Time_setting.Minute,screen_obj->Screen_keyboard.String,2);
+        }
+        case VP_Day    : {
+            memset(screen_obj->Time_setting.Day,0,3);
+            memcpy(screen_obj->Time_setting.Day,screen_obj->Screen_keyboard.String,2);
+        }
+        case VP_Month  : {
+            memset(screen_obj->Time_setting.Month,0,3);
+            memcpy(screen_obj->Time_setting.Month,screen_obj->Screen_keyboard.String,2);
+        }
+        case VP_Year   : {
+            memset(screen_obj->Time_setting.Year,0,3);
+            memcpy(screen_obj->Time_setting.Year,screen_obj->Screen_keyboard.String,2);
+        }
+    }
+}   
+
+void updata_data_program_from_app(Screen_t *const screen_obj,char *data,uint16_t len) {
+    /* update value */
+    char temp_buf[len];
+    memset(temp_buf,0,len);
+    memcpy(temp_buf,data,len);
+    uint8_t index_program;
+
+    char *pdata = strtok(temp_buf,",");
+    index_program = atoi(pdata) - 1;
+
+    if (screen_obj->Program_Testx[index_program].Name_Program != NULL) {
+        free(screen_obj->Program_Testx[index_program].Name_Program);
+        screen_obj->Program_Testx[index_program].Name_Program = NULL;
+    }
+    pdata = strtok(NULL,",");
+    screen_obj->Program_Testx[index_program].Name_Program = (char *)malloc(strlen(pdata) + 1);
+    strcpy(screen_obj->Program_Testx[index_program].Name_Program, pdata);
+
+    if (screen_obj->Program_Testx[index_program].Name_IC != NULL) {
+        free(screen_obj->Program_Testx[index_program].Name_IC);
+        screen_obj->Program_Testx[index_program].Name_IC = NULL;
+    }
+    pdata = strtok(NULL,",");
+    screen_obj->Program_Testx[index_program].Name_IC = (char *)malloc(strlen(pdata) + 1);
+    strcpy(screen_obj->Program_Testx[index_program].Name_IC, pdata);
+
+    if (screen_obj->Program_Testx[index_program].num_IC != NULL) {
+        free(screen_obj->Program_Testx[index_program].num_IC);
+        screen_obj->Program_Testx[index_program].num_IC = NULL;
+    }
+    pdata = strtok(NULL,",");
+    screen_obj->Program_Testx[index_program].num_IC = (char *)malloc(strlen(pdata) + 1);
+    strcpy(screen_obj->Program_Testx[index_program].num_IC, pdata);
+
+    /* get data for testing ic */
+    if (get_data_testing_ic(screen_obj->Program_Testx[index_program].Name_IC,&screen_obj->Program_Testx[index_program]) == false) {
+        return;
+    }
+
+    /* store data to eeprom */
+    char string_data[TOTAL_ONE_PROGRAM_TEST_LEN] = {0};
+    data_eeprom_t *data_write = malloc(sizeof(data_eeprom_t));
+    snprintf(string_data,TOTAL_ONE_PROGRAM_TEST_LEN,"%s,%s,%s",screen_obj->Program_Testx[index_program].Name_Program
+    ,screen_obj->Program_Testx[index_program].Name_IC
+    ,screen_obj->Program_Testx[index_program].num_IC);
+    data_write->data = malloc(TOTAL_ONE_PROGRAM_TEST_LEN);
+    memcpy(data_write->data,string_data,TOTAL_ONE_PROGRAM_TEST_LEN);
+    data_write->data_len = TOTAL_ONE_PROGRAM_TEST_LEN;
+    data_write->mem_addr = START_ADDR_PROGRAM_TEST_X(index_program);
+    OS_task_post_event(AO_task_eeprom,WRITE_EEPROM,(uint8_t *)&data_write,sizeof(data_eeprom_t));
+
+    // Show data in screen
+    if (screen_obj->Ishome) {
+        if (index_program == screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index) {
+            Screen_ShowData_Mainpage(screen_obj,index_program);
+        }
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Program_Name_1 + (0x28 *index_program),screen_obj->Program_Testx[index_program].Name_Program
+            ,strlen(screen_obj->Program_Testx[index_program].Name_Program));
+    } else {
+        uint8_t size_Name_IC = strlen("IC Name: ") + strlen((char *)screen_obj->Program_Testx[index_program].Name_IC);
+        uint8_t size_Num_IC = strlen("Number of ICs: ") + strlen((char *)screen_obj->Program_Testx[index_program].num_IC);
+
+        char *Text_Name_IC = malloc(size_Name_IC + 1); // Null 
+        char *Text_Num_IC = malloc(size_Num_IC + 1);
+
+        strcpy(Text_Name_IC,"IC Name: ");
+        strcat(Text_Name_IC,(char *)screen_obj->Program_Testx[index_program].Name_IC);
+        strcpy(Text_Num_IC,"Number of ICs: ");
+        strcat(Text_Num_IC,(char *)screen_obj->Program_Testx[index_program].num_IC);
+
+        // Show data in screen
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Name,Text_Name_IC,size_Name_IC);
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Modify_IC_Num,Text_Num_IC,size_Num_IC);
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Program_Name_1 + (0x28 *index_program),screen_obj->Program_Testx[index_program].Name_Program
+            ,strlen(screen_obj->Program_Testx[index_program].Name_Program));
+
+        free(Text_Name_IC);
+        free(Text_Num_IC);
+    }
 
 }

@@ -57,6 +57,9 @@ enum {
 enum {
     SEND_DATA_ESP32   = 0,
     RECEIVE_DATA_ESP32   ,
+    SEND_DATA_SCREEN     ,
+    ESP32_RX_TIMEOUT     ,
+    ESP32_TX_TIMEOUT     ,
 
     MAX_SIG_UART_ESP32
 };
@@ -77,6 +80,8 @@ enum {
 enum {
     DEIVCE_TEST_FINISH  = 0,
     UPDATE_RTC             ,
+    UPDATE_WIFI_STATE      ,
+    UPDATA_PROGARM         ,
     MAX_SIG_SCREEN
 };
 

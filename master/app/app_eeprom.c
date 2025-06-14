@@ -80,7 +80,9 @@ void eeprom_task_init(I2C_HandleTypeDef* i2c_port, uint8_t dev_address) {
     // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(1),(uint8_t *)data_program2,strlen(data_program2));
     // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(2),(uint8_t *)data_program3,strlen(data_program3));
     // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(3),(uint8_t *)data_program4,strlen(data_program4));
-
+    uint8_t clear_buf[60] = {0};
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_WIFI_INFO,clear_buf,DATA_LEN_WIFI_INFO);
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_WIFI_INFO,wifi_info,strlen(wifi_info));
     uint8_t buffer[30];
 //    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),&buffer,strlen(data_program1));
 //    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(1),&buffer,strlen(data_program2));

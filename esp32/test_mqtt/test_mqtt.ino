@@ -6,10 +6,13 @@
 #include <freertos/queue.h>
 #include <freertos/semphr.h>
 
-#define wifi_ssid "IoTVision_2.4GHz"
-#define wifi_password "iotvision@2022"
-// #define mqtt_server "192.168.100.171" 
-#define mqtt_server "192.168.0.126" 
+// #define wifi_ssid "IoTVision_2.4GHz"
+// #define wifi_password "iotvision@2022"
+// #define mqtt_server "192.168.0.126" 
+
+#define wifi_ssid "BIN BO"
+#define wifi_password "17062031809207"
+#define mqtt_server "192.168.100.171" 
 
 #define RXD2 16
 #define TXD2 17
@@ -20,7 +23,8 @@
 #define MQTT_TASK_PRIORITY 2
 
 // Queue and semaphore handles
-QueueHandle_t uartQueue;
+QueueHandle_t uartReceiveQueue;
+QueueHandle_t uartSendQueue;
 SemaphoreHandle_t wifiSemaphore;
 SemaphoreHandle_t mqttSemaphore;
 
@@ -31,6 +35,8 @@ PubSubClient client(espClient);
 String data_history_topic;
 String Dataprogram_topic;
 String data_device_topic;
+String status_topic;
+String checkconnect_topic;
 String MAC_Address;
 
 HardwareSerial Serial_stm32(2);
@@ -41,9 +47,19 @@ struct UartData {
   String data;
 };
 
-// WiFi status
+// Structure for data to send to STM32
+struct UartSendData {
+  int command_type;  // 0 = WiFi status, 1 = Program data
+  String data;
+};
+
+// WiFi and connection status
 volatile bool wifiConnected = false;
 volatile bool mqttConnected = false;
+volatile bool lastWifiState = false;  // Track previous WiFi state for change detection
+
+// Program data storage (to detect changes)
+String programData[5] = {"", "", "", "", ""};  // Index 1-4 for programs
 
 void setup() {
   Serial.begin(115200);
@@ -56,9 +72,12 @@ void setup() {
   data_history_topic = MAC_Address + "/" + "History";
   Dataprogram_topic = MAC_Address + "/" + "DataProgram";
   data_device_topic = MAC_Address + "/" + "StatusDevice";
+  status_topic = MAC_Address + "/" + "status";
+  checkconnect_topic = MAC_Address + "/" + "checkconnect";
   
-  // Create queue and semaphores
-  uartQueue = xQueueCreate(10, sizeof(UartData));
+  // Create queues and semaphores
+  uartReceiveQueue = xQueueCreate(10, sizeof(UartData));
+  uartSendQueue = xQueueCreate(10, sizeof(UartSendData));
   wifiSemaphore = xSemaphoreCreateBinary();
   mqttSemaphore = xSemaphoreCreateBinary();
   
@@ -105,96 +124,113 @@ void loop() {
   vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
-// WiFi monitoring task
+// WiFi monitoring task with status change detection
 void wifiTask(void *parameter) {
   Serial.println("WiFi Task started");
   
-  // Main task loop - runs forever
   while (true) {
+    bool currentWifiState = (WiFi.status() == WL_CONNECTED);
     
     // CHECK 1: Is WiFi currently disconnected?
-    if (WiFi.status() != WL_CONNECTED) {
-      // Set flags to indicate we're disconnected
+    if (!currentWifiState) {
       wifiConnected = false;
-      mqttConnected = false;  // MQTT can't work without WiFi
+      mqttConnected = false;
       
       Serial.println("Connecting to WiFi...");
-      WiFi.begin(wifi_ssid, wifi_password);  // Start connection attempt
+      WiFi.begin(wifi_ssid, wifi_password);
       
-      // INNER LOOP: Wait for connection with timeout protection
       int attempts = 0;
       while (WiFi.status() != WL_CONNECTED && attempts < 20) {
-        vTaskDelay(pdMS_TO_TICKS(500));  // Wait 500ms (FreeRTOS delay)
-        Serial.print(".");               // Show progress dots
-        attempts++;                      // Count attempts (20 x 500ms = 10 seconds max)
+        vTaskDelay(pdMS_TO_TICKS(500));
+        Serial.print(".");
+        attempts++;
       }
       
-      // CHECK 2: Did we successfully connect?
-      if (WiFi.status() == WL_CONNECTED) {
+      // Update current state after connection attempt
+      currentWifiState = (WiFi.status() == WL_CONNECTED);
+      
+      if (currentWifiState) {
         wifiConnected = true;
         Serial.println("\nWiFi connected!");
         Serial.print("IP address: ");
         Serial.println(WiFi.localIP());
-        
-        // SIGNAL other tasks that WiFi is ready
-        xSemaphoreGive(wifiSemaphore);  // Release semaphore to wake up MQTT task
-        
+        xSemaphoreGive(wifiSemaphore);
       } else {
         Serial.println("\nWiFi connection failed, retrying...");
-        // Will retry in next loop iteration after 5 second delay
       }
-      
     } else {
-      // WiFi is connected, but check if our flag is outdated
+      // WiFi is connected
       if (!wifiConnected) {
         wifiConnected = true;
-        xSemaphoreGive(wifiSemaphore);  // Signal that WiFi is available
+        xSemaphoreGive(wifiSemaphore);
       }
     }
     
-    // Wait 5 seconds before checking WiFi status again
+    // CHECK FOR WIFI STATE CHANGE - Send update to STM32 only when state changes
+    if (currentWifiState != lastWifiState) {
+      Serial.println("WiFi state changed: " + String(currentWifiState ? "Connected" : "Disconnected"));
+      
+      // Send WiFi status to STM32 via UART queue
+      UartSendData statusData;
+      statusData.command_type = 0;  // 0 = WiFi status
+      statusData.data = String(currentWifiState ? 1 : 0);  // 1 = connected, 0 = disconnected
+      
+      if (xQueueSend(uartSendQueue, &statusData, pdMS_TO_TICKS(100)) == pdTRUE) {
+        Serial.println("WiFi status queued for STM32: " + statusData.data);
+      } else {
+        Serial.println("Failed to queue WiFi status for STM32");
+      }
+      
+      lastWifiState = currentWifiState;  // Update last state
+    }
+    
     vTaskDelay(pdMS_TO_TICKS(5000));
   }
 }
 
-// UART receiving task
+// UART task - handles both receiving and sending
 void uartTask(void *parameter) {
-  // Serial.println("UART Task started");
+  Serial.println("UART Task started");
   UartData uartData;
+  UartSendData sendData;
   
   while (true) {
+    // RECEIVE from STM32
     if (Serial_stm32.available()) {
       String message = Serial_stm32.readStringUntil('\n');
-      message.trim(); // Remove whitespace
+      message.trim();
       
       if (message.length() > 0) {
         Serial.println("Received from STM32: " + message);
         
-        // Parse command (first character) and data
         uartData.command = message.charAt(0);
         uartData.data = message.substring(1);
         
-        // Send to MQTT task
-        if (xQueueSend(uartQueue, &uartData, pdMS_TO_TICKS(100)) != pdTRUE) {
-          Serial.println("Failed to send data to queue");
+        if (xQueueSend(uartReceiveQueue, &uartData, pdMS_TO_TICKS(100)) != pdTRUE) {
+          Serial.println("Failed to send received data to queue");
         }
       }
     }
     
-    vTaskDelay(pdMS_TO_TICKS(10)); // Small delay to prevent watchdog issues
+    // SEND to STM32
+    if (xQueueReceive(uartSendQueue, &sendData, pdMS_TO_TICKS(10)) == pdTRUE) {
+      String messageToSend = String(sendData.command_type) + "," + sendData.data;
+      Serial_stm32.println(messageToSend);
+      Serial.println("Sent to STM32: " + messageToSend);
+    }
+    
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 
-// MQTT publishing task
+// MQTT task with enhanced callback handling
 void mqttTask(void *parameter) {
-  // Serial.println("MQTT Task started");
+  Serial.println("MQTT Task started");
   UartData receivedData;
   
   while (true) {
-    // Wait for WiFi connection
     if (xSemaphoreTake(wifiSemaphore, pdMS_TO_TICKS(1000)) == pdTRUE || wifiConnected) {
       
-      // Check MQTT connection
       if (!client.connected()) {
         reconnectMQTT();
       }
@@ -202,8 +238,8 @@ void mqttTask(void *parameter) {
       if (client.connected()) {
         client.loop();
         
-        // Process UART data
-        if (xQueueReceive(uartQueue, &receivedData, pdMS_TO_TICKS(100)) == pdTRUE) {
+        // Process UART data from STM32
+        if (xQueueReceive(uartReceiveQueue, &receivedData, pdMS_TO_TICKS(100)) == pdTRUE) {
           processUartCommand(receivedData.command, receivedData.data);
         }
       }
@@ -228,8 +264,6 @@ void processUartCommand(char command, String data) {
       
     case 'P': // Program data
     case 'p':
-      // Parse program data: program_number,ic_name,param1,param2
-      // Example: 1,74123,2,1
       if (data.length() > 0) {
         int firstComma = data.indexOf(',');
         if (firstComma > 0) {
@@ -243,8 +277,6 @@ void processUartCommand(char command, String data) {
       
     case 'D': // Device status
     case 'd':
-      // Parse device data: device_number,status,program_number,ic_number
-      // Example: 1,running,2,3
       if (data.length() > 0) {
         int firstComma = data.indexOf(',');
         if (firstComma > 0) {
@@ -271,7 +303,7 @@ void processUartCommand(char command, String data) {
   }
 }
 
-// MQTT callback function
+// MQTT callback function - handles incoming messages and sends updates to STM32
 void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Message arrived on topic: ");
   Serial.print(topic);
@@ -282,6 +314,55 @@ void callback(char* topic, byte* message, unsigned int length) {
     messageTemp += (char)message[i];
   }
   Serial.println(messageTemp);
+  
+  String topicStr = String(topic);
+  
+  // Handle WiFi status check requests
+  if (topicStr == checkconnect_topic) {
+    Serial.println("WiFi status check requested");
+    
+    // Respond with current WiFi status
+    String statusResponse = wifiConnected ? "connected" : "disconnected";
+    client.publish(status_topic.c_str(), statusResponse.c_str());
+    Serial.println("WiFi status published: " + statusResponse);
+    return;
+  }
+  
+  // Handle DataProgram updates from Python application
+  if (topicStr.startsWith(Dataprogram_topic + "/")) {
+    // Extract program number from topic
+    int lastSlash = topicStr.lastIndexOf('/');
+    if (lastSlash > 0) {
+      String programNumStr = topicStr.substring(lastSlash + 1);
+      int programNum = programNumStr.toInt();
+      
+      // Check if this is a valid program number (1-4) and not a request
+      if (programNum >= 1 && programNum <= 4 && !programNumStr.equals("request")) {
+        // Check if program data has changed
+        if (programData[programNum] != messageTemp) {
+          programData[programNum] = messageTemp;  // Store new data
+          
+          Serial.println("Program " + String(programNum) + " data changed: " + messageTemp);
+          
+          // Send updated program data to STM32
+          UartSendData programUpdate;
+          programUpdate.command_type = 1;  // 1 = Program data
+          programUpdate.data = String(programNum) + "," + messageTemp;  // Format: program_num,data
+          
+          if (xQueueSend(uartSendQueue, &programUpdate, pdMS_TO_TICKS(100)) == pdTRUE) {
+            Serial.println("Program update queued for STM32: " + programUpdate.data);
+          } else {
+            Serial.println("Failed to queue program update for STM32");
+          }
+        }
+      }
+      // Handle program data requests
+      else if (programNumStr.equals("request")) {
+        // This is a request for program data - we could respond with stored data if needed
+        Serial.println("Program data request received for program " + programNumStr);
+      }
+    }
+  }
 }
 
 // MQTT reconnection function
@@ -295,10 +376,23 @@ void reconnectMQTT() {
       Serial.println("connected");
       mqttConnected = true;
       
-      // Subscribe to topics if needed
-      client.subscribe((data_history_topic + "/command").c_str());
-      client.subscribe((Dataprogram_topic + "/command").c_str());
-      client.subscribe((data_device_topic + "/command").c_str());
+      // Subscribe to important topics
+      client.subscribe(checkconnect_topic.c_str());
+      Serial.println("Subscribed to: " + checkconnect_topic);
+      
+      // Subscribe to all DataProgram topics for receiving updates from Python
+      for (int i = 1; i <= 4; i++) {
+        String programTopic = Dataprogram_topic + "/" + String(i);
+        client.subscribe(programTopic.c_str());
+        Serial.println("Subscribed to: " + programTopic);
+      }
+      
+      // Subscribe to program requests
+      for (int i = 1; i <= 4; i++) {
+        String requestTopic = Dataprogram_topic + "/" + String(i) + "/request";
+        client.subscribe(requestTopic.c_str());
+        Serial.println("Subscribed to: " + requestTopic);
+      }
       
       xSemaphoreGive(mqttSemaphore);
     } else {

@@ -14,6 +14,11 @@ typedef struct {
     
 } Screen_finish_data_t;
 
+typedef struct {
+    char *data;
+    uint16_t len;
+} Screen_data_t;
+
 extern OS_task * const AO_task_screen;
 void screen_task_init(void);
 

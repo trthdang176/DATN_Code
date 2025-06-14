@@ -1,4 +1,4 @@
-../app/app_post_test.c:21:6:Post_task_init	16	static
+../app/app_post_test.c:21:6:Post_task_init	4	static
 ../app/app_post_test.c:29:6:PostApp_ctor	16	static
 ../app/app_post_test.c:37:6:PostApp_init	16	static
 ../app/app_post_test.c:42:6:PostApp_dispatch	16	static

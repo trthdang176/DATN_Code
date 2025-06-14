@@ -133,61 +133,61 @@ static void add_data(DataLogging_t *data) {
    f_close(&fil);
 }
 
-uint32_t get_total_records() {
-   fresult = f_open(&fil, "index.txt", FA_READ);
-   if (fresult != FR_OK) return 0;
+//uint32_t get_total_records() {
+//   fresult = f_open(&fil, "index.txt", FA_READ);
+//   if (fresult != FR_OK) return 0;
+//
+//   uint32_t size = f_size(&fil);
+//   f_close(&fil);
+//
+//   return size / sizeof(IndexEntry);
+//}
 
-   uint32_t size = f_size(&fil);
-   f_close(&fil);
+//void read_record_by_index(uint32_t index, DataLogging_t* data) {
+//    // Read index entry to get file position
+//   fresult = f_open(&fil, "index.txt", FA_READ);
+//   if (fresult != FR_OK) {
+//       printf("Error: Cannot open index.txt\n");
+//       return;
+//   }
+//
+//   f_lseek(&fil, index * sizeof(IndexEntry));
+//
+//   IndexEntry idx;
+//   f_read(&fil, &idx, sizeof(IndexEntry), &br);
+//   f_close(&fil);
+//
+//   // Read actual data using the file position
+//   fresult = f_open(&fil, "data.txt", FA_READ);
+//   if (fresult != FR_OK) {
+//       printf("Error: Cannot open data.txt\n");
+//       return;
+//   }
+//
+//   f_lseek(&fil, idx.file_position);
+//   f_gets(buffer, sizeof(buffer), &fil);
+//   f_close(&fil);
+//
+//   memcpy(data->String_logging,buffer,strlen(buffer));
+//}
 
-   return size / sizeof(IndexEntry);
-}
-
-void read_record_by_index(uint32_t index, DataLogging_t* data) {
-    // Read index entry to get file position
-   fresult = f_open(&fil, "index.txt", FA_READ);
-   if (fresult != FR_OK) {
-       printf("Error: Cannot open index.txt\n");
-       return;
-   }
-
-   f_lseek(&fil, index * sizeof(IndexEntry));
-
-   IndexEntry idx;
-   f_read(&fil, &idx, sizeof(IndexEntry), &br);
-   f_close(&fil);
-
-   // Read actual data using the file position
-   fresult = f_open(&fil, "data.txt", FA_READ);
-   if (fresult != FR_OK) {
-       printf("Error: Cannot open data.txt\n");
-       return;
-   }
-
-   f_lseek(&fil, idx.file_position);
-   f_gets(buffer, sizeof(buffer), &fil);
-   f_close(&fil);
-
-   memcpy(data->String_logging,buffer,strlen(buffer));
-}
-
-void get_data_range_by_index(uint32_t start_index, uint32_t end_index) {
-   uint32_t total = get_total_records();
-
-   if (end_index >= total) end_index = total - 1;
-   if (start_index > end_index) {
-       printf("Invalid range\n");
-       return;
-   }
-
-   sprintf(buffer, "Records from index %lu to %lu:\n", start_index, end_index);
-   printf(buffer);
-
-   for (uint32_t i = start_index; i <= end_index; i++) {
-       DataLogging_t data;
-       read_record_by_index(i, &data);
-
-       sprintf(buffer, "Index %d: %s\n", i, data.String_logging);
-       printf(buffer);
-   }
-}
+//void get_data_range_by_index(uint32_t start_index, uint32_t end_index) {
+//   uint32_t total = get_total_records();
+//
+//   if (end_index >= total) end_index = total - 1;
+//   if (start_index > end_index) {
+//       printf("Invalid range\n");
+//       return;
+//   }
+//
+//   sprintf(buffer, "Records from index %lu to %lu:\n", start_index, end_index);
+//   printf(buffer);
+//
+//   for (uint32_t i = start_index; i <= end_index; i++) {
+//       DataLogging_t data;
+//       read_record_by_index(i, &data);
+//
+//       sprintf(buffer, "Index %d: %s\n", i, data.String_logging);
+//       printf(buffer);
+//   }
+//}

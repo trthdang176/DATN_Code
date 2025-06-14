@@ -26,6 +26,7 @@
 #define DWINPAGE_MAIN_FINISH            100
 #define DWINPAGE_MAIN_DETAIL            102
 #define DWINPAGE_MAIN_PULSE             103
+#define DWINPAGE_MAIN_DETAIL_14PIN      104 
 #define DWINPAGE_SETTING                116
 #define DWINPAGE_SETTING_PROGRAM        107   
 #define DWINPAGE_MODIFY_PROGRAM         108
@@ -81,8 +82,10 @@
 #define VP_Time_Day                     0x9820 // 40
 #define VP_Data_Log                     0x9900 // -> 0x9B50
 #define VP_INFO                         0x9C00
-#define VP_Warining                     0x9F00
-    
+#define VP_Warning                      0x9F00
+#define VP_Warning_setting_time         0xA000 //-> 50
+#define VP_Warning_modify_program       0xA050 // -> 100
+
 #define VP_ShowString_Keyboard          0xF000
 #define VP_ShowUnit_Keyboard            0xF050
 #define VP_ShowType_Keyboard            0xF080
@@ -94,7 +97,7 @@
 #define VP_ICON_RESULT                  0x4150
 #define VP_ICON_CAPLOCK                 0x4200
 #define VP_ICON_WIFI                    0x4250
-#define VP_ICON_DIREC_PULSE             0x4300
+#define VP_ICON_CLOCK                   0x4300
 
 
 enum {
@@ -187,7 +190,10 @@ enum {
     ICON_LOGIC_HIGH          ,
     ICON_CLOCK_LOW           ,
     ICON_CLOCK_HIGH          ,
-    ICON_LOGIC_NONE 
+    ICON_LOGIC_NONE          ,
+    ICON_DOWN_CLOCK       = 0,
+    ICON_UP_CLOCK            ,
+    ICON_CLOCK_NONE                 
 };
 
 
@@ -223,6 +229,12 @@ enum {
     DATA_PREV_CASE  = 0,
     DATA_NEXT_CASE  
 };
+
+enum {
+    WIFI_ON     = 0,
+    WIFI_OFF       
+};
+
 #pragma endregion ENUM DATA EVENT BUTTON 
 
 typedef enum {
@@ -290,6 +302,14 @@ typedef struct {
 } Device_t;
 
 typedef struct {
+    char Day[3];
+    char Month[3];
+    char Year[3];
+    char Hour[3];
+    char Minute[3];
+} Time_t;
+
+typedef struct {
     char Name_Wifi[MAX_NAME_WIFI_SIZE];
     char Password_Wifi[MAX_PASSWORD_WIFI_SIZE];
 } Wifi_t;
@@ -302,6 +322,7 @@ typedef struct  {
     Device_t IC_Testerx[MAX_DEVICE];
     Program_Test_t Program_Testx[MAX_PROGRAM_TEST];
     Wifi_t Wifi_setting;
+    Time_t Time_setting;
     void *p_handler_table;
     uint8_t pre_page;      // previous page 
     uint8_t curr_device;   // Device is displaying 
@@ -317,9 +338,8 @@ typedef struct  {
 
 // The string corresponds to the VP requirement
 typedef struct {
-    uint16_t VP_address;
-    char *String_Name;
-    char *String_Unit;
+    char String_Name[15];
+    char String_Unit[15];
 } VP_String; 
 
 typedef void (*handler_func)(Screen_t *const screen_obj, screen_event_t *const screen_event);
@@ -342,4 +362,5 @@ void show_main_page(Screen_t *const screen_obj, uint8_t PageMain, uint8_t curr_p
 
 void warning_page(Screen_t *const screen_obj,uint32_t id_slave);
 
+void updata_data_program_from_app(Screen_t *const screen_obj,char *data,uint16_t len);
 #endif /* __SCREEN_H__ */   

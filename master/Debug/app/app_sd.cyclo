@@ -4,6 +4,3 @@
 ../app/app_sd.c:65:13:sd_dispatch	3
 ../app/app_sd.c:80:13:init_data_logging	3
 ../app/app_sd.c:107:13:add_data	3
-../app/app_sd.c:136:10:get_total_records	2
-../app/app_sd.c:146:6:read_record_by_index	3
-../app/app_sd.c:174:6:get_data_range_by_index	4

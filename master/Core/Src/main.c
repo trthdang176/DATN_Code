@@ -80,6 +80,7 @@ static uint8_t can_iso_recv_buf2[250];
 static uint8_t can_iso_send_buf2[250];
 
 uint8_t dataRX[100];
+uint8_t dataRX_ESP32[80];
 uint8_t data_output[20] ={0};
 //char *data_test[] = {
 //  "$4053"                // NAME
@@ -230,6 +231,7 @@ int main(void)
 //  AT24Cxx_write_buffer_bloking(&pEeprom,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)text_program_1,strlen(text_program_1));
 
   HAL_UARTEx_ReceiveToIdle_IT(&huart2, dataRX, sizeof(dataRX)); // Enable interrupt UART
+  HAL_UARTEx_ReceiveToIdle_IT(&huart1, dataRX_ESP32, sizeof(dataRX_ESP32)); // Enable interrupt UART
 
   HAL_CAN_Start(&hcan);
   HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY | CAN_IT_BUSOFF );
@@ -240,13 +242,13 @@ int main(void)
 
   BSP_init();
 
-  Post_task_init();
-  static OS_event_t const *q_app_post[10];
-  OS_task_create(AO_taskPost,
-  1,
-  q_app_post,
-  ARRAY_ELEMENT(q_app_post),
-  (OS_event_t *)0 );
+//  Post_task_init();
+//  static OS_event_t const *q_app_post[10];
+//  OS_task_create(AO_taskPost,
+//  1,
+//  q_app_post,
+//  ARRAY_ELEMENT(q_app_post),
+//  (OS_event_t *)0 );
 
   eeprom_task_init(&hi2c1,EEPROM_ADDRESS);
   static OS_event_t const *q_eeprom_event[10];
@@ -271,8 +273,7 @@ int main(void)
   1,
   TestOS_blinky,
   ARRAY_ELEMENT(TestOS_blinky),
-  TestOS_Work()
-  );
+  (OS_event_t *)0);
 
   screen_task_init();
   static OS_event_t const *q_screen[10]; /* Event queue */
@@ -289,7 +290,7 @@ int main(void)
   static OS_event_t const *q_sd[10];
   OS_task_create(
   AO_task_sd,
-  2,
+  1,
   q_sd,
   ARRAY_ELEMENT(q_sd),
   (OS_event_t *)0);
@@ -302,7 +303,7 @@ int main(void)
   ARRAY_ELEMENT(Can_app_event),
   (OS_event_t *)0);
 
-  HAL_Delay(5000);
+  HAL_Delay(4500);
   Screen_begin(&huart2);
 
 //  TxHeader.DLC = 5;
@@ -339,7 +340,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 //  uint32_t pre;
 //  pre = 0;
-  while (1)
+  	  while (1)
   {
     /* USER CODE END WHILE */
 
@@ -633,6 +634,16 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 
 		// Enable Interrupt UART again
 		HAL_UARTEx_ReceiveToIdle_IT(&huart2, dataRX, sizeof(dataRX)); // Enable interrupt UART
+	} else if (huart->Instance == huart1.Instance) {
+    uart_esp32_t *RX_ESP32 = malloc(sizeof(uart_esp32_t));
+    RX_ESP32->data = malloc(strlen(dataRX_ESP32));
+    memcpy(RX_ESP32->data,dataRX_ESP32,strlen(dataRX_ESP32));
+    RX_ESP32->len = strlen(dataRX_ESP32);
+    OS_task_post_event(AO_task_uart_esp32,RECEIVE_DATA_ESP32,(uint8_t *)&RX_ESP32,sizeof(uart_esp32_t));
+
+    memset(dataRX_ESP32,0,sizeof(dataRX_ESP32));
+
+		HAL_UARTEx_ReceiveToIdle_IT(&huart1, dataRX_ESP32, sizeof(dataRX_ESP32)); // Enable interrupt UART
 	}
 }
 
@@ -681,7 +692,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
        isotp_receive(&CAN_iso[1], payload, sizeof(payload), &act_size);
        get_data_testing_finish(&_Screen,DEVICE_2,payload);
      }
-   } else if (RxHeader.StdId == 0x473) {
+   } else if (RxHeader.StdId == 0x474) {
      isotp_on_can_message(&CAN_iso[2], RxData, RxHeader.DLC);
      if(RxData[0] == 0x30) {
        OS_task_post_event(AO_task_can_bus,TX_SUCCESS,(uint8_t *)0,0);

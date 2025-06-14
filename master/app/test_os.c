@@ -9,9 +9,9 @@ typedef struct {
     /* External data app */
     OS_TimeEvt te1; /* time event */   
     OS_TimeEvt te2; /* time event */   
-    OS_TimeEvt te_eeprom_write;
-    OS_TimeEvt te_eeprom_read;
-    OS_TimeEvt te_send_data;
+//    OS_TimeEvt te_eeprom_write;
+//    OS_TimeEvt te_eeprom_read;
+//    OS_TimeEvt te_send_data;
 } Test_Blinky_OS; 
 
 void BlinkyTest_ctor(Test_Blinky_OS * const pAO);
@@ -35,15 +35,15 @@ uint32_t uart_num_test;
 void BlinkyTest_app_init(void) {
     BlinkyTest_ctor(&Blinky_instance);
 
-    snprintf(string_data,TOTAL_ONE_PROGRAM_TEST_LEN,"%s,%s,%d",name_program,name_ic,num_ic);
-    data_write.data = malloc(TOTAL_ONE_PROGRAM_TEST_LEN);
-    memcpy(data_write.data,string_data,TOTAL_ONE_PROGRAM_TEST_LEN);
-    data_write.data_len = TOTAL_ONE_PROGRAM_TEST_LEN;
-    data_write.mem_addr = START_ADDR_PROGRAM_TEST_X(1);
+//    snprintf(string_data,TOTAL_ONE_PROGRAM_TEST_LEN,"%s,%s,%d",name_program,name_ic,num_ic);
+//    data_write.data = malloc(TOTAL_ONE_PROGRAM_TEST_LEN);
+//    memcpy(data_write.data,string_data,TOTAL_ONE_PROGRAM_TEST_LEN);
+//    data_write.data_len = TOTAL_ONE_PROGRAM_TEST_LEN;
+//    data_write.mem_addr = START_ADDR_PROGRAM_TEST_X(1);
 
 
     // data_uart.data = malloc(50);
-    uart_num_test = 0;
+//    uart_num_test = 0;
 }
 
 
@@ -56,7 +56,7 @@ void BlinkyTest_ctor(Test_Blinky_OS * const pAO) {
     OS_TimeEvt_init(&pAO->te2,TIMEOUT2_SIG,&pAO->task);
     // OS_TimeEvt_init(&pAO->te_eeprom_write,WRITE_PROGRAM_TEST,&pAO->task);
     // OS_TimeEvt_init(&pAO->te_eeprom_read,READ_ONE_PROGRAM_TEST,&pAO->task);
-    OS_TimeEvt_init(&pAO->te_send_data,TEST_SEND_DATA_ESP32,&pAO->task);
+//    OS_TimeEvt_init(&pAO->te_send_data,TEST_SEND_DATA_ESP32,&pAO->task);
 }
 
 /* The init function of app task (optional) */
@@ -65,11 +65,11 @@ void BlinkyTest_init(Test_Blinky_OS * const pOS_task, OS_event_t const * const p
     /* init time for generate event */
     OS_TimeEvt_Set(&pOS_task->te1,
     1U,
-    OS_EVT_DOWNCAST(TestOS_Evt,pEvent)->ticks1);
+    200);
 
     OS_TimeEvt_Set(&pOS_task->te2,
-    1U + (OS_EVT_DOWNCAST(TestOS_Evt,pEvent)->ticks2 / 4),
-    OS_EVT_DOWNCAST(TestOS_Evt,pEvent)->ticks2);
+    1U + 100,
+    300);
 
     // OS_TimeEvt_Set(&pOS_task->te_eeprom_write,
     // 5,

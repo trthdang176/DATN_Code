@@ -1,0 +1,129 @@
+#include "app_uart_esp32.h"
+
+/* app header */
+#include "app_main.h"
+#include "../Core/Inc/main.h"
+
+#include <stdbool.h>
+
+#define RX_BUF 10
+
+typedef struct {
+    OS_task task;
+
+    UART_HandleTypeDef *pUart;
+
+    uart_esp32_t **uart_esp32_buf;
+    uint8_t head_index;
+    uint8_t tail_index;
+    uint8_t nUsed;
+    uint8_t end;
+    bool is_rx;
+
+    OS_TimeEvt te_wait_rx;
+    OS_TimeEvt te_wait_tx;
+} app_uart_esp32;
+
+void uart_esp32_ctor(app_uart_esp32 *pAO);
+static void uart_esp32_init(app_uart_esp32 * const pOS_task, OS_event_t const * const pEvent);
+static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t const * const pEvent);
+
+
+static app_uart_esp32 uart_esp32_instance;
+OS_task * const AO_task_uart_esp32 = &uart_esp32_instance.task;
+
+static managerTX_CAN_t *buff_store[RX_BUF]; /* buffer store the data write */
+
+void uart_esp32_task_init(UART_HandleTypeDef *pUart) {
+    uart_esp32_instance.pUart = pUart;
+    uart_esp32_instance.head_index = 0;
+    uart_esp32_instance.tail_index = 0;
+    uart_esp32_instance.nUsed = 0;
+    uart_esp32_instance.end = RX_BUF - 1;
+    uart_esp32_instance.uart_esp32_buf = buff_store;
+    uart_esp32_instance.is_rx = false;
+    
+    uart_esp32_ctor(&uart_esp32_instance);
+
+}
+
+void uart_esp32_ctor(app_uart_esp32 *pAO) {
+    OS_task_init(AO_task_uart_esp32,(OS_handler)&uart_esp32_init,(OS_handler)&uart_esp32_dispatch);
+
+    OS_TimeEvt_init(&uart_esp32_instance.te_wait_rx,ESP32_RX_TIMEOUT,&uart_esp32_instance.task);
+    OS_TimeEvt_init(&uart_esp32_instance.te_wait_tx,ESP32_TX_TIMEOUT,&uart_esp32_instance.task);
+}
+
+static void uart_esp32_init(app_uart_esp32 * const pOS_task, OS_event_t const * const pEvent) {
+    UNUSED(pOS_task);
+    UNUSED(pEvent);
+}
+
+static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t const * const pEvent) {
+    switch (pEvent->sig) {
+        case SEND_DATA_ESP32 : {
+            printf("Send data to esp32\n");
+            uart_esp32_t *data_send_esp32 = (uart_esp32_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
+            HAL_UART_Transmit(pOS_task->pUart,data_send_esp32->data,data_send_esp32->len,1000);
+
+            if (data_send_esp32->data != NULL) free(data_send_esp32->data);
+            free(data_send_esp32);
+        } break;
+        case RECEIVE_DATA_ESP32 : {
+            printf("Receive data from ESP32\n");
+            uart_esp32_t *RX_ESP32 = (uart_esp32_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
+            pOS_task->uart_esp32_buf[pOS_task->head_index] = RX_ESP32;
+            if (pOS_task->head_index == 0) {
+                pOS_task->head_index = pOS_task->end;
+            } else {
+                --pOS_task->head_index;
+            }
+            ++pOS_task->nUsed;
+            if (pOS_task->is_rx == false) {
+                pOS_task->is_rx = true;
+                OS_TimeEvt_Set(&pOS_task->te_wait_rx,1,0);
+            }
+        } break;
+        case ESP32_RX_TIMEOUT : {
+            uart_esp32_t *RX_ESP32 = pOS_task->uart_esp32_buf[pOS_task->tail_index];
+            /* check command of data */
+            switch (RX_ESP32->data[0]) {
+                case '0' : { // command wifi
+                    Screen_data_t *data_wifi = malloc(sizeof(Screen_data_t));
+                    data_wifi->data = malloc(1);
+                    memcpy(data_wifi->data,&RX_ESP32->data[2],1);
+                    data_wifi->len = 1;
+                    OS_task_post_event(AO_task_screen,UPDATE_WIFI_STATE,(uint8_t *)&data_wifi,sizeof(Screen_data_t));
+                } break;
+                case '1' : { // command info program 
+                    Screen_data_t *data_program = malloc(sizeof(Screen_data_t));
+                    data_program->data = malloc(RX_ESP32->len);
+                    memcpy(data_program->data,&RX_ESP32->data[2],RX_ESP32->len - 1);
+                    uint8_t buff[50];
+                    memcpy(buff,data_program->data,RX_ESP32->len - 1);
+                    data_program->len = RX_ESP32->len - 1;
+                    OS_task_post_event(AO_task_screen,UPDATA_PROGARM,(uint8_t *)&data_program,sizeof(Screen_data_t));
+                } break;
+                default : break;
+            } 
+
+            if (pOS_task->tail_index == 0) {
+                    pOS_task->tail_index = pOS_task->end;
+                } else {
+                    --pOS_task->tail_index;
+                } 
+            --pOS_task->nUsed;
+            pOS_task->is_rx = false;
+            /* check buff */
+            if (pOS_task->nUsed > 0 ) {
+                pOS_task->is_rx = true;
+                OS_TimeEvt_Set(&pOS_task->te_wait_rx,200,0); /* run only 1 time */
+            }
+            free(RX_ESP32);
+        } break;
+
+        default: break;
+    }
+}
+
+

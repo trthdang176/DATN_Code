@@ -76,7 +76,7 @@ static void can_bus_dispatch(app_can * const pOS_task, OS_event_t const * const 
             ++pOS_task->nUsed;
             if (pOS_task->b_counting == false) { /* in free, count to check timeout */
                 pOS_task->b_counting = true;
-                OS_TimeEvt_Set(&pOS_task->te_timeout,200,0); /* run only 1 time */                
+                OS_TimeEvt_Set(&pOS_task->te_timeout,500,0); /* run only 1 time */                
             }
         } break;
         case TX_TIMEOUT : {
@@ -103,7 +103,7 @@ static void can_bus_dispatch(app_can * const pOS_task, OS_event_t const * const 
             /* check buff */
             if (pOS_task->nUsed > 0 ) {
                 pOS_task->b_counting = true;
-                OS_TimeEvt_Set(&pOS_task->te_timeout,200,0); /* run only 1 time */    
+                OS_TimeEvt_Set(&pOS_task->te_timeout,500,0); /* run only 1 time */    
             }
         } break;
         case TX_SUCCESS : {

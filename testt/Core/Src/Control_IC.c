@@ -446,7 +446,7 @@ void convert_data_test(uint8_t num_pin, char *data_test, uint8_t *data_control) 
 
 bool has_clock_transition(uint8_t num_pin, char *data_test) {
     for (uint8_t i = 0; i < num_pin; i++) {
-        if (data_test[num_pin] == 'U' || data_test[num_pin] == 'D') {
+        if (data_test[i] == 'U' || data_test[i] == 'D') {
             return true;
         }
     }

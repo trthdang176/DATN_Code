@@ -42,7 +42,7 @@ void BSP_init(void) {
     OS_priority_IRQ(I2C2_EV_IRQn,2);
 
     OS_Test_setIRQ(AO_BlinkyTest,RTC_IRQn);    
-    OS_Test_setIRQ(AO_taskPost,RTC_IRQn);
+//    OS_Test_setIRQ(AO_taskPost,RTC_IRQn);
     OS_Test_setIRQ(AO_task_eeprom,RTC_IRQn);
     OS_Test_setIRQ(AO_task_uart_esp32,I2C2_EV_IRQn);
 }
@@ -50,15 +50,15 @@ void BSP_init(void) {
 /* ============================= function using for initialization task ============================= */ 
 
 /* the value using for app test os */
-OS_event_t const *TestOS_Work(void) {
-    static TestOS_Evt workTest_blinky ;
-    workTest_blinky.appEvt.sig = 0; /* unused */
-    workTest_blinky.ticks1 = 300; /* 500 ms */
-    workTest_blinky.ticks2 = 500;
+// OS_event_t const *TestOS_Work(void) {
+//     static TestOS_Evt workTest_blinky ;
+//     workTest_blinky.appEvt.sig = 0; /* unused */
+//     workTest_blinky.ticks1 = 300; /* 500 ms */
+//     workTest_blinky.ticks2 = 500;
 
-    /* return the OS_event_t type */
-    return &workTest_blinky.appEvt;
-}
+//     /* return the OS_event_t type */
+//     return &workTest_blinky.appEvt;
+// }
 
 
 

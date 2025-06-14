@@ -3,6 +3,10 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="buffer"/>
+		<item value="HAL_UARTEx_ReceiveToIdle_IT"/>
+		<item value="dataRX"/>
+		<item value="keyboard"/>
 		<item value="data_control_testing"/>
 		<item value="data_test"/>
 		<item value="0x471"/>
@@ -10,14 +14,10 @@
 		<item value="CAN_Error_Code"/>
 		<item value="show_main"/>
 		<item value="finish"/>
-		<item value="buffer"/>
 		<item value="show_text_short_circuit"/>
 		<item value="br"/>
 		<item value="fil"/>
 		<item value="pfs"/>
-		<item value="fre_clust"/>
-		<item value="printf"/>
-		<item value="Screen_GetIcon_Result"/>
 	</list>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item key="selection" value=""/>

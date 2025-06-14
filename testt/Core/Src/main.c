@@ -40,7 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DEVICE 2
+#define DEVICE 3
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -267,7 +267,7 @@ int main(void)
   isotp_init_link(&CAN_iso, 0x472, can_iso_send_buf , sizeof(can_iso_send_buf)
                               , can_iso_recv_buf, sizeof(can_iso_recv_buf));
 #elif DEVICE == 3
-  isotp_init_link(&CAN_iso, 0x473, can_iso_send_buf , sizeof(can_iso_send_buf)
+  isotp_init_link(&CAN_iso, 0x474, can_iso_send_buf , sizeof(can_iso_send_buf)
                                 , can_iso_recv_buf, sizeof(can_iso_recv_buf));
 #endif
 
@@ -387,6 +387,10 @@ int main(void)
           Control_IC_test.result_test_function = malloc(Control_IC_test.num_case * Control_IC_test.num_pin);
           memset(Control_IC_test.result_test_function,0,Control_IC_test.num_case * Control_IC_test.num_pin);
           count_case = 0;
+
+          memcpy(copy_buf,Control_IC_test.data_test,Control_IC_test.data_test_len);
+          ptr_data_test = strtok(copy_buf,"\n");
+
           while (count_case < Control_IC_test.num_case) {
             reset_TXS();
             if (is_clock_transition) {
@@ -402,12 +406,25 @@ int main(void)
             
             ReadPin_IC_test(Control_IC_test.result_test_function + (Control_IC_test.num_pin * count_case),Control_IC_test.num_pin);
 //              memcpy(buffer,Control_IC_test.result_test_function + (Control_IC_test.num_pin * count_case),Control_IC_test.num_pin);
-            count_case++;
-          }
+            if (ptr_data_test != NULL) {
+              for (uint8_t i = 0; i < Control_IC_test.num_pin; i++) {
+                uint8_t *pdata = &Control_IC_test.result_test_function[(Control_IC_test.num_pin * count_case) + i];
+                if (ptr_data_test[i] == 'U') {
+                  *pdata = 3;
+                } else if (ptr_data_test[i] == 'D') {
+                  *pdata = 4;
+                }
+              }
+            }
 
+            count_case++;
+            if (ptr_data_test != NULL) {
+              ptr_data_test = strtok(NULL,"\n");
+            }
+          }
           memcpy(can_send_result_test,Control_IC_test.result_test_function,Control_IC_test.num_pin * Control_IC_test.num_case);
+          
           /* check result */
-          // Control_IC_test.result_case = malloc(Control_IC_test.num_case * sizeof(uint8_t));
           memset(Control_IC_test.result_case,0,sizeof(Control_IC_test.result_case));
           memset(Control_IC_test.result_case,1,Control_IC_test.num_case);
           count_case = 0;
@@ -441,14 +458,14 @@ int main(void)
           memcpy(&total_data_send_can[Control_IC_test.num_pin+3],Control_IC_test.result_test_function,Control_IC_test.num_case*Control_IC_test.num_pin);
           memcpy(&total_data_send_can[Control_IC_test.num_pin+5+Control_IC_test.num_case*Control_IC_test.num_pin],Control_IC_test.result_case,Control_IC_test.num_case);
           /* convert data to char type */
-          for (uint16_t i = 0; i < (Control_IC_test.num_pin + 6 + Control_IC_test.num_case*Control_IC_test.num_pin + Control_IC_test.num_case); i++) {
+          for (uint16_t i = 0; i < (Control_IC_test.num_pin + 5 + Control_IC_test.num_case*Control_IC_test.num_pin + Control_IC_test.num_case); i++) {
             total_data_send_can[i] = '0' + total_data_send_can[i];
           }
-
           total_data_send_can[1] = '\0';
           total_data_send_can[Control_IC_test.num_pin+2] = '\0';
           total_data_send_can[Control_IC_test.num_pin+4+Control_IC_test.num_case*Control_IC_test.num_pin] = '\0';
-          isotp_send(&CAN_iso,total_data_send_can,(Control_IC_test.num_pin + 4 + Control_IC_test.num_case*Control_IC_test.num_pin + Control_IC_test.num_case));
+          total_data_send_can[Control_IC_test.num_pin+6+Control_IC_test.num_case*Control_IC_test.num_pin+Control_IC_test.num_case] = '\0';
+          isotp_send(&CAN_iso,total_data_send_can,(Control_IC_test.num_pin + 6 + Control_IC_test.num_case*Control_IC_test.num_pin + Control_IC_test.num_case));
           flag_run_test = false;
         } break;
         default : break;
@@ -539,7 +556,7 @@ static void MX_CAN1_Init(void)
   /* USER CODE BEGIN CAN1_Init 2 */
   CAN_FilterTypeDef canfilterconfig;
 
-#if DEVIVE == 1
+#if DEVICE == 1
  canfilterconfig.FilterActivation = CAN_FILTER_ENABLE;
  canfilterconfig.FilterBank = 18;  // which filter bank to use from the assigned ones
  canfilterconfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;

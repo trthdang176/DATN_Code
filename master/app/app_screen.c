@@ -49,9 +49,24 @@ static void screen_dispatch(app_screen * const pOS_task, OS_event_t const * cons
             sprintf(string, "%02d:%02d:%02d", data_time[2], data_time[1], data_time[0] );
             DWIN_SetText(&_Screen,VP_Time_Hour,string,strlen(string));
         } break;
-        // case DEVICE_ERROR_TX_CAN : {
-        //     warning_page(&_Screen,)
-        // }
+        case UPDATA_PROGARM : {
+            printf("updata program test\n");
+            Screen_data_t *data_program = (uint8_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
+            updata_data_program_from_app(&_Screen,data_program->data,data_program->len);
+            if (data_program->data != NULL) free(data_program->data);
+            free(data_program);
+        } break;
+        case UPDATE_WIFI_STATE : {
+            printf("Update wifi status\n");
+            Screen_data_t *data_wifi = (uint8_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
+            if (data_wifi->data == '0') {
+                DWIN_SetVariable_Icon(&_Screen,VP_ICON_WIFI,WIFI_OFF);
+            } else if (data_wifi->data == '1') {
+                DWIN_SetVariable_Icon(&_Screen,VP_ICON_WIFI,WIFI_ON);
+            }
+            if (data_wifi->data != NULL) free(data_wifi->data);
+            free(data_wifi);
+        } break;
         default: break;
     }
 }
