@@ -311,7 +311,7 @@ class LoginPage(tk.Frame):
                  font=('Arial', 11, 'bold')).pack(side='left')  # Reduced font
         tk.Label(student1_frame, text=' - ', bg='white', fg='#7F8C8D',
                  font=('Arial', 11)).pack(side='left')
-        tk.Label(student1_frame, text='123456789', bg='white', fg='#7F8C8D',
+        tk.Label(student1_frame, text='21151217', bg='white', fg='#7F8C8D',
                  font=('Arial', 11)).pack(side='left')
         
         # Student 2
@@ -322,7 +322,7 @@ class LoginPage(tk.Frame):
                  font=('Arial', 11, 'bold')).pack(side='left')  # Reduced font
         tk.Label(student2_frame, text=' - ', bg='white', fg='#7F8C8D',
                  font=('Arial', 11)).pack(side='left')
-        tk.Label(student2_frame, text='123456789', bg='white', fg='#7F8C8D',
+        tk.Label(student2_frame, text='21151195', bg='white', fg='#7F8C8D',
                  font=('Arial', 11)).pack(side='left')
 
         # Login box with enhanced styling (adjusted position)
@@ -438,6 +438,9 @@ class MainPage(tk.Frame):
             4: {'name': 'Program 4', 'ic_test': '', 'ic_count': ''}
         }
         self.selected_program = None
+        
+        # NEW: Store available IC names from NameIC topic
+        self.available_ic_names = []
         
         # WiFi status tracking - IMPROVED
         self.wifi_timeout_id = None
@@ -572,6 +575,9 @@ class MainPage(tk.Frame):
         
         # Request initial program data from ESP32
         self.after(1000, self.request_program_data)
+        
+        # NEW: Request available IC names
+        self.after(1500, self.request_ic_names)
 
     def load_mac_address(self):
         """Load MAC address from database"""
@@ -592,6 +598,12 @@ class MainPage(tk.Frame):
         # Request data for all 4 programs
         for i in range(1, 5):
             self.client.publish(f'{current_mac}/DataProgram/{i}/request', 'get')
+
+    def request_ic_names(self):
+        """NEW: Request available IC names from ESP32"""
+        current_mac = self.mac_address.get()
+        self.client.publish(f'{current_mac}/NameIC/request', 'get')
+        print(f"Requested IC names from: {current_mac}/NameIC")
 
     def request_wifi_status(self):
         """Request WiFi connection status from ESP32 with improved timing"""
@@ -650,6 +662,7 @@ class MainPage(tk.Frame):
                 # Unsubscribe from old MAC topics
                 self.client.unsubscribe(f'{old_mac}/WiFiStatus')
                 self.client.unsubscribe(f'{old_mac}/status')  # Fixed: listen for status response
+                self.client.unsubscribe(f'{old_mac}/NameIC')  # NEW: NameIC topic
                 for i in range(1, 5):
                     self.client.unsubscribe(f'{old_mac}/DataProgram/{i}')
                 for i in range(1, 4):
@@ -660,6 +673,7 @@ class MainPage(tk.Frame):
                 # Subscribe to new MAC topics
                 self.client.subscribe(f'{clean_mac}/WiFiStatus')
                 self.client.subscribe(f'{clean_mac}/status')  # Fixed: listen for status response
+                self.client.subscribe(f'{clean_mac}/NameIC')  # NEW: NameIC topic
                 for i in range(1, 5):
                     self.client.subscribe(f'{clean_mac}/DataProgram/{i}')
                 for i in range(1, 4):
@@ -677,6 +691,9 @@ class MainPage(tk.Frame):
                 
                 # Request program data with new MAC
                 self.request_program_data()
+                
+                # NEW: Request IC names with new MAC
+                self.request_ic_names()
                 
                 messagebox.showinfo("Success", f"MAC address updated to: {clean_mac}\nMQTT topics updated automatically!")
             else:
@@ -713,6 +730,9 @@ class MainPage(tk.Frame):
         client.subscribe(f'{current_mac}/WiFiStatus')
         client.subscribe(f'{current_mac}/status')  # Fixed: listen for status response
         
+        # NEW: Subscribe to NameIC topic
+        client.subscribe(f'{current_mac}/NameIC')
+        
         # Subscribe to all DataProgram topics (1-4)
         for i in range(1, 5):
             client.subscribe(f'{current_mac}/DataProgram/{i}')
@@ -727,6 +747,7 @@ class MainPage(tk.Frame):
         print(f"Subscribed to topics:")
         print(f"  - {current_mac}/WiFiStatus")
         print(f"  - {current_mac}/status")
+        print(f"  - {current_mac}/NameIC")  # NEW
         print(f"  - {current_mac}/DataProgram/1-4")
         print(f"  - {current_mac}/StatusDevice/1-3") 
         print(f"  - {current_mac}/History")
@@ -748,6 +769,43 @@ class MainPage(tk.Frame):
             'timestamp': datetime.datetime.now()
         }
         self.controller.message_queue.put(message)
+
+    def parse_date_time(self, date_str, time_str):
+        """
+        FIXED: Parse date and time strings correctly for sorting
+        Input: date_str = "17/6/25" (DD/M/YY), time_str = "3:20:13" (H:MM:SS)
+        Output: datetime object for proper sorting
+        """
+        try:
+            # Parse date: 17/6/25 -> day=17, month=6, year=2025
+            date_parts = date_str.split('/')
+            if len(date_parts) == 3:
+                day = int(date_parts[0])
+                month = int(date_parts[1])
+                year_short = int(date_parts[2])
+                
+                # Convert 2-digit year to 4-digit (assuming 20xx)
+                if year_short < 50:  # Years 00-49 -> 2000-2049
+                    year = 2000 + year_short
+                else:  # Years 50-99 -> 1950-1999
+                    year = 1900 + year_short
+                
+                # Parse time: 3:20:13
+                time_parts = time_str.split(':')
+                if len(time_parts) == 3:
+                    hour = int(time_parts[0])
+                    minute = int(time_parts[1])
+                    second = int(time_parts[2])
+                    
+                    # Create datetime object
+                    return datetime.datetime(year, month, day, hour, minute, second)
+            
+            # Fallback: return current time if parsing fails
+            return datetime.datetime.now()
+            
+        except Exception as e:
+            print(f"Error parsing date/time '{date_str} {time_str}': {e}")
+            return datetime.datetime.now()
 
     def process_mqtt_message(self, message):
         """Process MQTT message in main thread (thread-safe)"""
@@ -771,6 +829,17 @@ class MainPage(tk.Frame):
                 else:
                     self.wifi_status.set('Disconnected')
                     self.wifi_status_label.config(fg='red')
+            
+            # NEW: Handle NameIC topic
+            elif topic == f'{current_mac}/NameIC':
+                # Handle IC names list
+                # Expected format: "name1,name2,name3,..."
+                if payload.strip():
+                    self.available_ic_names = [name.strip() for name in payload.split(',') if name.strip()]
+                    print(f"Updated available IC names: {self.available_ic_names}")
+                else:
+                    self.available_ic_names = []
+                    print("No IC names available")
             
             elif topic.startswith(f'{current_mac}/DataProgram/'):
                 # Handle DataProgram updates - REMOVED mode
@@ -819,23 +888,24 @@ class MainPage(tk.Frame):
                         var.set(ic_count)
             
             elif topic == f'{current_mac}/History':
-                # Handle History updates with SIMPLIFIED format parsing - THREAD SAFE
+                # Handle History updates with FIXED date parsing - THREAD SAFE
                 # Expected format: "date;time;device_test;ic_name;ic_test_count;result_testing"
-                # Example: "25/6/8;19:10:29;IC TESTER 1;744051;2;IC1: Self-test result: failed | IC2: Self-test result: failed"
+                # Example: "17/6/25;3:20:13;IC TESTER 1;744051;2;IC1: Self-test result: failed | IC2: Self-test result: failed"
                 
                 print(f"Processing history data: {payload}")
                 parts = payload.split(';')
                 
                 if len(parts) >= 6:
                     try:
-                        date_part = parts[0]            # 25/6/8
-                        time_part = parts[1]            # 19:10:29
+                        date_part = parts[0]            # 17/6/25
+                        time_part = parts[1]            # 3:20:13
                         device_test = parts[2]          # IC TESTER 1
                         ic_name = parts[3]              # 744051
                         ic_test_count = parts[4]        # 2
                         result_testing = ';'.join(parts[5:])  # Remaining text (may contain semicolons)
                         
-                        # Combine date and time for timestamp
+                        # FIXED: Use the proper date format for storage
+                        # Convert the date/time to a format that can be parsed later
                         timestamp = f"{date_part} {time_part}"
                         
                         # Store in database using thread-safe method (device_id set to 0 since not used)
@@ -854,7 +924,7 @@ class MainPage(tk.Frame):
             print(f"Payload: {payload}")
 
     def open_modify_dialog(self):
-        """Open modify dialog - REMOVED Mode field"""
+        """UPDATED: Open modify dialog with new constraints"""
         if self.selected_program is None:
             messagebox.showwarning("No Selection", "Please select a program first")
             return
@@ -865,32 +935,107 @@ class MainPage(tk.Frame):
         dialog = tk.Toplevel(self)
         dialog.title(f'Modify Program {prog_num}')
         dialog.configure(bg=BG_COLOR)
-        dialog.geometry('400x200')  # Reduced height since no Mode field
+        dialog.geometry('450x250')  # Increased width for combobox
         
-        entries = {}
-        fields = ['Program Name', 'IC Test Name', 'IC Count']  # REMOVED 'Mode'
+        # Character counter for program name
+        char_count_var = tk.StringVar()
         
-        for idx, field in enumerate(fields):
-            tk.Label(dialog, text=f'{field}:', bg=BG_COLOR, fg='black', 
-                    font=('Arial',10,'bold')).grid(row=idx, column=0, pady=8, padx=15, sticky='e')
-            ent = tk.Entry(dialog, font=('Arial',12), width=20)
-            ent.grid(row=idx, column=1, pady=8, padx=15, sticky='w')
-            
-            # Set current values
-            if field == 'Program Name':
-                ent.insert(0, prog_data['name'])
-            elif field == 'IC Test Name':
-                ent.insert(0, prog_data['ic_test'])
-            elif field == 'IC Count':
-                ent.insert(0, prog_data['ic_count'])
-                
-            entries[field] = ent
+        # Program Name (limited to 12 characters)
+        tk.Label(dialog, text='Program Name (max 12 chars):', bg=BG_COLOR, fg='black', 
+                font=('Arial',10,'bold')).grid(row=0, column=0, pady=8, padx=15, sticky='e')
+        
+        name_frame = tk.Frame(dialog, bg=BG_COLOR)
+        name_frame.grid(row=0, column=1, pady=8, padx=15, sticky='w')
+        
+        name_entry = tk.Entry(name_frame, font=('Arial',12), width=15)
+        name_entry.pack(side='left')
+        name_entry.insert(0, prog_data['name'][:12])  # Limit to 12 chars
+        
+        char_label = tk.Label(name_frame, textvariable=char_count_var, bg=BG_COLOR, 
+                             fg='gray', font=('Arial',9))
+        char_label.pack(side='left', padx=(5,0))
+        
+        def update_char_count(event=None):
+            current_text = name_entry.get()
+            if len(current_text) > 12:
+                name_entry.delete(12, tk.END)
+                current_text = name_entry.get()
+            char_count_var.set(f"{len(current_text)}/12")
+            char_label.config(fg='red' if len(current_text) > 10 else 'gray')
+        
+        name_entry.bind('<KeyRelease>', update_char_count)
+        update_char_count()  # Initial count
+        
+        # IC Test Name (dropdown from available IC names)
+        tk.Label(dialog, text='IC Test Name:', bg=BG_COLOR, fg='black', 
+                font=('Arial',10,'bold')).grid(row=1, column=0, pady=8, padx=15, sticky='e')
+        
+        ic_combo = ttk.Combobox(dialog, font=('Arial',12), width=18, state='readonly')
+        ic_combo.grid(row=1, column=1, pady=8, padx=15, sticky='w')
+        
+        # Populate combobox with available IC names
+        if self.available_ic_names:
+            ic_combo['values'] = self.available_ic_names
+            # Set current value if it exists in the list
+            if prog_data['ic_test'] in self.available_ic_names:
+                ic_combo.set(prog_data['ic_test'])
+            elif self.available_ic_names:
+                ic_combo.set(self.available_ic_names[0])  # Default to first option
+        else:
+            ic_combo['values'] = ['No IC names available']
+            ic_combo.set('No IC names available')
+        
+        # IC Count (restricted to 1-5)
+        tk.Label(dialog, text='IC Count (1-5):', bg=BG_COLOR, fg='black', 
+                font=('Arial',10,'bold')).grid(row=2, column=0, pady=8, padx=15, sticky='e')
+        
+        count_frame = tk.Frame(dialog, bg=BG_COLOR)
+        count_frame.grid(row=2, column=1, pady=8, padx=15, sticky='w')
+        
+        count_var = tk.StringVar()
+        count_spinbox = tk.Spinbox(count_frame, from_=1, to=5, width=5, font=('Arial',12),
+                                  textvariable=count_var, state='readonly')
+        count_spinbox.pack(side='left')
+        
+        # Set current IC count (ensure it's within 1-5 range)
+        try:
+            current_count = int(prog_data['ic_count']) if prog_data['ic_count'].isdigit() else 1
+            current_count = max(1, min(5, current_count))  # Clamp to 1-5 range
+        except:
+            current_count = 1
+        count_var.set(str(current_count))
+        
+        tk.Label(count_frame, text='(Number of ICs to test)', bg=BG_COLOR, fg='gray',
+                font=('Arial',9)).pack(side='left', padx=(5,0))
 
         def save():
-            # Get new values
-            new_name = entries['Program Name'].get().strip()
-            new_ic_test = entries['IC Test Name'].get().strip()
-            new_ic_count = entries['IC Count'].get().strip()
+            # Get new values with validation
+            new_name = name_entry.get().strip()
+            new_ic_test = ic_combo.get().strip()
+            new_ic_count = count_var.get().strip()
+            
+            # Validate program name
+            if not new_name:
+                messagebox.showerror("Validation Error", "Program name cannot be empty")
+                return
+            if len(new_name) > 12:
+                messagebox.showerror("Validation Error", "Program name must be 12 characters or less")
+                return
+            
+            # Validate IC test name
+            if not new_ic_test or new_ic_test == 'No IC names available':
+                messagebox.showerror("Validation Error", "Please select a valid IC test name")
+                return
+            
+            # Validate IC count (already constrained by spinbox, but double-check)
+            try:
+                count_int = int(new_ic_count)
+                if not (1 <= count_int <= 5):
+                    messagebox.showerror("Validation Error", "IC count must be between 1 and 5")
+                    return
+            except ValueError:
+                messagebox.showerror("Validation Error", "IC count must be a valid number")
+                return
             
             current_mac = self.mac_address.get()
             
@@ -914,7 +1059,7 @@ class MainPage(tk.Frame):
             dialog.destroy()
 
         btn_frame = tk.Frame(dialog, bg=BG_COLOR)
-        btn_frame.grid(row=len(fields), column=0, columnspan=2, pady=20)
+        btn_frame.grid(row=3, column=0, columnspan=2, pady=20)
         
         tk.Button(btn_frame, text='Cancel', bg='gray', fg='white', bd=0, width=12,
                  command=dialog.destroy).pack(side='left', padx=10)
@@ -1097,20 +1242,42 @@ class MainPage(tk.Frame):
         self.apply_history_filter()  # This will trigger sorting
     
     def display_sorted_data(self, data):
-        """Sort and display the data in treeview"""
+        """FIXED: Sort and display the data in treeview with proper date parsing"""
         # Sort data based on current sort type
         if self.current_sort == 'time_desc':
-            # Convert timestamp to datetime for proper sorting
-            try:
-                sorted_data = sorted(data, key=lambda x: datetime.datetime.strptime(x[0], '%d/%m/%Y %H:%M:%S'), reverse=True)
-            except:
-                # Fallback to string sorting if datetime parsing fails
-                sorted_data = sorted(data, key=lambda x: x[0], reverse=True)
+            # FIXED: Parse timestamp using our custom function
+            def get_datetime(record):
+                timestamp = record[0]  # "17/6/25 3:20:13"
+                try:
+                    # Split into date and time parts
+                    parts = timestamp.split(' ')
+                    if len(parts) >= 2:
+                        date_part = parts[0]
+                        time_part = parts[1]
+                        return self.parse_date_time(date_part, time_part)
+                    else:
+                        return datetime.datetime.now()
+                except:
+                    return datetime.datetime.now()
+            
+            sorted_data = sorted(data, key=get_datetime, reverse=True)
+            
         elif self.current_sort == 'time_asc':
-            try:
-                sorted_data = sorted(data, key=lambda x: datetime.datetime.strptime(x[0], '%d/%m/%Y %H:%M:%S'))
-            except:
-                sorted_data = sorted(data, key=lambda x: x[0])
+            def get_datetime(record):
+                timestamp = record[0]
+                try:
+                    parts = timestamp.split(' ')
+                    if len(parts) >= 2:
+                        date_part = parts[0]
+                        time_part = parts[1]
+                        return self.parse_date_time(date_part, time_part)
+                    else:
+                        return datetime.datetime.now()
+                except:
+                    return datetime.datetime.now()
+            
+            sorted_data = sorted(data, key=get_datetime)
+            
         elif self.current_sort == 'ic_desc':
             # Sort by IC test count (numeric)
             try:
