@@ -9,6 +9,8 @@ typedef struct {
     /* External data app */
     OS_TimeEvt te1; /* time event */   
     OS_TimeEvt te2; /* time event */   
+    OS_TimeEvt te_buzzer;
+    uint8_t count_buzzer;
 //    OS_TimeEvt te_eeprom_write;
 //    OS_TimeEvt te_eeprom_read;
 //    OS_TimeEvt te_send_data;
@@ -54,6 +56,7 @@ void BlinkyTest_ctor(Test_Blinky_OS * const pAO) {
     /* init time os if using */
     OS_TimeEvt_init(&pAO->te1,TIMEOUT1_SIG,&pAO->task);
     OS_TimeEvt_init(&pAO->te2,TIMEOUT2_SIG,&pAO->task);
+    OS_TimeEvt_init(&pAO->te_buzzer,TIMEOUT_BUZZER,&pAO->task);
     // OS_TimeEvt_init(&pAO->te_eeprom_write,WRITE_PROGRAM_TEST,&pAO->task);
     // OS_TimeEvt_init(&pAO->te_eeprom_read,READ_ONE_PROGRAM_TEST,&pAO->task);
 //    OS_TimeEvt_init(&pAO->te_send_data,TEST_SEND_DATA_ESP32,&pAO->task);
@@ -70,6 +73,8 @@ void BlinkyTest_init(Test_Blinky_OS * const pOS_task, OS_event_t const * const p
     OS_TimeEvt_Set(&pOS_task->te2,
     1U + 100,
     300);
+
+    OS_TimeEvt_Stop(&pOS_task->te_buzzer);
 
     // OS_TimeEvt_Set(&pOS_task->te_eeprom_write,
     // 5,
@@ -100,6 +105,18 @@ void BlinkyTest_Dispatch(Test_Blinky_OS *const pOS_task, OS_event_t const * cons
         	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_RESET);
             // printf("Turn off led\n");
         } break;
+        case TIMEOUT_BUZZER : {
+            HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_8);
+            if (pOS_task->count_buzzer++ >=8) {
+            	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8, GPIO_PIN_RESET);
+                OS_TimeEvt_Stop(&pOS_task->te_buzzer);
+                pOS_task->count_buzzer = 0;
+            }
+        } break;
+        case BEGIN_BUZZER : {
+        	pOS_task->count_buzzer = 0;
+            OS_TimeEvt_Set(&pOS_task->te_buzzer,2,200);
+        }
         case PRINT_POST_DATA : {
 //            printf("Receive data post\n");
             // data_send_t *data_receive = (data_send_t *)(get_data_dynamic_event(pEvent));

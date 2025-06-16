@@ -3,6 +3,11 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="screen_obj-&gt;screen_error"/>
+		<item value="GPIOA"/>
+		<item value="Screen_Init_Variable"/>
+		<item value="get_data"/>
+		<item value="loggi"/>
 		<item value="num_IC"/>
 		<item value="CAN_iso"/>
 		<item value="buffer"/>
@@ -13,11 +18,6 @@
 		<item value="data_test"/>
 		<item value="0x471"/>
 		<item value="fresult"/>
-		<item value="CAN_Error_Code"/>
-		<item value="show_main"/>
-		<item value="finish"/>
-		<item value="show_text_short_circuit"/>
-		<item value="br"/>
 	</list>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item key="selection" value=""/>

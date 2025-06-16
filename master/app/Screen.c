@@ -71,7 +71,7 @@ VP_String text_numkeyboard[] = {
     [CONDITION_YEAR]     = {.String_Name = "YEAR", .String_Unit = "yr"},
     [CONDITION_HOUR]     = {.String_Name = "HOUR", .String_Unit = "h"},
     [CONDITION_MINUTE]   = {.String_Name = "MINUTE", .String_Unit = "min"},
-    [CONDITION_IC_NUM]   = {.String_Name = "No. of ICs", .String_Unit = "pcs"},
+    [CONDITION_IC_NUM]   = {.String_Name = "No.of ICs", .String_Unit = "pcs"},
     [CONDITION_PASS]     = {.String_Name = "PASSWORD",.String_Unit = ""}
 };
 
@@ -91,12 +91,12 @@ void Screen_begin(UART_HandleTypeDef * UART_Screen) {
     _Screen.pre_page = 106;
     _Screen.Ishome = true;
 
+    Screen_Init_Variable(&_Screen);
+
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST1].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST1]));
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST2].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST2]));
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST3].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST3]));
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST4].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST4]));
-
-    Screen_Init_Variable(&_Screen);
 
     DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x11D0,2);
     DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x13D0,2);
@@ -106,6 +106,7 @@ void Screen_begin(UART_HandleTypeDef * UART_Screen) {
     DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x1BD0,2);
     DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x1DD0,2);
 
+    Screen_ShowData_Mainpage(&_Screen,PROGRAM_TEST1);
     DWIN_SetPage((Dwin_t *)&_Screen,DWINPAGE_MAIN);  // Go to first page when start
     printf("Init screen done\n");
 }
@@ -142,8 +143,8 @@ void Navigation_setting_page(Screen_t *const screen_obj, screen_event_t *const s
 }
 
 void Navigation_home_page(Screen_t *const screen_obj, screen_event_t *const screen_event) {
-    uint8_t current_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
-    UNUSED(current_program);
+    // uint8_t current_program = screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index;
+    // UNUSED(current_program);
     // Show data
 
     // Switch page
@@ -153,7 +154,7 @@ void Navigation_home_page(Screen_t *const screen_obj, screen_event_t *const scre
 }   
 
 void Navigation_return(Screen_t *const screen_obj, screen_event_t *const screen_event) {
-    if (screen_obj->Ishome) {
+    if (screen_obj->screen_error == SCREEN_ERROR_CONNECT) {
         screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN;
         off_testing(screen_obj);
 
@@ -163,6 +164,10 @@ void Navigation_return(Screen_t *const screen_obj, screen_event_t *const screen_
             screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
         data_send_esp32->len = strlen(data_send_esp32->data);
         OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+        // show_main_page(screen_obj,DWINPAGE_MAIN,screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index);
+    } else if (screen_obj->screen_error == SCREEN_ERROR_SHUTDOWN) {
+        
+        DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING);
         // show_main_page(screen_obj,DWINPAGE_MAIN,screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index);
     } else {
         DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->pre_page);
@@ -384,8 +389,53 @@ void Navigation_Information(Screen_t *const screen_obj, screen_event_t *const sc
 
 void Navigation_Logging(Screen_t *const screen_obj, screen_event_t *const screen_event) {
     /* show data */
-    
+    screen_obj->data_log.reading_type = READING_NEXT;
+    screen_obj->data_log.is_first = true;
+    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+    data_send_esp32->data = (char *)malloc(50);
+    strcpy(data_send_esp32->data,"rfirst\n");
+    data_send_esp32->len = strlen("rfirst")+1;
+    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_LOGGING);
+}
+
+void Navigation_Change_DataLog(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    if (screen_event->data == DATA_LOG_PREV) {
+        strcpy(_Screen.data_log.next_data, _Screen.data_log.cur_data);    
+        strcpy(_Screen.data_log.cur_data, _Screen.data_log.pre_data);
+        DWIN_SetText((Dwin_t *)&_Screen,VP_Data_Log,_Screen.data_log.cur_data,strlen(_Screen.data_log.cur_data));
+
+        screen_obj->data_log.reading_type = READING_PREV;
+        uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+        data_send_esp32->data = (char *)malloc(50);
+        strcpy(data_send_esp32->data,"rprev\n");
+        data_send_esp32->len = strlen("rprev") + 1;
+        OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));        
+    } else if (screen_event->data == DATA_LOG_NEXT) {   
+        strcpy(_Screen.data_log.pre_data, _Screen.data_log.cur_data);     
+        strcpy(_Screen.data_log.cur_data, _Screen.data_log.next_data); 
+        DWIN_SetText((Dwin_t *)&_Screen,VP_Data_Log,_Screen.data_log.cur_data,strlen(_Screen.data_log.cur_data));
+
+        screen_obj->data_log.reading_type = READING_NEXT;
+        uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+        data_send_esp32->data = (char *)malloc(50);
+        strcpy(data_send_esp32->data,"rnext\n");
+        data_send_esp32->len = strlen("rnext") +1;
+        OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+    }
+}
+
+void Navigation_Shutdown(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    if (screen_obj->IC_Testerx[DEVICE_1].state == false &&
+    screen_obj->IC_Testerx[DEVICE_2].state == false &&
+    screen_obj->IC_Testerx[DEVICE_3].state == false ) {
+        shutdown();
+    } else {
+        screen_obj->screen_error = SCREEN_ERROR_SHUTDOWN;
+        DWIN_SetText((Dwin_t *)screen_obj,VP_Warning,"Turn off all devices before shutdown",strlen("Turn off all devices before shutdown"));
+        DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_WARNING);
+    }
 }
 
 void Navigation_Next_PrevPage(Screen_t *const screen_obj, screen_event_t *const screen_event) {
@@ -518,7 +568,14 @@ void Navigation_full_keyboard(Screen_t *const screen_obj, screen_event_t *const 
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_FULL_KEYBOARD);
 }
 
-void Save_Information(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+void Save_Information(Screen_t *const screen_obj, screen_event_t *const screen_event) {\
+    /* get data for testing ic */
+    if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp != NULL) {
+        if (get_data_testing_ic(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC_temp,&screen_obj->Program_Testx[screen_obj->modify_program_index]) == false) {
+            return;
+        }
+    }
+
     /* update value */
     if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program_temp != NULL) {
         if (screen_obj->Program_Testx[screen_obj->modify_program_index].Name_Program != NULL) {
@@ -551,18 +608,12 @@ void Save_Information(Screen_t *const screen_obj, screen_event_t *const screen_e
             free(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC);
             screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC = NULL;
         } 
-        screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC = (char *)malloc(strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp));
-        memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC
-        ,screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp
-        ,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp));
+        screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC = (char *)malloc(2);
+        memset(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC,0,2);
+        screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC[0] = screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp[0];
 
         free(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp);
         screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = NULL;
-    }
-
-    /* get data for testing ic */
-    if (get_data_testing_ic(screen_obj->Program_Testx[screen_obj->modify_program_index].Name_IC,&screen_obj->Program_Testx[screen_obj->modify_program_index]) == false) {
-        return;
     }
 
     /* send to esp32 */
@@ -877,7 +928,9 @@ void Screen_init_handler_table(Screen_t *const obj_screen) {
     handler_function_table[SIG_NAVIGATION][NAVIGATION_FINISH_REVIEW]        = Navigation_Finish_Review;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_INFORMATION]          = Navigation_Information;
     handler_function_table[SIG_NAVIGATION][NAVIGATION_LOGGING]              = Navigation_Logging;
-
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_CHANGE_DATALOG]       = Navigation_Change_DataLog;
+    handler_function_table[SIG_NAVIGATION][NAVIGATION_SHUTDOWN]             = Navigation_Shutdown;
+    
     handler_function_table[SIG_SELECTION][ON_OFF_DEV]                       = ON_OFF_Button;
     handler_function_table[SIG_SELECTION][SELECT_PROGRAM]                   = select_running_program;
     handler_function_table[SIG_SELECTION][SElECT_MODIFY_PROGRAM]            = select_modify_program;
@@ -1094,6 +1147,12 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
 
     DWIN_SetText((Dwin_t *)obj_screen,VP_Name_Tester,obj_screen->IC_Testerx[DEVICE_1].NameIC_Tester,strlen(obj_screen->IC_Testerx[DEVICE_1].NameIC_Tester));
 
+    // DWIN_SetText((Dwin_t *)obj_screen,0x9C00,"GRADUATION PROJECTE",strlen("GRADUATION PROJECT"));
+    // DWIN_SetText((Dwin_t *)obj_screen,0x9C50,"IC TESTING MACHINE",strlen("IC TESTING MACHINE"));
+    // DWIN_SetText((Dwin_t *)obj_screen,0x9D00,"TRAN THANH DANG",strlen("TRAN THANH DANG"));
+    // DWIN_SetText((Dwin_t *)obj_screen,0x9D20,"21151217",strlen("21151217"));
+    // DWIN_SetText((Dwin_t *)obj_screen,0x9D00,"TRAN THANH DANG",strlen("TRAN THANH DANG"));
+    // DWIN_SetText((Dwin_t *)obj_screen,0x9D20,"21151217",strlen("21151217"));
     // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x000,100,110,100,415,0x01ED);
     // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x200,150,110,150,415,0xF800);
     // DWIN_Create_Single_line((Dwin_t *)obj_screen,VP_vertical_line+0x400,200,110,200,415,0x01ED);
@@ -1108,8 +1167,6 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
     obj_screen->Screen_keyboard.Caplock = false;
     obj_screen->Screen_keyboard.Index_String = 0;
     obj_screen->Screen_condition = &condition_array[0];
-
-    Screen_ShowData_Mainpage(obj_screen,PROGRAM_TEST1);
 
     uint8_t num_direc_used = 0;
     uint8_t *temp_buf = (uint8_t *)malloc(MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
@@ -1163,12 +1220,12 @@ static void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_p
     // uint8_t index_program = screen_obj.IC_Testerx[screen_obj->curr_device].selected_Program_Index;
     uint8_t num_ic = atoi(screen_obj->Program_Testx[index_program].num_IC);
     uint8_t size_Name_IC = strlen("IC Name: ") + strlen((char *)screen_obj->Program_Testx[index_program].Name_IC);
-    uint8_t size_Description_IC = strlen((char *)screen_obj->Program_Testx[index_program].Description_IC) + 1;
+    uint8_t size_Description_IC = strlen((char *)screen_obj->Program_Testx[index_program].Description_IC);
     // uint8_t size_Description_IC = strlen("Desc IC: ") + strlen((char *)screen_obj->Program_Testx[index_program].Description_IC) + 1;
     // uint8_t size_Num_IC = strlen("Number of ICs: ") + strlen((char *)screen_obj->Program_Testx[index_program].num_IC);
 
     char *Text_Name_IC = malloc(size_Name_IC + 1); // Null 
-    char *Text_Description_IC = malloc(size_Description_IC + 1);
+    char *Text_Description_IC = malloc(size_Description_IC);
     // char *Text_Num_IC = malloc(size_Num_IC + 1);
 
     strcpy(Text_Name_IC,"IC Name: ");
@@ -1449,8 +1506,10 @@ static void compelte_testing(Screen_t *const screen_obj) {
     /* Store data to sd card */
     char buffer[500] = {0};
     // memset(buffer,0,300);
+    char get_clean_num_ic[2] = {0};
+    get_clean_num_ic[0] = screen_obj->Program_Testx[index_program].num_IC[0];
     int written = snprintf(buffer,sizeof(buffer),"%d/%d/%d;%d:%d:%d;%s;%s;%s;%s",data_time[4],data_time[5],data_time[6],data_time[2],data_time[1],data_time[0]
-        ,screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester,screen_obj->Program_Testx[index_program].Name_IC,screen_obj->Program_Testx[index_program].num_IC,
+        ,screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester,screen_obj->Program_Testx[index_program].Name_IC,get_clean_num_ic,
         screen_obj->IC_Testerx[screen_obj->curr_device].result_text);
     // DataLogging_t *data_store = (DataLogging_t *)malloc(sizeof(DataLogging_t));
     // data_store->String_logging = malloc(strlen(buffer)+1);
@@ -1575,7 +1634,8 @@ static void show_pulse(Screen_t *screen_obj, uint8_t curr_case) {
             if (screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data] == 3) { // UP CLOCK
                 /* don't show pulse graph */
                 uint8_t up_clock[7] = {0};
-                memset(up_clock,ICON_UP_CLOCK,sizeof(up_clock));
+                memset(up_clock,ICON_CLOCK_NONE,sizeof(up_clock));
+                memset(up_clock,ICON_UP_CLOCK,num_case);
                 DWIN_Create_Basic_line((Dwin_t *)screen_obj, vp_pulse, 0, 0, // base x 114
                                 &(screen_obj->IC_Testerx[screen_obj->curr_device].data_clock[index_data]), 
                                 num_case);
@@ -1750,7 +1810,7 @@ void get_data_testing_finish(Screen_t *const screen_obj,uint8_t device, uint8_t 
 void warning_page(Screen_t *const screen_obj,uint32_t id_slave) {
     char buffer[90]  = {0};
     snprintf(buffer,sizeof(buffer),"IC Tester %d is not connected to the system. Please check the connection",(id_slave - 0x470));
-
+    screen_obj->screen_error = SCREEN_ERROR_CONNECT;
     DWIN_SetText((Dwin_t *)screen_obj,VP_Warning,buffer,strlen(buffer));
     DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_WARNING);
 
@@ -1862,3 +1922,8 @@ void updata_data_program_from_app(Screen_t *const screen_obj,char *data,uint16_t
     }
 
 }
+
+void shutdown(void) {
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, GPIO_PIN_RESET);
+}
+

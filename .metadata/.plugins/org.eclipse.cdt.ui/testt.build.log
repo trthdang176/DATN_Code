@@ -1,10 +1,10 @@
-16:58:59 **** Incremental Build of configuration Debug for project testt ****
+03:02:55 **** Incremental Build of configuration Debug for project testt ****
 make -j12 all 
 arm-none-eabi-size  testt.elf 
    text	   data	    bss	    dec	    hex	filename
-  54824	    848	   4504	  60176	   eb10	testt.elf
+  54904	    848	   4504	  60256	   eb60	testt.elf
 Finished building: default.size.stdout
  
 
-16:59:00 Build Finished. 0 errors, 0 warnings. (took 318ms)
+03:02:55 Build Finished. 0 errors, 0 warnings. (took 322ms)
 

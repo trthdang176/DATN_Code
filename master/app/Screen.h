@@ -130,6 +130,8 @@ enum {
     NAVIGATION_GRAPH_MAINPAGE          ,
     NAVIGATION_CHANGE_CASE_PULSE       ,
     NAVIGATION_FINISH_REVIEW           ,
+    NAVIGATION_CHANGE_DATALOG          ,
+    NAVIGATION_SHUTDOWN                ,
     MAX_VALUE_SIG_NAVIGATE             
 };
 
@@ -233,9 +235,24 @@ enum {
 };
 
 enum {
+    DATA_LOG_PREV   = 0,
+    DATA_LOG_NEXT      
+};
+
+enum {
     WIFI_ON     = 0,
     WIFI_OFF       
 };
+
+enum {
+    READING_NEXT = 0,
+    READING_PREV 
+};
+
+typedef enum {
+    SCREEN_ERROR_CONNECT = 0,
+    SCREEN_ERROR_SHUTDOWN  
+} Error_type_t;
 
 #pragma endregion ENUM DATA EVENT BUTTON 
 
@@ -319,6 +336,14 @@ typedef struct {
     char 
 } Wifi_t;
 
+typedef struct {
+    char pre_data[300];
+    char cur_data[300];
+    char next_data[300];
+    uint8_t reading_type;
+    bool is_first;
+} Data_Log_t;
+
 typedef struct  {
     Dwin_t Screen_DWIN;  // inherit from dwin object
 
@@ -334,6 +359,9 @@ typedef struct  {
     uint8_t modify_program_index; // index of program is modified
     uint8_t page_setting;  // Selected setting page 
     bool Ishome;
+
+    Data_Log_t data_log;
+    Error_type_t screen_error;
 } Screen_t;
 
 typedef struct  {

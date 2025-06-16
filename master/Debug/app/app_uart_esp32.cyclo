@@ -1,4 +1,5 @@
 ../app/app_uart_esp32.c:46:6:uart_esp32_task_init	1
 ../app/app_uart_esp32.c:67:6:uart_esp32_ctor	1
 ../app/app_uart_esp32.c:74:13:uart_esp32_init	1
-../app/app_uart_esp32.c:79:13:uart_esp32_dispatch	17
+../app/app_uart_esp32.c:79:13:uart_esp32_dispatch	21
+../app/app_uart_esp32.c:210:6:splitHistoryData	8

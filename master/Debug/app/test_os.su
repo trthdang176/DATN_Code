@@ -1,4 +1,4 @@
-../app/test_os.c:35:6:BlinkyTest_app_init	8	static
-../app/test_os.c:50:6:BlinkyTest_ctor	16	static
-../app/test_os.c:63:6:BlinkyTest_init	16	static
-../app/test_os.c:91:6:BlinkyTest_Dispatch	16	static
+../app/test_os.c:37:6:BlinkyTest_app_init	8	static
+../app/test_os.c:52:6:BlinkyTest_ctor	16	static
+../app/test_os.c:66:6:BlinkyTest_init	16	static
+../app/test_os.c:96:6:BlinkyTest_Dispatch	16	static

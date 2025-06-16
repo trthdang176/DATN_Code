@@ -91,6 +91,7 @@ static void can_bus_dispatch(app_can * const pOS_task, OS_event_t const * const 
                 /* go to warning screen */
                 printf("transmit CAN id %x failed\n",check_TX_CAN->ID);
                 warning_page(&_Screen,check_TX_CAN->ID);
+                OS_task_post_event(AO_BlinkyTest,BEGIN_BUZZER,0,0);
             }
 
             if (pOS_task->tail_index == 0) {

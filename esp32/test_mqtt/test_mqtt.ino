@@ -5,10 +5,11 @@
 #include <SD.h>
 #include <SPI.h>
 
-// Default WiFi credentials (can be changed via 'w' command)
-String current_wifi_ssid = "BIN BO";
-String current_wifi_password = "17062031809207";
+String current_wifi_ssid = "ABC";
+String current_wifi_password = "123";
 #define mqtt_server "192.168.100.171" 
+// #define mqtt_server "192.168.0.126" 
+
 
 #define RXD2 16
 #define TXD2 17
@@ -45,11 +46,12 @@ String Dataprogram_topic;
 String data_device_topic;
 String status_topic;
 String checkconnect_topic;
+String nameic_topic;
 String MAC_Address;
 
 HardwareSerial Serial_stm32(2);
 
-// SD Card pin definitions (adjust according to your wiring)
+// SD Card pin definitions
 #define SD_CS_PIN 5
 
 // History data management
@@ -70,14 +72,19 @@ struct UartData {
 // Structure for data to send to STM32
 struct UartSendData {
   int command_type;  // 0 = WiFi status, 1 = Program data, 2 = History data response
-  String data;
+  char data[500];
 };
 
 // WiFi and connection status
 volatile bool wifiConnected = false;
 volatile bool mqttConnected = false;
 volatile bool lastWifiState = false;
-volatile bool wifiCredentialsChanged = false;  // Flag to interrupt connection attempts
+volatile bool wifiCredentialsChanged = false;
+
+// Sync mechanism for offline data
+int lastSyncedHistoryIndex = 0;  // Track last synced history record
+unsigned long lastSyncTime = 0;
+#define SYNC_INTERVAL_MS 2000  // 2 seconds between sync attempts
 
 // Program data storage
 String programData[5] = {"", "", "", "", ""};
@@ -86,6 +93,7 @@ void setup() {
   Serial.begin(115200);
   Serial_stm32.begin(115200, SERIAL_8N1, RXD2, TXD2);
   SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, CS_PIN);
+  
   // Initialize EEPROM
   EEPROM.begin(EEPROM_SIZE);
   
@@ -101,9 +109,10 @@ void setup() {
   data_device_topic = MAC_Address + "/" + "StatusDevice";
   status_topic = MAC_Address + "/" + "status";
   checkconnect_topic = MAC_Address + "/" + "checkconnect";
+  nameic_topic = MAC_Address + "/" + "NameIC";
   
   // Create queues and semaphores
-  uartReceiveQueue = xQueueCreate(50, sizeof(UartData));  // Increased queue size
+  uartReceiveQueue = xQueueCreate(50, sizeof(UartData));
   uartSendQueue = xQueueCreate(20, sizeof(UartSendData));
   wifiSemaphore = xSemaphoreCreateBinary();
   mqttSemaphore = xSemaphoreCreateBinary();
@@ -113,35 +122,9 @@ void setup() {
   client.setCallback(callback);
   
   // Create FreeRTOS tasks
-  xTaskCreatePinnedToCore(
-    wifiTask,           
-    "WiFi Task",        
-    4096,               
-    NULL,               
-    WIFI_TASK_PRIORITY, 
-    NULL,               
-    0                   
-  );
-  
-  xTaskCreatePinnedToCore(
-    uartTask,           
-    "UART Task",        
-    4096,               
-    NULL,               
-    UART_TASK_PRIORITY, 
-    NULL,               
-    1                   
-  );
-  
-  xTaskCreatePinnedToCore(
-    mqttTask,           
-    "MQTT Task",        
-    4096,               
-    NULL,               
-    MQTT_TASK_PRIORITY, 
-    NULL,               
-    0                   
-  );
+  xTaskCreatePinnedToCore(wifiTask, "WiFi Task", 4096, NULL, WIFI_TASK_PRIORITY, NULL, 0);
+  xTaskCreatePinnedToCore(uartTask, "UART Task", 4096, NULL, UART_TASK_PRIORITY, NULL, 1);
+  xTaskCreatePinnedToCore(mqttTask, "MQTT Task", 4096, NULL, MQTT_TASK_PRIORITY, NULL, 0);
   
   Serial.println("FreeRTOS tasks created successfully!");
 
@@ -155,6 +138,9 @@ void setup() {
   // Initialize history count
   countHistoryRecords();
   
+  // Initialize sync index to total count (start from newest unsyncced)
+  lastSyncedHistoryIndex = totalHistoryCount;
+  
   Serial.println("Total history records: " + String(totalHistoryCount));
 }
 
@@ -167,14 +153,14 @@ void loadWiFiCredentials() {
   int ssidLen = EEPROM.read(SSID_LEN_ADDR);
   int passLen = EEPROM.read(PASS_LEN_ADDR);
   
-  if (ssidLen > 0 && ssidLen < 50) {  // Reasonable SSID length
+  if (ssidLen > 0 && ssidLen < 50) {
     current_wifi_ssid = "";
     for (int i = 0; i < ssidLen; i++) {
       current_wifi_ssid += char(EEPROM.read(SSID_ADDR + i));
     }
   }
   
-  if (passLen > 0 && passLen < 50) {  // Reasonable password length
+  if (passLen > 0 && passLen < 50) {
     current_wifi_password = "";
     for (int i = 0; i < passLen; i++) {
       current_wifi_password += char(EEPROM.read(PASS_ADDR + i));
@@ -186,13 +172,11 @@ void loadWiFiCredentials() {
 
 // Save WiFi credentials to EEPROM
 void saveWiFiCredentials(String ssid, String password) {
-  // Save SSID
   EEPROM.write(SSID_LEN_ADDR, ssid.length());
   for (int i = 0; i < ssid.length(); i++) {
     EEPROM.write(SSID_ADDR + i, ssid[i]);
   }
   
-  // Save Password
   EEPROM.write(PASS_LEN_ADDR, password.length());
   for (int i = 0; i < password.length(); i++) {
     EEPROM.write(PASS_ADDR + i, password[i]);
@@ -226,8 +210,9 @@ void countHistoryRecords() {
 
 // Store history data to SD card
 void storeHistoryData(String data) {
-  String timestamp = String(millis()); // You can use RTC for real timestamp
-  String record = timestamp + "," + data;
+  String timestamp = String(millis());
+  // String record = timestamp + "," + data;
+  String record = data;
   
   File file = SD.open("/hisdata.txt", FILE_APPEND);
   if (!file) {
@@ -242,8 +227,41 @@ void storeHistoryData(String data) {
   Serial.println("History stored: " + record);
 }
 
+// Read specific history record by index (1-based, 1 = oldest, totalHistoryCount = newest)
+String readHistoryRecordByIndex(int index) {
+  if (index < 1 || index > totalHistoryCount) {
+    return "INVALID_INDEX";
+  }
+  
+  File file = SD.open("/hisdata.txt", FILE_READ);
+  if (!file) {
+    Serial.println("Failed to open hisdata.txt for reading");
+    return "NO_DATA";
+  }
+  
+  String targetLine = "";
+  int currentLine = 0;
+  
+  while (file.available()) {
+    String line = file.readStringUntil('\n');
+    line.trim();
+    if (line.length() > 0) {
+      currentLine++;
+      if (currentLine == index) {
+        targetLine = line;
+        break;
+      }
+    }
+  }
+  file.close();
+  
+  return targetLine;
+}
+
+  #define MAX_HISTORY_LINES 100
+
 // Read history data from SD card (5 records at a time)
-String readHistoryData(bool readNext) {
+String readHistoryData(bool readNext, uint8_t recordCount) {
   File file = SD.open("/hisdata.txt", FILE_READ);
   if (!file) {
     Serial.println("Failed to open hisdata.txt for reading");
@@ -251,10 +269,11 @@ String readHistoryData(bool readNext) {
   }
   
   // Read all lines into an array
-  String lines[totalHistoryCount];
+  String lines[MAX_HISTORY_LINES];
+  int maxLines = min(totalHistoryCount, MAX_HISTORY_LINES);
   int lineCount = 0;
   
-  while (file.available() && lineCount < totalHistoryCount) {
+  while (file.available() && lineCount < maxLines) {
     String line = file.readStringUntil('\n');
     line.trim();
     if (line.length() > 0) {
@@ -282,12 +301,14 @@ String readHistoryData(bool readNext) {
   if (readNext) {
     // Read older data (decrease index)
     endIdx = currentReadIndex - 1;
-    startIdx = max(0, endIdx - 4);
+    // startIdx = max(0, endIdx - 1);
+    startIdx = max(0, endIdx - (recordCount - 1));
     currentReadIndex = startIdx;
   } else {
     // Read newer data (increase index)
     startIdx = currentReadIndex;
-    endIdx = min(totalHistoryCount - 1, startIdx + 4);
+    // endIdx = min(totalHistoryCount - 1, startIdx + 1);
+    endIdx = min(totalHistoryCount - 1, startIdx + (recordCount - 1));
     currentReadIndex = endIdx + 1;
   }
   
@@ -306,6 +327,44 @@ String readHistoryData(bool readNext) {
   return result.length() > 0 ? result : "NO_MORE_DATA";
 }
 
+// Sync unsent history data to MQTT
+void syncHistoryToMQTT() {
+  if (!wifiConnected || !client.connected()) {
+    return;
+  }
+  
+  unsigned long currentTime = millis();
+  if (currentTime - lastSyncTime < SYNC_INTERVAL_MS) {
+    return; // Not time to sync yet
+  }
+  
+  lastSyncTime = currentTime;
+  
+  // Check if there are unsyncced records
+  if (lastSyncedHistoryIndex >= totalHistoryCount) {
+    return; // All records are synced
+  }
+  
+  // Sync next record
+  int indexToSync = lastSyncedHistoryIndex + 1;
+  String recordToSync = readHistoryRecordByIndex(indexToSync);
+  
+  if (recordToSync != "NO_DATA" && recordToSync != "INVALID_INDEX" && recordToSync.length() > 0) {
+    // Extract data part (remove timestamp)
+    int commaPos = recordToSync.indexOf(',');
+    if (commaPos > 0) {
+      String historyData = recordToSync.substring(commaPos + 1);
+      
+      if (client.publish(data_history_topic.c_str(), historyData.c_str(), true)) {
+        lastSyncedHistoryIndex++;
+        Serial.println("Synced history record " + String(indexToSync) + ": " + historyData);
+      } else {
+        Serial.println("Failed to sync history record " + String(indexToSync));
+      }
+    }
+  }
+}
+
 // WiFi task with dynamic credentials and interruptible connection
 void wifiTask(void *parameter) {
   Serial.println("WiFi Task started");
@@ -317,7 +376,7 @@ void wifiTask(void *parameter) {
       if (wifiCredentialsChanged) {
         Serial.println("WiFi credentials changed - reconnecting...");
         WiFi.disconnect();
-        vTaskDelay(pdMS_TO_TICKS(1000)); // Wait for disconnect
+        vTaskDelay(pdMS_TO_TICKS(1000));
         wifiCredentialsChanged = false;
       }
       
@@ -330,11 +389,10 @@ void wifiTask(void *parameter) {
       // Non-blocking connection attempt with interrupt capability
       int attempts = 0;
       while (WiFi.status() != WL_CONNECTED && attempts < 40 && !wifiCredentialsChanged) {
-        vTaskDelay(pdMS_TO_TICKS(250)); // Shorter delay for more responsive interruption
+        vTaskDelay(pdMS_TO_TICKS(250));
         Serial.print(".");
         attempts++;
         
-        // Check every few attempts if credentials changed
         if (attempts % 4 == 0 && wifiCredentialsChanged) {
           Serial.println("\nConnection interrupted - new credentials received");
           break;
@@ -381,7 +439,7 @@ void wifiTask(void *parameter) {
       lastWifiState = currentWifiState;
     }
     
-    vTaskDelay(pdMS_TO_TICKS(2000)); // Reduced delay for more responsiveness
+    vTaskDelay(pdMS_TO_TICKS(2000));
   }
 }
 
@@ -478,14 +536,17 @@ void mqttTask(void *parameter) {
       
       if (client.connected()) {
         client.loop();
+        
+        // Sync unsent history data when WiFi is available
+        syncHistoryToMQTT();
       }
     }
     
-    vTaskDelay(pdMS_TO_TICKS(50));  // Faster processing
+    vTaskDelay(pdMS_TO_TICKS(50));
   }
 }
 
-// Enhanced processUartCommand with WiFi config and history reading
+// Enhanced processUartCommand with all commands and WiFi sync
 void processUartCommand(char command, String data) {
   String topic;
   String payload;
@@ -496,9 +557,29 @@ void processUartCommand(char command, String data) {
       // Store to SD card first
       storeHistoryData(data);
       
-      topic = data_history_topic;
-      payload = data;
-      Serial.println("Publishing history data: " + payload);
+      // If WiFi connected, publish immediately
+      if (wifiConnected && client.connected()) {
+        topic = data_history_topic;
+        payload = data;
+        Serial.println("Publishing history data: " + payload);
+        
+        if (client.publish(topic.c_str(), payload.c_str(), true)) {
+          Serial.println("Successfully published to: " + topic);
+          lastSyncedHistoryIndex = totalHistoryCount; // Update sync index
+        } else {
+          Serial.println("Failed to publish to: " + topic);
+        }
+      } else {
+        Serial.println("History stored to SD (WiFi not available - will sync later)");
+      }
+      return;
+      
+    case 'N': // IC Name data
+    case 'n':
+      // Example data: n744051,740000,74139,7408,74157,40175,40174,4027
+      topic = nameic_topic;
+      payload = data; // All data after 'n'
+      Serial.println("Publishing IC name data: " + payload);
       break;
       
     case 'W': // WiFi configuration change
@@ -520,24 +601,30 @@ void processUartCommand(char command, String data) {
             wifiCredentialsChanged = true;
             
             Serial.println("WiFi credentials updated - SSID: " + newSSID);
-            
           } else {
             Serial.println("Invalid WiFi credentials format");
-            
           }
         } 
         return; 
       }
+      
     case 'R': // Read history data
     case 'r':
       {
         bool readNext = (data == "next" || data == "NEXT");
-        String historyData = readHistoryData(readNext);
+        String historyData;
+        if (data == "first") {
+          historyData = readHistoryData(true,2);
+          Serial.println("Reading history data first");
+        } else {
+          historyData = readHistoryData(readNext,1);
+        }
         
         // Send history data back to STM32
         UartSendData historyResponse;
         historyResponse.command_type = 2; // 2 = History data response
-        historyResponse.data = historyData;
+        // historyResponse.data = historyData;
+         historyData.toCharArray(historyResponse.data, sizeof(historyResponse.data));
         
         if (xQueueSend(uartSendQueue, &historyResponse, pdMS_TO_TICKS(500)) == pdTRUE) {
           Serial.println("History data sent to STM32: " + historyData);
@@ -578,12 +665,16 @@ void processUartCommand(char command, String data) {
       return;
   }
   
-  // Publish to MQTT
+  // Publish to MQTT only if connected
   if (topic.length() > 0 && payload.length() > 0) {
-    if (client.publish(topic.c_str(), payload.c_str(), true)) {
-      Serial.println("Successfully published to: " + topic);
+    if (wifiConnected && client.connected()) {
+      if (client.publish(topic.c_str(), payload.c_str(), true)) {
+        Serial.println("Successfully published to: " + topic);
+      } else {
+        Serial.println("Failed to publish to: " + topic);
+      }
     } else {
-      Serial.println("Failed to publish to: " + topic);
+      Serial.println("WiFi not available - data not published: " + payload);
     }
   }
 }

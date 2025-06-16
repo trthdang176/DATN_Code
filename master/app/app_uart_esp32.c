@@ -90,8 +90,8 @@ static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t cons
             ++pOS_task->nUsed_tx;
             if (pOS_task->is_tx == false) {
                 pOS_task->is_tx = true;
-                HAL_UART_Transmit(pOS_task->pUart,data_send_esp32->data,data_send_esp32->len,1000);
-                OS_TimeEvt_Set(&pOS_task->te_wait_tx,2000,0);
+//                HAL_UART_Transmit(pOS_task->pUart,data_send_esp32->data,data_send_esp32->len,1000);
+                OS_TimeEvt_Set(&pOS_task->te_wait_tx,200,0);
             }
         } break;
         case RECEIVE_DATA_ESP32 : {
@@ -129,7 +129,40 @@ static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t cons
                     data_program->len = RX_ESP32->len - 1;
                     OS_task_post_event(AO_task_screen,UPDATA_PROGARM,(uint8_t *)&data_program,sizeof(Screen_data_t));
                 } break;
+                case '2' : { // data logging
+                    Screen_data_t *data_log = malloc(sizeof(Screen_data_t));
+                    data_log->data = malloc(RX_ESP32->len);
+                    memcpy(data_log->data,&RX_ESP32->data[2],RX_ESP32->len - 1);
+
+                    if (_Screen.data_log.is_first) {
+                    	_Screen.data_log.is_first = false;
+                        char firstRecord[300];
+                        char secondRecord[300];
+                        splitHistoryData(&RX_ESP32->data[2], firstRecord, secondRecord);
+        
+                        memset(_Screen.data_log.pre_data,0,sizeof(_Screen.data_log.pre_data));
+                        strcpy(_Screen.data_log.next_data, secondRecord);     
+                        strcpy(_Screen.data_log.cur_data, firstRecord); 
+                        DWIN_SetText((Dwin_t *)&_Screen,VP_Data_Log,_Screen.data_log.cur_data,strlen(_Screen.data_log.cur_data));
+
+                    } else {
+                        if (_Screen.data_log.reading_type == READING_NEXT) {
+                            // strcpy(_Screen.data_log.pre_data, _Screen.data_log.cur_data);     
+                            // strcpy(_Screen.data_log.cur_data, _Screen.data_log.next_data);    
+                            strcpy(_Screen.data_log.next_data, data_log->data); 
+                            
+                        } else {
+                            // strcpy(_Screen.data_log.next_data, _Screen.data_log.cur_data);    
+                            // strcpy(_Screen.data_log.cur_data, _Screen.data_log.pre_data);    
+                            strcpy(_Screen.data_log.pre_data, data_log->data);   
+                        }
+                    }
+                    /* show data */
+                    // DWIN_SetText((Dwin_t *)&_Screen,VP_Data_Log,_Screen.data_log.cur_data,strlen(_Screen.data_log.cur_data));
+                }
                 default : break;
+
+                // check freee RX_ESP32
             } 
 
             if (pOS_task->tail_index_rx == 0) {
@@ -174,4 +207,29 @@ static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t cons
     }
 }
 
-
+void splitHistoryData(char* receivedData, char* firstRecord, char* secondRecord) {
+    char* pos = receivedData;
+    char* separator = NULL;
+    
+    // Find the second occurrence of date pattern
+    while ((pos = strchr(pos + 1, '|')) != NULL) {
+        // Check if next characters look like date (digit/digit/)
+        if (pos[1] >= '0' && pos[1] <= '9' && 
+            pos[2] >= '0' && pos[2] <= '9' && 
+            pos[3] == '/') {
+            separator = pos;
+            break;
+        }
+    }
+    
+    if (separator != NULL) {
+        int firstLength = separator - receivedData;
+        strncpy(firstRecord, receivedData, firstLength);
+        firstRecord[firstLength] = '\0';
+        
+        strcpy(secondRecord, separator + 1);
+    } else {
+        strcpy(firstRecord, receivedData);
+        secondRecord[0] = '\0';
+    }
+}

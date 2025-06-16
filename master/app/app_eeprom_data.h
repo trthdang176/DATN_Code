@@ -80,30 +80,30 @@ const char data_74157[] =
     "101H01HGH10H100V\n"
     "010L10LGL01L011V\n";
 
-const char data_40175[] = 
+const char data_74175[] = 
     "16|4|"
     "|"
     "Quad positive edge triggered D type flip flops with individual D inputs"
     "|"
     "!MR\nQ0\n!Q0\nD0\nD1\n!Q1\nQ1\nGND\nCP\nQ2\n!Q2\nD2\nD3\n!Q3\nQ3\nVCC\n"
     "|"
-    "1HL11LHGUHL11LHV\n"
-    "1LH00HLGULH00HLV\n"
     "0LH00HLGULH00HLV\n"
-    "0LH11HLGULH11HLV\n";
+    "0LH11HLGULH11HLV\n"
+    "1HL11LHGUHL11LHV\n"
+    "1LH00HLGULH00HLV\n";
 
-const char data_40174[] = 
+
+const char data_74174[] = 
     "16|4|"
     "|"
     "Hex positive-edge D type flip flops with common clock & master reset"
     "|"
     "!MR\nQ0\nD0\nD1\nQ\nD1\nQ2\nGND\nCP\nQ3\nD3\nQ4\nD4\nD5\nQ5\nVCC\n"
     "|"
-    "1H11H1HGCH1H11HV\n"
-    "1L00L0LGCL0L00LV\n"
-    "0L00L0LGCL0L00LV\n"
-    "0L11L1LGCL1L11LV\n";
-
+    "0L00L00GUL0L00LV\n"
+    "0L11L10GUL1L11LV\n"
+    "1L00L00GUL0L00LV\n"
+    "1H11H11GUH1H11HV\n";
 
 const char data_4027[] = 
     "16|5|"
@@ -112,11 +112,22 @@ const char data_4027[] =
     "|"
     "2Q\n2!Q\n2CP\n2CD\n2K\n2J\n2SD\nGND\n1SD\n1J\n1K\n1CD\n1CP\n1!Q\n1Q\nVCC\n"
     "|"
-    "HLC0001G1000CLHV\n"
-    "LHC1000G0001CHLV\n"
-    "HLC0010G0100CLHV\n"
-    "HLC0000G0000CLHV\n"
-    "LHC0100G0010CHLV\n";
+    "HLU0001G1000ULHV\n"
+    "LHU1000G0001UHLV\n"
+    "HLU0010G0100ULHV\n"
+    "HLU0000G0000ULHV\n"
+    "LHU0100G0010UHLV\n";
 
+const char data_7402[] = 
+    "14|4|"
+    "|"
+    "four independent 2-input NOR gates"
+    "|"
+    "1Y\n1A\n1B\n2Y\n2A\n2B\nGND\n3A\n3B\n3Y\n4A\n4B\n4Y\nVCC\n"
+    "|"
+    "H00H00G00H00HV\n"
+    "L10L10G10L10LV\n"
+    "L01L01G01L01LV\n"
+    "L11L11G11L11LV\n";
 
 #endif /* __APP_EEPROM_DATA_H__ */

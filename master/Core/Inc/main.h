@@ -60,6 +60,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define TEST_PIN_Pin GPIO_PIN_1
 #define TEST_PIN_GPIO_Port GPIOA
+#define POWER_ENA_Pin GPIO_PIN_15
+#define POWER_ENA_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

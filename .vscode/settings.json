@@ -29,7 +29,8 @@
     "app_uart_esp32.h": "c",
     "app_can_bus.h": "c",
     "app_screen.h": "c",
-    "isotp.h": "c"
+    "isotp.h": "c",
+    "typeinfo": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
