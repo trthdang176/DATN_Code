@@ -59,9 +59,9 @@ static void screen_dispatch(app_screen * const pOS_task, OS_event_t const * cons
         case UPDATE_WIFI_STATE : {
             printf("Update wifi status\n");
             Screen_data_t *data_wifi = (uint8_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
-            if (data_wifi->data == '0') {
+            if (data_wifi->data[0] == '0') {
                 DWIN_SetVariable_Icon(&_Screen,VP_ICON_WIFI,WIFI_OFF);
-            } else if (data_wifi->data == '1') {
+            } else if (data_wifi->data[0] == '1') {
                 DWIN_SetVariable_Icon(&_Screen,VP_ICON_WIFI,WIFI_ON);
             }
             if (data_wifi->data != NULL) free(data_wifi->data);

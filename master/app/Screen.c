@@ -51,7 +51,9 @@ VP_item lookup_VP_condition[] = {
     {VP_Minute,CONDITION_MINUTE},
     {VP_Day,CONDITION_DAY},
     {VP_Month,CONDITION_MONTH},
-    {VP_Year,CONDITION_YEAR}
+    {VP_Year,CONDITION_YEAR},
+    {VP_Modify_IC_Num,CONDITION_IC_NUM},
+    {VP_Password,CONDITION_PASS}
 };
 
 Screen_condition_t condition_array[MAX_CONDITION] = {
@@ -59,7 +61,8 @@ Screen_condition_t condition_array[MAX_CONDITION] = {
     [CONDITION_MONTH]    = {.max_value = 12, .min_value = 1},
     [CONDITION_YEAR]     = {.max_value = 99, .min_value = 1},
     [CONDITION_HOUR]     = {.max_value = 23, .min_value = 0},
-    [CONDITION_MINUTE]   = {.max_value = 59, .min_value = 0}
+    [CONDITION_IC_NUM]   = {.max_value = 5 , .min_value = 1},
+    [CONDITION_MINUTE]   = {.max_value = 59, .min_value = 0},
 };
 
 VP_String text_numkeyboard[] = {
@@ -67,7 +70,9 @@ VP_String text_numkeyboard[] = {
     [CONDITION_MONTH]    = {.String_Name = "MONTH", .String_Unit = "mth"},
     [CONDITION_YEAR]     = {.String_Name = "YEAR", .String_Unit = "yr"},
     [CONDITION_HOUR]     = {.String_Name = "HOUR", .String_Unit = "h"},
-    [CONDITION_MINUTE]   = {.String_Name = "MINUTE", .String_Unit = "min"}
+    [CONDITION_MINUTE]   = {.String_Name = "MINUTE", .String_Unit = "min"},
+    [CONDITION_IC_NUM]   = {.String_Name = "No. of ICs", .String_Unit = "pcs"},
+    [CONDITION_PASS]     = {.String_Name = "PASSWORD",.String_Unit = ""}
 };
 
 void Screen_begin(UART_HandleTypeDef * UART_Screen) {
@@ -77,8 +82,6 @@ void Screen_begin(UART_HandleTypeDef * UART_Screen) {
     // add receive function callback
 	Screen_init_handler_table(&_Screen);
     DWIN_SetCallback((Dwin_t *)&_Screen,(pListenDWIN)Screen_RX_Callback);
-
-    Screen_Init_Variable(&_Screen);
 
     // Init screen keyboard     
     _Screen.Screen_keyboard.VP_Text = 0xFFFF;
@@ -92,6 +95,8 @@ void Screen_begin(UART_HandleTypeDef * UART_Screen) {
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST2].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST2]));
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST3].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST3]));
     get_data_testing_ic(_Screen.Program_Testx[PROGRAM_TEST4].Name_IC,&(_Screen.Program_Testx[PROGRAM_TEST4]));
+
+    Screen_Init_Variable(&_Screen);
 
     DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x11D0,2);
     DWIN_SetWidth_Basic_line((Dwin_t *)&_Screen,0x13D0,2);
@@ -128,11 +133,12 @@ void Screen_RX_Callback(uint16_t Vpaddress, uint8_t lowByte, uint8_t highByte) {
 #pragma region CALLBACK FUNCTION VP ADRRESS 
 
 void Navigation_setting_page(Screen_t *const screen_obj, screen_event_t *const screen_event) {
-    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING);
     
+    screen_obj->Ishome = false;
+    screen_obj->pre_page = DWINPAGE_SETTING;
     DWIN_ClearText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard);
     DWIN_ClearText((Dwin_t *)screen_obj,VP_Warning_Password);
-    screen_obj->Ishome = false;
+    DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING);
 }
 
 void Navigation_home_page(Screen_t *const screen_obj, screen_event_t *const screen_event) {
@@ -150,6 +156,13 @@ void Navigation_return(Screen_t *const screen_obj, screen_event_t *const screen_
     if (screen_obj->Ishome) {
         screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN;
         off_testing(screen_obj);
+
+        uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+        data_send_esp32->data = (char *)malloc(50);
+        sprintf(data_send_esp32->data,"d%d,disconected,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+            screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+        data_send_esp32->len = strlen(data_send_esp32->data);
+        OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
         // show_main_page(screen_obj,DWINPAGE_MAIN,screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index);
     } else {
         DWIN_SetPage((Dwin_t *)screen_obj,screen_obj->pre_page);
@@ -162,6 +175,7 @@ void Navigation_setting_program(Screen_t *const screen_obj, screen_event_t *cons
     // DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING_PROGRAM);
     /* Get the setting page */
     screen_obj->page_setting = DWINPAGE_SETTING_PROGRAM;
+    screen_obj->pre_page = DWINPAGE_PASSWORD;
     // Switch page password 
     DWIN_SetText((Dwin_t *)screen_obj,VP_Password,"",strlen(""));
     DWIN_ClearText((Dwin_t *)screen_obj,VP_Warning_Password);
@@ -346,6 +360,19 @@ void Navigation_Finish_Review(Screen_t *const screen_obj, screen_event_t *const 
     } else { /* testing enough number */ 
         off_testing(screen_obj);
 
+        /* Send data to esp32 status device */
+        uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+        data_send_esp32->data = (char *)malloc(50);
+        if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
+            sprintf(data_send_esp32->data,"d%d,running,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+            screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+        } else {
+            sprintf(data_send_esp32->data,"d%d,stop,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+            screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+        }
+        data_send_esp32->len = strlen(data_send_esp32->data);
+        OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+
     }   
 }
 
@@ -373,22 +400,35 @@ void ON_OFF_Button(Screen_t *const screen_obj, screen_event_t *const screen_even
         DWIN_SetVariable_Icon((Dwin_t *)screen_obj,VP_ICON_ON_OFF,screen_obj->IC_Testerx[screen_obj->curr_device].state);
     
         /* Send data to esp32 status device */
-        uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
-        data_send_esp32->data = (char *)malloc(50);
-        if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
-            sprintf(data_send_esp32->data,"d%d,running,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
-            screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
-        } else {
-            sprintf(data_send_esp32->data,"stop,%s,%s",screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
-            screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
-        }
-        data_send_esp32->len = strlen(data_send_esp32->data);
-        OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+        // uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+        // data_send_esp32->data = (char *)malloc(50);
+        // if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
+        //     sprintf(data_send_esp32->data,"d%d,running,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+        //     screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+        // } else {
+        //     sprintf(data_send_esp32->data,"stop,%s,%s",screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+        //     screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+        // }
+        // data_send_esp32->len = strlen(data_send_esp32->data);
+        // OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
     } else { // dang on -> off
         /* luu vao sd, gui cho esp32 len app */
         screen_obj->IC_Testerx[screen_obj->curr_device].curr_PageMain = DWINPAGE_MAIN;
         off_testing(screen_obj);
     }
+
+    /* Send data to esp32 status device */
+    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+    data_send_esp32->data = (char *)malloc(50);
+    if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
+        sprintf(data_send_esp32->data,"d%d,running,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+        screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+    } else {
+        sprintf(data_send_esp32->data,"d%d,stop,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
+        screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
+    }
+    data_send_esp32->len = strlen(data_send_esp32->data);
+    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
     
     /* Send data test */
     // screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic = 0;
@@ -514,7 +554,7 @@ void Save_Information(Screen_t *const screen_obj, screen_event_t *const screen_e
         screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC = (char *)malloc(strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp));
         memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC
         ,screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp
-        ,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp)+1);
+        ,strlen(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp));
 
         free(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp);
         screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = NULL;
@@ -653,13 +693,20 @@ void Enter_num_keyboard(Screen_t *const screen_obj, screen_event_t *const screen
                 DWIN_SetText((Dwin_t *)screen_obj,VP_ShowWarning_Keyboard,"Please enter a value",strlen("Please enter a value"));
                 return;
             }
-            screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
-            memset(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
-            memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
-            DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
+            if (Screen_CheckInput_Keyboard(screen_obj) == Status_SUCCESS) {
+                screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp = malloc(screen_obj->Screen_keyboard.Index_String + 1);
+                memset(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,0,screen_obj->Screen_keyboard.Index_String + 1);
+                memcpy(screen_obj->Program_Testx[screen_obj->modify_program_index].num_IC_temp,screen_obj->Screen_keyboard.String,screen_obj->Screen_keyboard.Index_String);
+                DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_MODIFY_PROGRAM);
+            }
+            
         } break;
-        case VP_Name_Wifi :
+        case VP_Name_Wifi : {
+            strcpy(screen_obj->Wifi_setting.Name_Wifi_temp,screen_obj->Screen_keyboard.String);
+            DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING_WIFI);
+        } break;
         case VP_Password_Wifi : {
+            strcpy(screen_obj->Wifi_setting.Password_Wifi_temp,screen_obj->Screen_keyboard.String);
             DWIN_SetPage((Dwin_t *)screen_obj,DWINPAGE_SETTING_WIFI);
         } break;
         case VP_Hour : 
@@ -698,7 +745,39 @@ void Enter_setting_time(Screen_t *const screen_obj, screen_event_t *const screen
 }
 
 void Enter_setting_wifi(Screen_t *const screen_obj, screen_event_t *const screen_event) {
+    if (screen_obj->Wifi_setting.Name_Wifi_temp[0] != 0) {
+        memset(screen_obj->Wifi_setting.Name_Wifi,0,sizeof(screen_obj->Wifi_setting.Name_Wifi));
+        strcpy(screen_obj->Wifi_setting.Name_Wifi,screen_obj->Wifi_setting.Name_Wifi_temp);
+        memset(screen_obj->Wifi_setting.Name_Wifi_temp,0,sizeof(screen_obj->Wifi_setting.Name_Wifi_temp));
+    }
 
+    if (screen_obj->Wifi_setting.Password_Wifi_temp[0] != 0) {
+        memset(screen_obj->Wifi_setting.Password_Wifi,0,sizeof(screen_obj->Wifi_setting.Password_Wifi));
+        strcpy(screen_obj->Wifi_setting.Password_Wifi,screen_obj->Wifi_setting.Password_Wifi_temp);
+        memset(screen_obj->Wifi_setting.Password_Wifi_temp,0,sizeof(screen_obj->Wifi_setting.Password_Wifi_temp));
+    }
+
+    /* store to eeprom */
+    char string_data[DATA_LEN_WIFI_INFO] = {0};
+    data_eeprom_t *data_write = malloc(sizeof(data_eeprom_t));
+    snprintf(string_data,DATA_LEN_WIFI_INFO,"%s,%s",screen_obj->Wifi_setting.Name_Wifi,screen_obj->Wifi_setting.Password_Wifi);
+    data_write->data = malloc(DATA_LEN_WIFI_INFO);
+    memcpy(data_write->data,string_data,DATA_LEN_WIFI_INFO);
+    data_write->data_len = DATA_LEN_WIFI_INFO;
+    data_write->mem_addr = START_ADDR_WIFI_INFO;
+    OS_task_post_event(AO_task_eeprom,WRITE_EEPROM,(uint8_t *)&data_write,sizeof(data_eeprom_t));
+
+    /* send to esp32 */
+    char buffer_send[200];
+    memset(buffer_send,0,200);
+    sprintf(buffer_send,"%s,%s",screen_obj->Wifi_setting.Name_Wifi,screen_obj->Wifi_setting.Password_Wifi);
+    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+    data_send_esp32->data = (char *)malloc(strlen(buffer_send));
+    buffer_send[strlen(buffer_send)] = '\n';
+    memcpy(data_send_esp32->data,"w",screen_obj->modify_program_index + 1);
+    memcpy(data_send_esp32->data+1,buffer_send,strlen(buffer_send)+1);
+    data_send_esp32->len = strlen(buffer_send) + 2;
+    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
 }
 
 void Keyboard(Screen_t *const screen_obj, screen_event_t *const screen_event) {
@@ -924,10 +1003,10 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
 //    memcpy(obj_screen->Program_Testx[PROGRAM_TEST3].Description_IC,"Description IC 74HC4051",strlen("Description IC 74HC4051"));
 //    memcpy(obj_screen->Program_Testx[PROGRAM_TEST4].Description_IC,"Description IC 74HC4051",strlen("Description IC 74HC4051"));
 
-     obj_screen->Program_Testx[PROGRAM_TEST1].Description_IC = "Description IC 74HC4051";
-     obj_screen->Program_Testx[PROGRAM_TEST2].Description_IC = "Description IC 74HC4052";
-     obj_screen->Program_Testx[PROGRAM_TEST3].Description_IC = "Description IC 74HC4053";
-     obj_screen->Program_Testx[PROGRAM_TEST4].Description_IC = "Description IC 74HC4054";
+    //  obj_screen->Program_Testx[PROGRAM_TEST1].Description_IC = "Description IC 74HC4051";
+    //  obj_screen->Program_Testx[PROGRAM_TEST2].Description_IC = "Description IC 74HC4052";
+    //  obj_screen->Program_Testx[PROGRAM_TEST3].Description_IC = "Description IC 74HC4053";
+    //  obj_screen->Program_Testx[PROGRAM_TEST4].Description_IC = "Description IC 74HC4054";
 
     obj_screen->Program_Testx[PROGRAM_TEST1].Name_Program = (char *)malloc(MAX_PROGRAM_NAME_SIZE);
     obj_screen->Program_Testx[PROGRAM_TEST2].Name_Program = (char *)malloc(MAX_PROGRAM_NAME_SIZE);
@@ -945,25 +1024,33 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
     obj_screen->Program_Testx[PROGRAM_TEST4].num_IC = (char *)malloc(MAX_IC_NUM_SIZE);
 
     uint8_t buffer[TOTAL_ONE_PROGRAM_TEST_LEN];
+    memset(buffer,0,TOTAL_ONE_PROGRAM_TEST_LEN);
     for (uint8_t i = 0; i < 4; i++) {
         AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(i),&buffer[0],TOTAL_ONE_PROGRAM_TEST_LEN);
-        sscanf((char *)buffer, "%[^,],%[^,],%[^,\n]",
-        obj_screen->Program_Testx[i].Name_Program,
-        obj_screen->Program_Testx[i].Name_IC,
-        obj_screen->Program_Testx[i].num_IC);
+        char *copy_buf = malloc(TOTAL_ONE_PROGRAM_TEST_LEN);
+        strcpy(copy_buf,buffer);
+        char *pdata = strtok(copy_buf,",");
+        strcpy(obj_screen->Program_Testx[i].Name_Program,pdata);
+        pdata = strtok(NULL,",");
+        strcpy(obj_screen->Program_Testx[i].Name_IC,pdata);
+        pdata = strtok(NULL,",");
+        snprintf(obj_screen->Program_Testx[i].num_IC, 2, "%c", pdata[0]);
 
-        // char buffer_send[200];
-        // memset(buffer_send,0,200);
-        // sprintf(buffer_send,"%d,%s,%s,%s",1,obj_screen->Program_Testx[DEVICE_1].Name_Program
-        //     ,obj_screen->Program_Testx[DEVICE_1].Name_IC,obj_screen->Program_Testx[DEVICE_1].num_IC);
-        // uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
-        // data_send_esp32->data = (char *)malloc(strlen(buffer_send));
-        // memcpy(data_send_esp32->data,"p",1);
-        // memcpy(data_send_esp32->data+1,buffer_send,strlen(buffer_send));
-        // data_send_esp32->len = strlen(buffer_send) + 1;
-        // OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
-
-        HAL_Delay(100);
+//        char buffer_send[200];
+//        memset(buffer_send,0,200);
+//        sprintf(buffer_send,"%d,%s,%s,%s",i+1,obj_screen->Program_Testx[i].Name_Program
+//            ,obj_screen->Program_Testx[DEVICE_1].Name_IC,obj_screen->Program_Testx[DEVICE_1].num_IC);
+//        uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+//        data_send_esp32->data = (char *)malloc(strlen(buffer_send) + 2);
+//        memcpy(data_send_esp32->data,"p",1);
+//        memcpy(data_send_esp32->data+1,buffer_send,strlen(buffer_send) + 2);
+//        data_send_esp32->data[strlen(buffer_send) + 2] = 0;
+//        data_send_esp32->len = strlen(buffer_send) + 2;
+//        OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+//
+        free(copy_buf);
+        memset(buffer,0,TOTAL_ONE_PROGRAM_TEST_LEN);
+        // HAL_Delay(100);
     }
 
     memcpy(obj_screen->IC_Testerx[DEVICE_1].NameIC_Tester,"IC TESTER 1",strlen("IC TESTER 1"));
@@ -976,6 +1063,16 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
     memcpy(obj_screen->Wifi_setting.Name_Wifi,pdata,strlen(pdata));
     pdata = strtok(NULL,",");
     memcpy(obj_screen->Wifi_setting.Password_Wifi,pdata,strlen(pdata));
+
+    memset(obj_screen->Wifi_setting.Name_Wifi_temp,0,sizeof(obj_screen->Wifi_setting.Name_Wifi_temp));
+    memset(obj_screen->Wifi_setting.Password_Wifi_temp,0,sizeof(obj_screen->Wifi_setting.Password_Wifi_temp));
+
+
+
+//    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+//    data_send_esp32->data = (char *)malloc(80);
+//    sprintf(data_send_esp32->data,"w%s,%s",obj_screen->Wifi_setting.Name_Wifi,obj_screen->Wifi_setting.Password_Wifi);
+//    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
     // memcpy(obj_screen->Wifi_setting.Name_Wifi,"Wifi TEST 1",strlen("Wifi TEST 1"));
     // memcpy(obj_screen->Wifi_setting.Password_Wifi,"PASSword 1234",strlen("PASSword 1234"));
 
@@ -1013,6 +1110,51 @@ static void Screen_Init_Variable(Screen_t *const obj_screen) {
     obj_screen->Screen_condition = &condition_array[0];
 
     Screen_ShowData_Mainpage(obj_screen,PROGRAM_TEST1);
+
+    uint8_t num_direc_used = 0;
+    uint8_t *temp_buf = (uint8_t *)malloc(MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
+    memset(temp_buf,0,MAX_DIRECTORY_USED * sizeof(direc_EEPROM_t));
+    direc_EEPROM_t direc_array[MAX_DIRECTORY_USED]; /* array store directory */
+    direc_EEPROM_t *pDirectory = NULL;
+    uint16_t mem_addr;
+    uint16_t buf_length;
+
+    /* get num directory used */
+    AT24Cxx_read_buffer(&eeprom_ob,START_MEM_ADDR_DIREC_USED,&temp_buf[0],1);
+    num_direc_used = temp_buf[0];
+
+    /* read directory info */
+    AT24Cxx_read_buffer(&eeprom_ob,START_MEM_ADDR_DATA_DIREC,temp_buf,num_direc_used * sizeof(direc_EEPROM_t));
+    memcpy(&direc_array[0],temp_buf,num_direc_used * sizeof(direc_EEPROM_t));
+    free(temp_buf);
+
+    char combined_names[100] = {0};
+    uint16_t current_pos = 0;
+
+    for (uint8_t i = 0; i < num_direc_used; i++) {
+        uint16_t name_len = strlen((char*)direc_array[i].nameIC);
+        if (current_pos + name_len + 2 < sizeof(combined_names)) {
+            // Copy the nameIC 
+            strcpy(&combined_names[current_pos], (char*)direc_array[i].nameIC);
+            current_pos += name_len;
+            
+            if (i < num_direc_used - 1) {
+                combined_names[current_pos] = ',';
+                current_pos++;
+            }
+        }
+    }
+    combined_names[current_pos] = '\0';
+
+    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
+    data_send_esp32->data = (char *)malloc(strlen(combined_names) + 1);
+    memcpy(data_send_esp32->data, "n", 1);
+    memcpy(data_send_esp32->data+1,combined_names,strlen(combined_names));
+    data_send_esp32->data[strlen(combined_names) + 1] = '\0';
+    data_send_esp32->len = strlen(combined_names) + 1;
+    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
+
+
     DWIN_SetVariable_Icon((Dwin_t *)obj_screen,VP_ICON_ON_OFF,obj_screen->IC_Testerx[obj_screen->curr_device].state);
 }
 
@@ -1021,7 +1163,8 @@ static void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_p
     // uint8_t index_program = screen_obj.IC_Testerx[screen_obj->curr_device].selected_Program_Index;
     uint8_t num_ic = atoi(screen_obj->Program_Testx[index_program].num_IC);
     uint8_t size_Name_IC = strlen("IC Name: ") + strlen((char *)screen_obj->Program_Testx[index_program].Name_IC);
-    uint8_t size_Description_IC = strlen("IC Description: ") + strlen((char *)screen_obj->Program_Testx[index_program].Description_IC);
+    uint8_t size_Description_IC = strlen((char *)screen_obj->Program_Testx[index_program].Description_IC) + 1;
+    // uint8_t size_Description_IC = strlen("Desc IC: ") + strlen((char *)screen_obj->Program_Testx[index_program].Description_IC) + 1;
     // uint8_t size_Num_IC = strlen("Number of ICs: ") + strlen((char *)screen_obj->Program_Testx[index_program].num_IC);
 
     char *Text_Name_IC = malloc(size_Name_IC + 1); // Null 
@@ -1030,8 +1173,8 @@ static void Screen_ShowData_Mainpage(Screen_t *const screen_obj, uint8_t index_p
 
     strcpy(Text_Name_IC,"IC Name: ");
     strcat(Text_Name_IC,(char *)screen_obj->Program_Testx[index_program].Name_IC);
-    strcpy(Text_Description_IC,"IC Description: ");
-    strcat(Text_Description_IC,(char *)screen_obj->Program_Testx[index_program].Description_IC);
+    strncpy(Text_Description_IC,(char *)screen_obj->Program_Testx[index_program].Description_IC,strlen(screen_obj->Program_Testx[index_program].Description_IC));
+    // strcat(Text_Description_IC,);
     // strcpy(Text_Num_IC,"Number of ICs: ");
     // strcat(Text_Num_IC,(char *)screen_obj->Program_Testx[index_program].num_IC);
 
@@ -1102,15 +1245,17 @@ static bool get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
         DWIN_SetText((Dwin_t *)&_Screen,VP_Warning_modify_program,"No data found for this IC",strlen("No data found for this IC"));
         return false;
     } 
+
     mem_addr = (uint16_t)((pDirectory->addr[0] << 8) | pDirectory->addr[1]);
     buf_length = (uint16_t)((pDirectory->length[0] << 8) | pDirectory->length[1]);
     temp_buf = (uint8_t *)malloc(buf_length);
 
-    AT24Cxx_read_buffer(&eeprom_ob,mem_addr,temp_buf,buf_length);
+    AT24Cxx_read_buffer(&eeprom_ob, mem_addr, temp_buf, buf_length);
+
     // Find the first pipe separator
     uint8_t *first_pipe = memchr(temp_buf, '|', buf_length);
     if (!first_pipe) return false;
-    
+
     // Extract pin count
     int pin_count_len = first_pipe - temp_buf;
     char* pin_count_str = malloc(pin_count_len + 1);
@@ -1118,33 +1263,62 @@ static bool get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
     pin_count_str[pin_count_len] = '\0';
     pdata_test->num_pin = atoi(pin_count_str);
     free(pin_count_str);
-    
+
     // Find the second pipe separator
     int remaining_len = buf_length - (first_pipe - temp_buf + 1);
     uint8_t *second_pipe = memchr(first_pipe + 1, '|', remaining_len);
     if (!second_pipe) return false;
-    
+
     // Extract test count
     int test_count_len = second_pipe - (first_pipe + 1);
     char* test_count_str = malloc(test_count_len + 1);
     strncpy(test_count_str, first_pipe + 1, test_count_len);
     test_count_str[test_count_len] = '\0';
-    pdata_test->num_case= atoi(test_count_str);
+    pdata_test->num_case = atoi(test_count_str);
     free(test_count_str);
-    
-    // Find the third pipe separator using memchr (searches through \0)
+
+    // Find the third pipe separator (after empty field)
     remaining_len = buf_length - (second_pipe - temp_buf + 1);
     uint8_t *third_pipe = memchr(second_pipe + 1, '|', remaining_len);
     if (!third_pipe) return false;
-    
-    // Extract pin data (between second and third pipe)
-    int pin_data_len = third_pipe - (second_pipe + 1);
+
+    // Skip the empty field between second and third pipe
+    // Find the fourth pipe separator  
+    remaining_len = buf_length - (third_pipe - temp_buf + 1);
+    uint8_t *fourth_pipe = memchr(third_pipe + 1, '|', remaining_len);
+    if (!fourth_pipe) return false;
+
+    if (pdata_test->Description_IC != NULL) {
+        free(pdata_test->Description_IC);
+        pdata_test->Description_IC = NULL;
+    }
+    // Extract description (between third and fourth pipe)
+    int description_len = fourth_pipe - (third_pipe + 1);
+    pdata_test->Description_IC = malloc(description_len + 1);
+    strncpy(pdata_test->Description_IC, third_pipe + 1, description_len);
+    pdata_test->Description_IC[description_len] = '\0';
+
+    // Find the fifth pipe separator
+    remaining_len = buf_length - (fourth_pipe - temp_buf + 1);
+    uint8_t *fifth_pipe = memchr(fourth_pipe + 1, '|', remaining_len);
+    if (!fifth_pipe) return false;
+
+    if (pdata_test->data_pin != NULL) {
+        free(pdata_test->data_pin);
+        pdata_test->data_pin = NULL;
+    }
+    // Extract pin data (between fourth and fifth pipe)
+    int pin_data_len = fifth_pipe - (fourth_pipe + 1);
     pdata_test->data_pin = malloc(pin_data_len);
-    memcpy(pdata_test->data_pin, second_pipe + 1, pin_data_len);
+    memcpy(pdata_test->data_pin, fourth_pipe + 1, pin_data_len);
     pdata_test->data_pin_len = pin_data_len;
-    
-    // Extract test data (after third pipe)
-    uint8_t *test_start = third_pipe + 1;
+
+    if (pdata_test->data_test != NULL) {
+        free(pdata_test->data_test);
+        pdata_test->data_test = NULL;
+    }
+    // Extract test data (after fifth pipe)
+    uint8_t *test_start = fifth_pipe + 1;
     int test_data_len = buf_length - (test_start - temp_buf);
     pdata_test->data_test = malloc(test_data_len);
     memcpy(pdata_test->data_test, test_start, test_data_len);
@@ -1152,10 +1326,6 @@ static bool get_data_testing_ic(char *searchName,Program_Test_t *pdata_test) {
 
     free(temp_buf);
     return true;
-//    uint8_t array_buf[200];
-//    memcpy(array_buf,pdata_test->data_pin,pin_data_len);
-//    uint8_t array_buf2[200];
-//    memcpy(array_buf2,pdata_test->data_test,test_data_len);
 }
 
 static void show_text_short_circuit(Screen_t *screen_obj) {
@@ -1277,18 +1447,19 @@ static void compelte_testing(Screen_t *const screen_obj) {
     DS3231_Read_time(&ds3231,data_time);
 
     /* Store data to sd card */
-    char buffer[300] = {0};
+    char buffer[500] = {0};
     // memset(buffer,0,300);
     int written = snprintf(buffer,sizeof(buffer),"%d/%d/%d;%d:%d:%d;%s;%s;%s;%s",data_time[4],data_time[5],data_time[6],data_time[2],data_time[1],data_time[0]
         ,screen_obj->IC_Testerx[screen_obj->curr_device].NameIC_Tester,screen_obj->Program_Testx[index_program].Name_IC,screen_obj->Program_Testx[index_program].num_IC,
         screen_obj->IC_Testerx[screen_obj->curr_device].result_text);
-    DataLogging_t *data_store = (DataLogging_t *)malloc(sizeof(DataLogging_t));
-    data_store->String_logging = malloc(strlen(buffer)+1);
-    memset(data_store->String_logging,0,strlen(buffer)+1);
-    memcpy(data_store->String_logging,buffer,strlen(buffer));
-    memset(screen_obj->IC_Testerx[screen_obj->curr_device].result_text,0,sizeof(screen_obj->IC_Testerx[screen_obj->curr_device].result_text));
-    OS_task_post_event(AO_task_sd, STORE_DATA_TEST, (uint8_t *)&data_store, sizeof(DataLogging_t));
+    // DataLogging_t *data_store = (DataLogging_t *)malloc(sizeof(DataLogging_t));
+    // data_store->String_logging = malloc(strlen(buffer)+1);
+    // memset(data_store->String_logging,0,strlen(buffer)+1);
+    // memcpy(data_store->String_logging,buffer,strlen(buffer));
+    // memset(screen_obj->IC_Testerx[screen_obj->curr_device].result_text,0,sizeof(screen_obj->IC_Testerx[screen_obj->curr_device].result_text));
+    // OS_task_post_event(AO_task_sd, STORE_DATA_TEST, (uint8_t *)&data_store, sizeof(DataLogging_t));
 
+    memset(screen_obj->IC_Testerx[screen_obj->curr_device].result_text,0,sizeof(screen_obj->IC_Testerx[screen_obj->curr_device].result_text));
     if (written >= sizeof(buffer)) {
         printf("ERROR: Buffer overflow in compelte_testing!\n");
         return;
@@ -1296,10 +1467,11 @@ static void compelte_testing(Screen_t *const screen_obj) {
 
     /* Send data to esp32 */
     uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
-    data_send_esp32->data = (char *)malloc(strlen(buffer));
+    data_send_esp32->data = (char *)malloc(strlen(buffer) + 2);
     memcpy(data_send_esp32->data,"h",1);
     memcpy(data_send_esp32->data+1,buffer,strlen(buffer));
-    data_send_esp32->len = strlen(buffer);
+    data_send_esp32->data[strlen(buffer)+1] = '\n';
+    data_send_esp32->len = strlen(buffer) + 2;
     OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
 
     screen_obj->IC_Testerx[screen_obj->curr_device].curr_num_ic = 0;
@@ -1339,19 +1511,6 @@ static void off_testing(Screen_t *screen_obj) {
     if (screen_obj->IC_Testerx[screen_obj->curr_device].data_result != NULL) {
         free(screen_obj->IC_Testerx[screen_obj->curr_device].data_result);
     }
-
-    /* Send data to esp32 status device */
-    uart_esp32_t *data_send_esp32 = malloc(sizeof(uart_esp32_t));
-    data_send_esp32->data = (char *)malloc(50);
-    if (screen_obj->IC_Testerx[screen_obj->curr_device].state) {
-        sprintf(data_send_esp32->data,"d%d,running,%s,%s",screen_obj->curr_device+1,screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
-        screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
-    } else {
-        sprintf(data_send_esp32->data,"stop,%s,%s",screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].Name_Program,
-        screen_obj->Program_Testx[screen_obj->IC_Testerx[screen_obj->curr_device].selected_Program_Index].num_IC);
-    }
-    data_send_esp32->len = strlen(data_send_esp32->data);
-    OS_task_post_event(AO_task_uart_esp32,SEND_DATA_ESP32,(uint8_t *)&data_send_esp32,sizeof(uart_esp32_t));
 }
 
 static void show_pulse(Screen_t *screen_obj, uint8_t curr_case) {

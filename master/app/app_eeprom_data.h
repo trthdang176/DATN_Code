@@ -10,6 +10,9 @@ const char wifi_info[] = "dang123,12345678";
 
 const char data_744051[] = 
     "16|8|"
+    "|"
+    "Bidirectional 8-channel analog multiplexer/demultiplexer"
+    "|"
     "A4\nA6\nCOMA\nA7\nA5\nE\nVEE\nGND\nS2\nS1\nS0\nA3\nA0\nA1\nA2\nVCC\n"
     "|"
     "11L1100G0001011V\n"
@@ -23,6 +26,9 @@ const char data_744051[] =
 
 const char data_7400[] = 
     "14|4|"
+    "|"
+    "four independent, 2-input NAND gates"
+    "|"
     "A1\nB1\nY1\nA2\nB2\nY2\nGND\nY3\nB3\nA3\nY4\nA4\nB4\nVCC\n"
     "|"
     "00H00HGH00H00V\n"
@@ -32,6 +38,9 @@ const char data_7400[] =
 
 const char data_74139[] = 
     "16|6|"
+    "|"
+    "Dual 2-to-4 line decoder/demultiplexer"
+    "|"
     "1E\n1A0\n1A1\n1Y0\n1Y1\n1Y2\n1Y3\nGND\n2Y3\n2Y2\n2Y1\n2Y0\n2A1\n2A0\n2E\nVCC\n"
     "|"
     "101HHHHGHHHH011V\n"
@@ -43,6 +52,9 @@ const char data_74139[] =
 
 const char data_7408[] = 
     "14|4|"
+    "|"
+    "four independent 2-input AND gates"
+    "|"
     "A1\nB1\nY1\nA2\nB2\nY2\nGND\nY3\nB3\nA3\nY4\nA4\nB4\nVCC\n"
     "|"
     "00L00LGL00L00V\n"
@@ -52,6 +64,9 @@ const char data_7408[] =
 
 const char data_74157[] = 
     "16|10|"
+    "|"
+    "Quad 2 input multiplexers with common select"
+    "|"
     "S\n1I0\n1I1\n1Y\n2I0\n2I1\n2Y\nGND\n3Y\n3I1\n3I0\n4Y\n4I1\n4I0\nE\nVCC\n"
     "|"
     "111H11HGH11H110V\n"
@@ -67,6 +82,9 @@ const char data_74157[] =
 
 const char data_40175[] = 
     "16|4|"
+    "|"
+    "Quad positive edge triggered D type flip flops with individual D inputs"
+    "|"
     "!MR\nQ0\n!Q0\nD0\nD1\n!Q1\nQ1\nGND\nCP\nQ2\n!Q2\nD2\nD3\n!Q3\nQ3\nVCC\n"
     "|"
     "1HL11LHGUHL11LHV\n"
@@ -76,6 +94,9 @@ const char data_40175[] =
 
 const char data_40174[] = 
     "16|4|"
+    "|"
+    "Hex positive-edge D type flip flops with common clock & master reset"
+    "|"
     "!MR\nQ0\nD0\nD1\nQ\nD1\nQ2\nGND\nCP\nQ3\nD3\nQ4\nD4\nD5\nQ5\nVCC\n"
     "|"
     "1H11H1HGCH1H11HV\n"
@@ -86,6 +107,9 @@ const char data_40174[] =
 
 const char data_4027[] = 
     "16|5|"
+    "|"
+    "Dual positive edge triggered JK flip flops with independent asynchronous set/clear"
+    "|"
     "2Q\n2!Q\n2CP\n2CD\n2K\n2J\n2SD\nGND\n1SD\n1J\n1K\n1CD\n1CP\n1!Q\n1Q\nVCC\n"
     "|"
     "HLC0001G1000CLHV\n"
@@ -94,42 +118,5 @@ const char data_4027[] =
     "HLC0000G0000CLHV\n"
     "LHC0100G0010CHLV\n";
 
-
-
-const char data_74595[] = 
-    "16|6|"
-    "Q1\nQ2\nQ3\nQ4\nQ5\nQ6\nQ7\nGND\nQ7S\nMR\nSHCP\nSTCP\nOE\nDS\nQ0\nVCC\n"
-    "|"
-    "LLLLLLLGL10000LV\n"
-    "LLLLLLLGL1C001LV\n"
-    "LLLLLLLGL1C001LV\n"
-    "LLLLLLLGL1C001LV\n"
-    "LLLLLLLGL1C001LV\n"
-    "HHHLLLLGL10C01HV\n";
-
-const char data_74164[] = 
-    "14|8|"
-    "DSA\nDSB\nQ0\nQ1\nQ2\nQ3\nGND\nCP\nMR\nQ4\nQ5\nQ6\nQ7\nVCC\n"
-    "|"
-    "00LLLLGC0LLLLV\n"
-    "11LLLLGC0LLLLV\n" 
-    "00LLLLGC1LLLLV\n"
-    "11HLLLGC1LLLLV\n"
-    "11HHLLGC1LLLLV\n"
-    "00LHHLGC1LLLLV\n"
-    "01LLHHGC1LLLLV\n"
-    "10LLLHGC1HLLLV\n";
-
-
-const char data_74165[] = 
-    "16|6|"
-    "!PL\nCP\nD4\nD5\nD6\nD7\n!Q7\nGND\nQ7\nDS\nD0\nD1\nD2\nD3\n!CE\nVCC\n"
-    "|"
-    "0C0000HGL000000V\n"
-    "0C0100HGL000000V\n"
-    "1C0100HGL000000V\n"
-    "1C0010HGL100000V\n"
-    "1C0001LGH100000V\n"
-    "1C0000HGL100000V\n";
 
 #endif /* __APP_EEPROM_DATA_H__ */

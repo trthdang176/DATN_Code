@@ -172,6 +172,8 @@ enum {
     CONDITION_DAY                ,
     CONDITION_MONTH              ,
     CONDITION_YEAR               ,
+    CONDITION_IC_NUM             ,
+    CONDITION_PASS               ,
 
     MAX_CONDITION 
 };
@@ -297,7 +299,7 @@ typedef struct {
     char isShort;
     char *data_result_case;
     char *data_clock;                   // data pulse 
-    char result_text[250];
+    char result_text[300];
     uint8_t array[MAX_PROGRAM_TEST];    // Array control icon selected program
 } Device_t;
 
@@ -311,7 +313,10 @@ typedef struct {
 
 typedef struct {
     char Name_Wifi[MAX_NAME_WIFI_SIZE];
+    char Name_Wifi_temp[MAX_NAME_WIFI_SIZE];
     char Password_Wifi[MAX_PASSWORD_WIFI_SIZE];
+    char Password_Wifi_temp[MAX_PASSWORD_WIFI_SIZE];
+    char 
 } Wifi_t;
 
 typedef struct  {

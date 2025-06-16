@@ -1,0 +1,63 @@
+#ifndef __APP_EEPROM_H__
+#define __APP_EEPROM_H__
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include "../os/os.h"
+#include "../lib/AT24Cxx.h"
+#include "Screen.h"
+
+#define NAME_IC_MAX_LENGTH 8
+
+#define MEM_ADDR_CHECK_UPDATA_DATA_TEST 0x10
+
+#define START_MEM_ADDR_PROGRAM_TEST     AT24C256_ADDR_PAGE(1) // -> 4
+#define TOTAL_ONE_PROGRAM_TEST_LEN      (MAX_PROGRAM_NAME_SIZE + MAX_IC_NAME_SIZE + MAX_IC_NUM_SIZE)
+#define TOTAL_ALL_PROGRAM_TEST_LEN      (TOTAL_ONE_PROGRAM_TEST_LEN * MAX_PROGRAM_TEST)
+#define START_ADDR_PROGRAM_TEST_X(i)    (START_MEM_ADDR_PROGRAM_TEST + (TOTAL_ONE_PROGRAM_TEST_LEN * i) + 3)
+
+#define START_ADDR_WIFI_INFO            AT24C256_ADDR_PAGE(6) // -> 7
+#define DATA_LEN_WIFI_INFO              60
+
+#define MAX_DIRECTORY_USED              20  /* THE MAX TESTING IC */
+#define DATA_LEN_DIREC_EEPROM           (sizeof(direc_EEPROM_t))
+#define START_MEM_ADDR_DIREC_USED       (AT24C256_ADDR_PAGE(10))     /* Number of directories used */
+#define START_MEM_ADDR_DATA_DIREC       (AT24C256_ADDR_PAGE(10) + 2) /* List of all directory data */
+#define START_MEM_ADDR_DATA_TEST        (START_MEM_ADDR_DATA_DIREC + (DATA_LEN_DIREC_EEPROM * 20) + 1) /* Start data for testing */
+
+typedef struct {
+    uint16_t mem_addr;      /* starting memory address */
+    uint8_t *data;          /* pointer to buffer data */
+    uint16_t data_len;      /* total bytes data */
+} data_eeprom_t;
+
+/* parameter using for write eeprom */
+typedef struct {
+    // uint8_t byte_first_page; /* number of bytes to write in the first page from mem_addr */
+    // uint8_t page_write; /* number of full pages to write */
+    // uint8_t byte_remain; /* number of bytes remaining after writing full pages */
+
+    uint16_t mem_addr; /* begin address write */
+    uint8_t *data;     /* data write */
+    uint16_t data_len; /* len of data write */
+    uint16_t data_written; /* bytes already written */
+    uint16_t data_lastlen; /* length of data just written */
+
+} write_param_t;
+
+/* directory address eeprom for each data testing */
+typedef struct {
+    char nameIC[NAME_IC_MAX_LENGTH];
+    uint8_t addr[2];
+    uint8_t length[2];
+} direc_EEPROM_t; 
+
+extern OS_task * const AO_task_eeprom;
+extern AT24Cxx_t eeprom_ob;
+void eeprom_task_init(I2C_HandleTypeDef* i2c_port, uint8_t dev_address);
+
+
+#endif /* __APP_EEPROM_H__ */

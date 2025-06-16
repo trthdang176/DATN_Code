@@ -24,7 +24,6 @@ app/app_rtc.o: ../app/app_rtc.c ../app/app_rtc.h ../app/../os/os.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
- ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
  ../app/../lib/DS3231.h ../app/../lib/../Core/Inc/main.h \
  ../app/../lib/../Core/Inc/../../lib/ISO_TP/isotp.h \
@@ -64,7 +63,6 @@ app/app_rtc.o: ../app/app_rtc.c ../app/app_rtc.h ../app/../os/os.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
-../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
 ../app/../lib/DS3231.h:
 ../app/../lib/../Core/Inc/main.h:

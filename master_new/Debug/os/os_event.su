@@ -1,0 +1,7 @@
+../os/os_event.c:20:6:dynamic_event_pool_init	16	static,ignoring_inline_asm
+../os/os_event.c:33:6:free_dynamic_event	24	static,ignoring_inline_asm
+../os/os_event.c:45:13:get_dynamic_event	16	static,ignoring_inline_asm
+../os/os_event.c:55:6:set_data_dynamic_event	24	static
+../os/os_event.c:65:6:set_sig_dynamic_event	16	static
+../os/os_event.c:69:10:get_data_dynamic_event	16	static
+../os/os_event.c:73:10:get_len_dynamic_event	16	static

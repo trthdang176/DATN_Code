@@ -40,7 +40,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DEVICE 3
+#define DEVICE 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/

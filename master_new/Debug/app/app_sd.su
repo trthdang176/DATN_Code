@@ -1,0 +1,6 @@
+../app/app_sd.c:34:6:sd_task_init	8	static
+../app/app_sd.c:55:6:sd_ctor	16	static
+../app/app_sd.c:60:13:sd_init	16	static
+../app/app_sd.c:65:13:sd_dispatch	24	static
+../app/app_sd.c:80:13:init_data_logging	8	static
+../app/app_sd.c:107:13:add_data	24	static

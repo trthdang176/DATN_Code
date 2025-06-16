@@ -3,6 +3,8 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="num_IC"/>
+		<item value="CAN_iso"/>
 		<item value="buffer"/>
 		<item value="HAL_UARTEx_ReceiveToIdle_IT"/>
 		<item value="dataRX"/>
@@ -16,8 +18,6 @@
 		<item value="finish"/>
 		<item value="show_text_short_circuit"/>
 		<item value="br"/>
-		<item value="fil"/>
-		<item value="pfs"/>
 	</list>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item key="selection" value=""/>

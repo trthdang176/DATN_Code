@@ -1,0 +1,13 @@
+../os/os.c:21:6:OS_task_run	8	static
+../os/os.c:32:6:OS_task_init	24	static
+../os/os.c:50:6:OS_task_create	24	static
+../os/os.c:83:6:OS_task_post	24	static,ignoring_inline_asm
+../os/os.c:117:6:OS_task_post_event	32	static
+../os/os.c:127:6:OS_TimeEvt_init	24	static
+../os/os.c:151:6:OS_TimeEvt_Set	16	static,ignoring_inline_asm
+../os/os.c:158:6:OS_TimeEvt_Stop	16	static,ignoring_inline_asm
+../os/os.c:169:6:OS_TimeEvt_tick	16	static,ignoring_inline_asm
+../os/os.c:196:6:OS_task_activate	32	static,ignoring_inline_asm
+../os/os.c:244:6:OS_priority_IRQ	16	static
+../os/os.c:256:6:OS_prio_setIRQ	16	static
+../os/os.c:262:6:OS_Test_setIRQ	16	static

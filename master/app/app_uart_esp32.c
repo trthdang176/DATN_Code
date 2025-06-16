@@ -7,18 +7,26 @@
 #include <stdbool.h>
 
 #define RX_BUF 10
+#define TX_BUF 15
 
 typedef struct {
     OS_task task;
 
     UART_HandleTypeDef *pUart;
 
-    uart_esp32_t **uart_esp32_buf;
-    uint8_t head_index;
-    uint8_t tail_index;
-    uint8_t nUsed;
-    uint8_t end;
+    uart_esp32_t **uart_esp32_buf_rx;
+    uint8_t head_index_rx;
+    uint8_t tail_index_rx;
+    uint8_t nUsed_rx;
+    uint8_t end_rx;
     bool is_rx;
+
+    uart_esp32_t **uart_esp32_buf_tx;
+    uint8_t head_index_tx;
+    uint8_t tail_index_tx;
+    uint8_t nUsed_tx;
+    uint8_t end_tx;
+    bool is_tx;
 
     OS_TimeEvt te_wait_rx;
     OS_TimeEvt te_wait_tx;
@@ -32,16 +40,25 @@ static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t cons
 static app_uart_esp32 uart_esp32_instance;
 OS_task * const AO_task_uart_esp32 = &uart_esp32_instance.task;
 
-static managerTX_CAN_t *buff_store[RX_BUF]; /* buffer store the data write */
+static uart_esp32_t *buff_store_rx[RX_BUF]; /* buffer store the data write */
+static uart_esp32_t *buff_store_tx[TX_BUF]; /* buffer store the data write */
 
 void uart_esp32_task_init(UART_HandleTypeDef *pUart) {
     uart_esp32_instance.pUart = pUart;
-    uart_esp32_instance.head_index = 0;
-    uart_esp32_instance.tail_index = 0;
-    uart_esp32_instance.nUsed = 0;
-    uart_esp32_instance.end = RX_BUF - 1;
-    uart_esp32_instance.uart_esp32_buf = buff_store;
+
+    uart_esp32_instance.head_index_rx = 0;
+    uart_esp32_instance.tail_index_rx = 0;
+    uart_esp32_instance.nUsed_rx = 0;
+    uart_esp32_instance.end_rx = RX_BUF - 1;
+    uart_esp32_instance.uart_esp32_buf_rx = buff_store_rx;
     uart_esp32_instance.is_rx = false;
+
+    uart_esp32_instance.head_index_tx = 0;
+    uart_esp32_instance.tail_index_tx = 0;
+    uart_esp32_instance.nUsed_tx = 0;
+    uart_esp32_instance.end_tx = TX_BUF - 1;
+    uart_esp32_instance.uart_esp32_buf_tx = buff_store_tx;
+    uart_esp32_instance.is_tx = false;
     
     uart_esp32_ctor(&uart_esp32_instance);
 
@@ -64,34 +81,42 @@ static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t cons
         case SEND_DATA_ESP32 : {
             printf("Send data to esp32\n");
             uart_esp32_t *data_send_esp32 = (uart_esp32_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
-            HAL_UART_Transmit(pOS_task->pUart,data_send_esp32->data,data_send_esp32->len,1000);
-
-            if (data_send_esp32->data != NULL) free(data_send_esp32->data);
-            free(data_send_esp32);
+            pOS_task->uart_esp32_buf_tx[pOS_task->head_index_tx] = data_send_esp32;
+            if (pOS_task->head_index_tx == 0) {
+                pOS_task->head_index_tx = pOS_task->end_tx;
+            } else {
+                --pOS_task->head_index_tx;
+            }
+            ++pOS_task->nUsed_tx;
+            if (pOS_task->is_tx == false) {
+                pOS_task->is_tx = true;
+                HAL_UART_Transmit(pOS_task->pUart,data_send_esp32->data,data_send_esp32->len,1000);
+                OS_TimeEvt_Set(&pOS_task->te_wait_tx,2000,0);
+            }
         } break;
         case RECEIVE_DATA_ESP32 : {
             printf("Receive data from ESP32\n");
             uart_esp32_t *RX_ESP32 = (uart_esp32_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
-            pOS_task->uart_esp32_buf[pOS_task->head_index] = RX_ESP32;
-            if (pOS_task->head_index == 0) {
-                pOS_task->head_index = pOS_task->end;
+            pOS_task->uart_esp32_buf_rx[pOS_task->head_index_rx] = RX_ESP32;
+            if (pOS_task->head_index_rx == 0) {
+                pOS_task->head_index_rx = pOS_task->end_rx;
             } else {
-                --pOS_task->head_index;
+                --pOS_task->head_index_rx;
             }
-            ++pOS_task->nUsed;
+            ++pOS_task->nUsed_rx;
             if (pOS_task->is_rx == false) {
                 pOS_task->is_rx = true;
-                OS_TimeEvt_Set(&pOS_task->te_wait_rx,1,0);
+                OS_TimeEvt_Set(&pOS_task->te_wait_rx,200,0);
             }
         } break;
         case ESP32_RX_TIMEOUT : {
-            uart_esp32_t *RX_ESP32 = pOS_task->uart_esp32_buf[pOS_task->tail_index];
+            uart_esp32_t *RX_ESP32 = pOS_task->uart_esp32_buf_rx[pOS_task->tail_index_rx];
             /* check command of data */
             switch (RX_ESP32->data[0]) {
                 case '0' : { // command wifi
                     Screen_data_t *data_wifi = malloc(sizeof(Screen_data_t));
                     data_wifi->data = malloc(1);
-                    memcpy(data_wifi->data,&RX_ESP32->data[2],1);
+                    data_wifi->data[0] = RX_ESP32->data[2];
                     data_wifi->len = 1;
                     OS_task_post_event(AO_task_screen,UPDATE_WIFI_STATE,(uint8_t *)&data_wifi,sizeof(Screen_data_t));
                 } break;
@@ -107,19 +132,42 @@ static void uart_esp32_dispatch(app_uart_esp32 * const pOS_task, OS_event_t cons
                 default : break;
             } 
 
-            if (pOS_task->tail_index == 0) {
-                    pOS_task->tail_index = pOS_task->end;
+            if (pOS_task->tail_index_rx == 0) {
+                    pOS_task->tail_index_rx = pOS_task->end_rx;
                 } else {
-                    --pOS_task->tail_index;
+                    --pOS_task->tail_index_rx;
                 } 
-            --pOS_task->nUsed;
+            --pOS_task->nUsed_rx;
             pOS_task->is_rx = false;
             /* check buff */
-            if (pOS_task->nUsed > 0 ) {
+            if (pOS_task->nUsed_rx > 0 ) {
                 pOS_task->is_rx = true;
                 OS_TimeEvt_Set(&pOS_task->te_wait_rx,200,0); /* run only 1 time */
             }
+
+            if (RX_ESP32->data != NULL) free(RX_ESP32->data);
             free(RX_ESP32);
+        } break;
+        case ESP32_TX_TIMEOUT : {
+            uart_esp32_t *data_send_esp32 = pOS_task->uart_esp32_buf_tx[pOS_task->tail_index_tx];
+
+            HAL_UART_Transmit(pOS_task->pUart,data_send_esp32->data,data_send_esp32->len,1000);
+            
+            if (pOS_task->tail_index_tx == 0) {
+                    pOS_task->tail_index_tx = pOS_task->end_tx;
+                } else {
+                    --pOS_task->tail_index_tx;
+                } 
+            --pOS_task->nUsed_tx;
+            pOS_task->is_tx = false;
+            /* check buff */
+            if (pOS_task->nUsed_tx > 0 ) {
+                pOS_task->is_tx = true;
+                OS_TimeEvt_Set(&pOS_task->te_wait_tx,2000,0); /* run only 1 time */
+            }
+
+            if (data_send_esp32->data != NULL) free(data_send_esp32->data);
+            free(data_send_esp32);
         } break;
 
         default: break;

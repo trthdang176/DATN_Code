@@ -1,0 +1,4 @@
+../app/app_main.c:21:6:I2C1_ER_IRQHandler	1
+../app/app_main.c:25:6:RTC_WKUP_IRQHandler	1
+../app/app_main.c:29:6:I2C2_EV_IRQHandler	1
+../app/app_main.c:34:6:BSP_init	1

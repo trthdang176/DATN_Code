@@ -18,12 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "fatfs.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
-#include "fatfs_sd.h"
+//#include "fatfs_sd.h"
 #include "string.h"
 
 #include "../../app/Screen.h"
@@ -54,8 +53,6 @@
 CAN_HandleTypeDef hcan;
 
 I2C_HandleTypeDef hi2c1;
-
-SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -117,7 +114,6 @@ static void MX_CAN_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -183,8 +179,6 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-  MX_SPI1_Init();
-  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
 //  fresult = f_mount(&fs, "0:", 1);
@@ -261,7 +255,7 @@ int main(void)
   uart_esp32_task_init(&huart1);
   static OS_event_t const *q_uart_esp32_event[10];
   OS_task_create(AO_task_uart_esp32,
-  1,
+  2,
   q_uart_esp32_event,
   ARRAY_ELEMENT(q_uart_esp32_event),
   (OS_event_t *)0);
@@ -286,14 +280,14 @@ int main(void)
 
   ds3231_task_init(&hi2c1,ADDRESS_DS3231);
 
-  sd_task_init();
-  static OS_event_t const *q_sd[10];
-  OS_task_create(
-  AO_task_sd,
-  1,
-  q_sd,
-  ARRAY_ELEMENT(q_sd),
-  (OS_event_t *)0);
+//  sd_task_init();
+//  static OS_event_t const *q_sd[10];
+//  OS_task_create(
+//  AO_task_sd,
+//  1,
+//  q_sd,
+//  ARRAY_ELEMENT(q_sd),
+//  (OS_event_t *)0);
 
   can_bus_task_init(&hcan);
   static OS_event_t const *Can_app_event[10];
@@ -478,44 +472,6 @@ static void MX_I2C1_Init(void)
 }
 
 /**
-  * @brief SPI1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_SPI1_Init(void)
-{
-
-  /* USER CODE BEGIN SPI1_Init 0 */
-
-  /* USER CODE END SPI1_Init 0 */
-
-  /* USER CODE BEGIN SPI1_Init 1 */
-
-  /* USER CODE END SPI1_Init 1 */
-  /* SPI1 parameter configuration*/
-  hspi1.Instance = SPI1;
-  hspi1.Init.Mode = SPI_MODE_MASTER;
-  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
-  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
-  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
-  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  hspi1.Init.CRCPolynomial = 10;
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN SPI1_Init 2 */
-
-  /* USER CODE END SPI1_Init 2 */
-
-}
-
-/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -564,7 +520,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 460800;
+  huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -600,22 +556,12 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(TEST_PIN_GPIO_Port, TEST_PIN_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-
   /*Configure GPIO pin : TEST_PIN_Pin */
   GPIO_InitStruct.Pin = TEST_PIN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(TEST_PIN_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PB0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -636,9 +582,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
 		HAL_UARTEx_ReceiveToIdle_IT(&huart2, dataRX, sizeof(dataRX)); // Enable interrupt UART
 	} else if (huart->Instance == huart1.Instance) {
     uart_esp32_t *RX_ESP32 = malloc(sizeof(uart_esp32_t));
-    RX_ESP32->data = malloc(strlen(dataRX_ESP32));
+    RX_ESP32->data = malloc(strlen(dataRX_ESP32)+1);
+    memset(RX_ESP32->data,0,strlen(dataRX_ESP32)+1);
     memcpy(RX_ESP32->data,dataRX_ESP32,strlen(dataRX_ESP32));
-    RX_ESP32->len = strlen(dataRX_ESP32);
+    RX_ESP32->len = strlen(dataRX_ESP32)+1;
     OS_task_post_event(AO_task_uart_esp32,RECEIVE_DATA_ESP32,(uint8_t *)&RX_ESP32,sizeof(uart_esp32_t));
 
     memset(dataRX_ESP32,0,sizeof(dataRX_ESP32));

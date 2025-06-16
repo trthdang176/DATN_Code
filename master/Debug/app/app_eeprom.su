@@ -1,6 +1,6 @@
-../app/app_eeprom.c:44:6:eeprom_task_init	120	static
-../app/app_eeprom.c:116:6:eeprom_ctor	16	static
-../app/app_eeprom.c:125:13:eeprom_init	24	static
-../app/app_eeprom.c:149:6:eeprom_dispatch	32	static
-../app/app_eeprom.c:233:13:write_buffer_with_task	24	static
-../app/app_eeprom.c:248:6:write_data_test_ic	56	static
+../app/app_eeprom.c:44:6:eeprom_task_init	224	static
+../app/app_eeprom.c:117:6:eeprom_ctor	16	static
+../app/app_eeprom.c:126:13:eeprom_init	24	static
+../app/app_eeprom.c:150:6:eeprom_dispatch	32	static
+../app/app_eeprom.c:234:13:write_buffer_with_task	24	static
+../app/app_eeprom.c:249:6:write_data_test_ic	56	static

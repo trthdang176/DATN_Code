@@ -63,26 +63,27 @@ void eeprom_task_init(I2C_HandleTypeDef* i2c_port, uint8_t dev_address) {
     write_data_test_ic("744051",data_744051,sizeof(data_744051));
     write_data_test_ic("740000",data_7400,sizeof(data_7400));
     write_data_test_ic("74139",data_74139,sizeof(data_74139));
-    write_data_test_ic("74164",data_74164,sizeof(data_74164));
     write_data_test_ic("7408",data_7408,sizeof(data_7408));
     write_data_test_ic("74157",data_74157,sizeof(data_74157));
     write_data_test_ic("40175",data_40175,sizeof(data_40175));
     write_data_test_ic("40174",data_40174,sizeof(data_40174));
     write_data_test_ic("4027",data_4027,sizeof(data_4027));
-    write_data_test_ic("74165",data_74165,sizeof(data_74165));
 
 
     uint8_t num_direc;
     AT24Cxx_read_buffer(&eeprom_ob,START_MEM_ADDR_DIREC_USED,&num_direc,1);
-    // uint8_t clear_buf[TOTAL_ALL_PROGRAM_TEST_LEN] = {0};
-    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)clear_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
-    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)data_program1,strlen(data_program1));
-    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(1),(uint8_t *)data_program2,strlen(data_program2));
-    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(2),(uint8_t *)data_program3,strlen(data_program3));
-    // AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(3),(uint8_t *)data_program4,strlen(data_program4));
-    uint8_t clear_buf[60] = {0};
-    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_WIFI_INFO,clear_buf,DATA_LEN_WIFI_INFO);
-    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_WIFI_INFO,wifi_info,strlen(wifi_info));
+    uint8_t clear_buf[TOTAL_ALL_PROGRAM_TEST_LEN] = {0};
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)clear_buf,TOTAL_ALL_PROGRAM_TEST_LEN);
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),(uint8_t *)data_program1,strlen(data_program1));
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(1),(uint8_t *)data_program2,strlen(data_program2));
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(2),(uint8_t *)data_program3,strlen(data_program3));
+    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(3),(uint8_t *)data_program4,strlen(data_program4));
+
+    // uint8_t buffer_123[TOTAL_ALL_PROGRAM_TEST_LEN];
+    // AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),buffer_123,TOTAL_ALL_PROGRAM_TEST_LEN);
+    // uint8_t clear_buf[60] = {0};
+//    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_WIFI_INFO,clear_buf,DATA_LEN_WIFI_INFO);
+//    AT24Cxx_write_buffer_bloking(&eeprom_ob,START_ADDR_WIFI_INFO,wifi_info,strlen(wifi_info));
     uint8_t buffer[30];
 //    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(0),&buffer,strlen(data_program1));
 //    AT24Cxx_read_buffer(&eeprom_ob,START_ADDR_PROGRAM_TEST_X(1),&buffer,strlen(data_program2));

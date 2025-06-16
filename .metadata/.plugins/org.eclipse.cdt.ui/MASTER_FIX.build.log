@@ -1,0 +1,10 @@
+19:49:44 **** Incremental Build of configuration Debug for project MASTER_FIX ****
+make -j12 all 
+arm-none-eabi-size  MASTER_FIX.elf 
+   text	   data	    bss	    dec	    hex	filename
+  14492	     12	   1804	  16308	   3fb4	MASTER_FIX.elf
+Finished building: default.size.stdout
+ 
+
+19:49:44 Build Finished. 0 errors, 0 warnings. (took 348ms)
+

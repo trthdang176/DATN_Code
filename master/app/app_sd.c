@@ -4,14 +4,14 @@
 #include "../Core/Inc/main.h"
 
 /* sd lib */
-#include "../FatFs/App/fatfs.h"
-#include "../Core/Inc/fatfs_sd.h"
+//#include "../FatFs/App/fatfs.h"
+//#include "../Core/Inc/fatfs_sd.h"
 
-FATFS fs;
-FIL fil;
-FRESULT fresult;
-char buffer[300];
-UINT bw, br;
+//FATFS fs;
+//FIL fil;
+//FRESULT fresult;
+//char buffer[300];
+//UINT bw, br;
 
 typedef struct {
     OS_task task;
@@ -65,11 +65,11 @@ static void sd_init(app_sd * const pOS_task, OS_event_t const * const pEvent) {
 static void sd_dispatch(app_sd * const pOS_task, OS_event_t const * const pEvent) {
     switch (pEvent->sig) {
         case STORE_DATA_TEST : {
-            printf("Store data to sd card\n");
-            DataLogging_t *data_store = (DataLogging_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
-            add_data(data_store);
-            if (data_store->String_logging != NULL) free(data_store->String_logging);
-            free(data_store);
+//            printf("Store data to sd card\n");
+//            DataLogging_t *data_store = (DataLogging_t *)(*(uint32_t *)get_data_dynamic_event(pEvent));
+//            add_data(data_store);
+//            if (data_store->String_logging != NULL) free(data_store->String_logging);
+//            free(data_store);
         } break;
 
         default : break;
@@ -79,58 +79,58 @@ static void sd_dispatch(app_sd * const pOS_task, OS_event_t const * const pEvent
 
 static void init_data_logging(void) {
 
-   fresult = f_mount(&fs, "0:", 1);
-	if (fresult != FR_OK){
-       printf ("ERROR with code:%d!!! in mounting SD CARD...\n\n",fresult);
-	}
-	else{
-       printf("SD CARD mounted successfully...\n\n");
-   }
-
-	fresult = f_open(&fil, "data.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
-   if (f_size(&fil) == 0) {
-       f_close(&fil);
-       fresult = f_open(&fil, "data.txt", FA_WRITE);
-       f_puts("Timestamp,Temperature,Humidity,Pressure\n", &fil);
-       f_close(&fil);
-       printf("Data file created\n");
-   } else {
-       f_close(&fil);
-       printf("Data file exists\n");
-   }
-
-   fresult = f_open(&fil, "index.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
-   f_close(&fil);
+//   fresult = f_mount(&fs, "0:", 1);
+//	if (fresult != FR_OK){
+//       printf ("ERROR with code:%d!!! in mounting SD CARD...\n\n",fresult);
+//	}
+//	else{
+//       printf("SD CARD mounted successfully...\n\n");
+//   }
+//
+//	fresult = f_open(&fil, "data.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+//   if (f_size(&fil) == 0) {
+//       f_close(&fil);
+//       fresult = f_open(&fil, "data.txt", FA_WRITE);
+//       f_puts("Timestamp,Temperature,Humidity,Pressure\n", &fil);
+//       f_close(&fil);
+//       printf("Data file created\n");
+//   } else {
+//       f_close(&fil);
+//       printf("Data file exists\n");
+//   }
+//
+//   fresult = f_open(&fil, "index.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+//   f_close(&fil);
 }
 
 // Write data with index update
 static void add_data(DataLogging_t *data) {
-   fresult = f_open(&fil, "data.txt", FA_OPEN_EXISTING | FA_WRITE | FA_READ);
-   if (fresult != FR_OK) {
-       printf("Error: Cannot open data.txt\n");
-       return;
-   }
-
-   uint32_t position = f_size(&fil);
-   f_lseek(&fil, position);
-
-   // Write data
-   sprintf(buffer, "%s\n", data->String_logging);
-   f_puts(buffer, &fil);
-   f_close(&fil);
-
-   // Add position to index file
-   IndexEntry index_entry = {position};
-
-   fresult = f_open(&fil, "index.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
-   if (fresult != FR_OK) {
-       printf("Error: Cannot open index.txt\n");
-       return;
-   }
-
-   f_lseek(&fil, f_size(&fil));
-   f_write(&fil, &index_entry, sizeof(IndexEntry), &bw);
-   f_close(&fil);
+//   fresult = f_open(&fil, "data.txt", FA_OPEN_EXISTING | FA_WRITE | FA_READ);
+//   if (fresult != FR_OK) {
+//       printf("Error: Cannot open data.txt\n");
+//       return;
+//   }
+//
+//   uint32_t position = f_size(&fil);
+//   f_lseek(&fil, position);
+//
+//   // Write data
+//   sprintf(buffer, "%s\n", data->String_logging);
+//   f_puts(buffer, &fil);
+//   f_close(&fil);
+//
+//   // Add position to index file
+//   IndexEntry index_entry = {position};
+//
+//   fresult = f_open(&fil, "index.txt", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+//   if (fresult != FR_OK) {
+//       printf("Error: Cannot open index.txt\n");
+//       return;
+//   }
+//
+//   f_lseek(&fil, f_size(&fil));
+//   f_write(&fil, &index_entry, sizeof(IndexEntry), &bw);
+//   f_close(&fil);
 }
 
 //uint32_t get_total_records() {

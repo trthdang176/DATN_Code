@@ -1,0 +1,4 @@
+../app/app_post_test.c:21:6:Post_task_init	1
+../app/app_post_test.c:29:6:PostApp_ctor	1
+../app/app_post_test.c:37:6:PostApp_init	1
+../app/app_post_test.c:42:6:PostApp_dispatch	1

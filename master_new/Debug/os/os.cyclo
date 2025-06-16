@@ -1,0 +1,13 @@
+../os/os.c:21:6:OS_task_run	1
+../os/os.c:32:6:OS_task_init	1
+../os/os.c:50:6:OS_task_create	4
+../os/os.c:83:6:OS_task_post	5
+../os/os.c:117:6:OS_task_post_event	1
+../os/os.c:127:6:OS_TimeEvt_init	1
+../os/os.c:151:6:OS_TimeEvt_Set	1
+../os/os.c:158:6:OS_TimeEvt_Stop	1
+../os/os.c:169:6:OS_TimeEvt_tick	4
+../os/os.c:196:6:OS_task_activate	6
+../os/os.c:244:6:OS_priority_IRQ	1
+../os/os.c:256:6:OS_prio_setIRQ	2
+../os/os.c:262:6:OS_Test_setIRQ	1

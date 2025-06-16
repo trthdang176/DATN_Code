@@ -1,6 +1,6 @@
 ../app/app_sd.c:34:6:sd_task_init	1
 ../app/app_sd.c:55:6:sd_ctor	1
 ../app/app_sd.c:60:13:sd_init	1
-../app/app_sd.c:65:13:sd_dispatch	3
-../app/app_sd.c:80:13:init_data_logging	3
-../app/app_sd.c:107:13:add_data	3
+../app/app_sd.c:65:13:sd_dispatch	1
+../app/app_sd.c:80:13:init_data_logging	1
+../app/app_sd.c:107:13:add_data	1

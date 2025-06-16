@@ -1,0 +1,4 @@
+../app/app_screen.c:19:6:screen_task_init	1
+../app/app_screen.c:23:6:screen_ctor	1
+../app/app_screen.c:29:13:screen_init	1
+../app/app_screen.c:34:13:screen_dispatch	9

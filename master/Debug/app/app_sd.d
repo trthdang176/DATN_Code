@@ -24,7 +24,6 @@ app/app_sd.o: ../app/app_sd.c ../app/app_sd.h ../app/../os/os.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
- ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
  ../app/app_main.h ../app/test_os.h ../app/app_post_test.h \
  ../app/app_eeprom.h ../app/../lib/AT24Cxx.h \
@@ -37,13 +36,7 @@ app/app_sd.o: ../app/app_sd.c ../app/app_sd.h ../app/../os/os.h \
  ../app/../lib/DWIN_HMI.h ../app/../lib/../Core/Inc/main.h \
  ../app/app_uart_esp32.h ../app/app_can_bus.h ../app/app_screen.h \
  ../app/app_rtc.h ../app/../lib/DS3231.h ../app/../os/os_event.h \
- ../app/../os/os.h ../app/../FatFs/App/fatfs.h \
- ../Middlewares/Third_Party/FatFs/src/ff.h \
- ../Middlewares/Third_Party/FatFs/src/integer.h ../FATFS/Target/ffconf.h \
- ../Core/Inc/main.h ../Middlewares/Third_Party/FatFs/src/ff_gen_drv.h \
- ../Middlewares/Third_Party/FatFs/src/diskio.h \
- ../Middlewares/Third_Party/FatFs/src/ff.h ../FATFS/Target/user_diskio.h \
- ../app/../Core/Inc/fatfs_sd.h
+ ../app/../os/os.h
 ../app/app_sd.h:
 ../app/../os/os.h:
 ../app/../os/../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
@@ -71,7 +64,6 @@ app/app_sd.o: ../app/app_sd.c ../app/app_sd.h ../app/../os/os.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
-../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
 ../app/app_main.h:
 ../app/test_os.h:
@@ -94,13 +86,3 @@ app/app_sd.o: ../app/app_sd.c ../app/app_sd.h ../app/../os/os.h \
 ../app/../lib/DS3231.h:
 ../app/../os/os_event.h:
 ../app/../os/os.h:
-../app/../FatFs/App/fatfs.h:
-../Middlewares/Third_Party/FatFs/src/ff.h:
-../Middlewares/Third_Party/FatFs/src/integer.h:
-../FATFS/Target/ffconf.h:
-../Core/Inc/main.h:
-../Middlewares/Third_Party/FatFs/src/ff_gen_drv.h:
-../Middlewares/Third_Party/FatFs/src/diskio.h:
-../Middlewares/Third_Party/FatFs/src/ff.h:
-../FATFS/Target/user_diskio.h:
-../app/../Core/Inc/fatfs_sd.h:

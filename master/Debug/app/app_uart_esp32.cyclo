@@ -1,4 +1,4 @@
-../app/app_uart_esp32.c:37:6:uart_esp32_task_init	1
-../app/app_uart_esp32.c:50:6:uart_esp32_ctor	1
-../app/app_uart_esp32.c:57:13:uart_esp32_init	1
-../app/app_uart_esp32.c:62:13:uart_esp32_dispatch	12
+../app/app_uart_esp32.c:46:6:uart_esp32_task_init	1
+../app/app_uart_esp32.c:67:6:uart_esp32_ctor	1
+../app/app_uart_esp32.c:74:13:uart_esp32_init	1
+../app/app_uart_esp32.c:79:13:uart_esp32_dispatch	17
