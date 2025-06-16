@@ -222,29 +222,54 @@ class LoginPage(tk.Frame):
                 # Fallback to solid color background
                 self.configure(bg=BG_COLOR)
 
-        # Multiple logos section
-        logo_frame = tk.Frame(self, bg=BG_COLOR)
-        logo_frame.pack(pady=30)
+        # Header section with solid background (optimized height)
+        header_section = tk.Frame(self, bg='white', relief='flat', bd=0)
+        header_section.pack(fill='x', padx=0, pady=0)
+        
+        # Add subtle shadow under header
+        shadow_header = tk.Frame(self, bg='gray85', height=2)
+        shadow_header.pack(fill='x')
+        
+        # Inner header container with reduced padding for better balance
+        header_container = tk.Frame(header_section, bg='white')
+        header_container.pack(fill='x', padx=20, pady=10)  # Reduced from pady=15
+        
+        # Configure grid weights for header container
+        header_container.grid_columnconfigure(0, weight=1)  # Logo section
+        header_container.grid_columnconfigure(1, weight=2)  # Text section
+        
+        # LEFT SIDE: Logo section
+        logo_frame = tk.Frame(header_container, bg='white')
+        logo_frame.grid(row=0, column=0, sticky='w', padx=(0, 20))
         
         # List of logo files to look for
         logo_files = ['SPKT.png', 'LOGO_LAB.jpg']
         logos_loaded = 0
+        logo_height = 90  # Fixed height for both logos, width will vary
         
         for logo_file in logo_files:
             logo_path = os.path.join(BASE_DIR, logo_file)
             if os.path.exists(logo_path):
                 try:
                     logo_img = Image.open(logo_path)
-                    # Resize logo maintaining aspect ratio
-                    logo_img.thumbnail((100, 100), Image.Resampling.LANCZOS)
+                    
+                    # Calculate width based on original aspect ratio
+                    original_width, original_height = logo_img.size
+                    aspect_ratio = original_width / original_height
+                    new_width = int(logo_height * aspect_ratio)
+                    
+                    # Resize maintaining aspect ratio with fixed height
+                    logo_img = logo_img.resize((new_width, logo_height), Image.Resampling.LANCZOS)
                     logo_photo = ImageTk.PhotoImage(logo_img)
                     
-                    # Create logo label with shadow effect
-                    logo_container = tk.Frame(logo_frame, bg='white', relief='raised', bd=2)
-                    logo_container.pack(side='left', padx=15, pady=5)
+                    # Create logo container with dynamic width
+                    logo_container = tk.Frame(logo_frame, bg='white', relief='solid', bd=1, 
+                                            width=new_width+10, height=logo_height+10)
+                    logo_container.pack(side='left', padx=8, pady=3)
+                    logo_container.pack_propagate(False)  # Maintain fixed size
                     
                     logo_label = tk.Label(logo_container, image=logo_photo, bg='white')
-                    logo_label.pack(padx=5, pady=5)
+                    logo_label.pack(expand=True)
                     
                     # Keep reference to prevent garbage collection
                     setattr(self, f'logo_photo_{logos_loaded}', logo_photo)
@@ -253,18 +278,60 @@ class LoginPage(tk.Frame):
                 except Exception as e:
                     print(f"Error loading logo {logo_file}: {e}")
         
-        # If no logos loaded, show a default title
+        # If no logos loaded, show placeholders
         if logos_loaded == 0:
-            tk.Label(logo_frame, text='IC Test System', bg=BG_COLOR, fg=BORDER_COLOR,
-                     font=('Arial', 20, 'bold')).pack(pady=20)
+            for i in range(2):
+                placeholder_logo = tk.Frame(logo_frame, bg='lightgray', width=logo_height+10, 
+                                          height=logo_height+10, relief='solid', bd=1)
+                placeholder_logo.pack(side='left', padx=8, pady=3)
+                placeholder_logo.pack_propagate(False)
+                tk.Label(placeholder_logo, text=f'LOGO {i+1}', bg='lightgray', fg='gray', 
+                         font=('Arial', 12, 'bold')).pack(expand=True)
+        
+        # RIGHT SIDE: Project information section (repositioned)
+        info_frame = tk.Frame(header_container, bg='white')
+        info_frame.grid(row=0, column=1, sticky='ne', padx=(20, 0))  # Changed to 'ne' for top-right
+        
+        # Project title and information with compact spacing
+        tk.Label(info_frame, text='GRADUATION PROJECT', bg='white', fg=BORDER_COLOR,
+                 font=('Arial', 16, 'bold')).pack(anchor='e', pady=(5, 2))  # Reduced font and spacing
+        
+        tk.Label(info_frame, text='IC TESTING MACHINE', bg='white', fg='#2C3E50',
+                 font=('Arial', 14, 'bold')).pack(anchor='e', pady=(0, 8))  # Reduced font and spacing
+        
+        # Student information section
+        students_frame = tk.Frame(info_frame, bg='white')
+        students_frame.pack(anchor='e')
+        
+        # Student 1
+        student1_frame = tk.Frame(students_frame, bg='white')
+        student1_frame.pack(anchor='e', pady=1)  # Reduced spacing
+        
+        tk.Label(student1_frame, text='Trần Thành Đăng', bg='white', fg='#34495E',
+                 font=('Arial', 11, 'bold')).pack(side='left')  # Reduced font
+        tk.Label(student1_frame, text=' - ', bg='white', fg='#7F8C8D',
+                 font=('Arial', 11)).pack(side='left')
+        tk.Label(student1_frame, text='123456789', bg='white', fg='#7F8C8D',
+                 font=('Arial', 11)).pack(side='left')
+        
+        # Student 2
+        student2_frame = tk.Frame(students_frame, bg='white')
+        student2_frame.pack(anchor='e', pady=1)  # Reduced spacing
+        
+        tk.Label(student2_frame, text='Bùi Dương Quốc Bảo', bg='white', fg='#34495E',
+                 font=('Arial', 11, 'bold')).pack(side='left')  # Reduced font
+        tk.Label(student2_frame, text=' - ', bg='white', fg='#7F8C8D',
+                 font=('Arial', 11)).pack(side='left')
+        tk.Label(student2_frame, text='123456789', bg='white', fg='#7F8C8D',
+                 font=('Arial', 11)).pack(side='left')
 
-        # Login box with enhanced styling
+        # Login box with enhanced styling (adjusted position)
         login_box = tk.Frame(self, bg='white', bd=0, relief='flat')
-        login_box.place(relx=0.5, rely=0.6, anchor='center', width=380, height=380)
+        login_box.place(relx=0.5, rely=0.62, anchor='center', width=380, height=350)  # Moved up slightly
         
         # Add shadow effect to login box
         shadow_frame = tk.Frame(self, bg='gray70', bd=0)
-        shadow_frame.place(relx=0.5, rely=0.6, anchor='center', width=385, height=385)
+        shadow_frame.place(relx=0.5, rely=0.62, anchor='center', width=385, height=355)  # Adjusted position
         login_box.lift()  # Bring login box to front
         
         # Add rounded corner effect with inner frame
